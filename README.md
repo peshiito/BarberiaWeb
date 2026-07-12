@@ -1,352 +1,88 @@
-# ============================================
+necesito tu ayuda claude
 
-# 1. HEALTH CHECK
+quiero levantar una web para una barberia, en este caso va a funcionar de la siguiente manera, quiero dos web, una va a ser una landing page elaborada, que ayude a tratar de llamar a los clientes, con informacion de barberos y asi eso lo vemos luego
 
-# ============================================
+esta web tambien va a permitir un inicio de sesion minimo para agendar turnos con barberos y que los barberos puedan verlo ,tambien la idea es que los usuarios tengan limite de turnos por semana y un rate limit
 
-curl http://localhost:3000/health
+la otra web es un dashboard donde los barberos puedan iniciar sesion con datos mas detallados, almacenen informacion sobre sus cortes, y las mecanicas mas importantes de esto es que los barberos puedan abrir agendas, las agendas la van a abrir cada semana, ademas de que carguen informacion como dias que trabajen, los horarios (ej 10am - 8pm) y el tiempo entre corte y corte, (juan tiene una demora de 30 minutos entre cortes, horarios de turnos 10 : 00 -- 10:30 -- 11:00 -- 11:30 -- 12:30 o si pedro tiene turnos cada 1 hora, los horarios de turnos para pedro son de 10: 00 -- 11: 00 -- 12:00 -- 13: 00), creo que con eso se entiendela funcion del dashboard para los barberos, con estadisticas y cosas asi, otra cosa del dashboard es del admin, que el pueda ver toda la informacion de los barberos, de los usuarios registrados (clientes, barberos, turnos, ganancias, caja, division de ganancia entre barbero y local, cosas asi), registrar nuevos barberos, aclaremos que el admin puede ser barbero tambien, tiene que poder ser ambas opciones, puede ser un admin, un barbero y un adminbarbero
 
-# ============================================
+mi idea es que para sacar turno los clientes desde la landing se registren con informacion minima como nombre, apellido y telefono para ponerse en contacto, ademas de eso podran anular turnos, solo pueden sacar un turno por dia, en el caso de que allan sacado un turno a las 12 el lunes, pero realmente queria el lunes a las 13, deberia anular el turno y sacar para el 13, ahora te voy a pasar las tecnologias y ademas de eso como vamos a hacer las carpetas para el trabajo
 
-# 2. AUTH - REGISTRO
+Una idea del backend es que maneje todo de las dos paginas
 
-# ============================================
+ademas que de eso pueda funcionar lo siguiente, un apartado con informacion donde se refleje en la lading page, que los barberos desde se dashboard puedan subir 3, 4 fotos y una extra de ellos, ademas de una descripcion que este vinculado a ellos, que eso se refleje en la landing page donde los usuarios peudan sacar turnos y ver los turnos disponible de los barberos y informacion
 
-# Registrar Admin (solo admin puede crear users)
+--LANDING PAGE --
 
-curl -X POST http://localhost:3000/api/auth/register/user \
- -H "Content-Type: application/json" \
- -d '{
-"email": "nuevoadmin@barberia.com",
-"password": "Admin123!",
-"fullName": "Nuevo Admin",
-"role": "admin",
-"phone": "123456789"
-}'
+Tecnologias : React con javascript
 
-# Registrar Barbero
+Utilizacion : informar sobre la barberia, los barberos, registro y inicio de sesion de usuarios para que saquen turnos
 
-curl -X POST http://localhost:3000/api/auth/register/user \
- -H "Content-Type: application/json" \
- -d '{
-"email": "barbero2@barberia.com",
-"password": "Barber123!",
-"fullName": "Pedro Barber",
-"role": "barber",
-"phone": "987654321"
-}'
+-- DASHBOARD BARBEROS --
 
-# Registrar Cliente (público)
+Tecnologias : React con js
 
-curl -X POST http://localhost:3000/api/auth/register/client \
- -H "Content-Type: application/json" \
- -d '{
-"fullName": "Maria Cliente",
-"phone": "1122334455",
-"email": "maria@email.com",
-"password": "Client123!"
-}'
+Utilizacion : Ver metricas, abrir agenda de cada barbero, admin ver metricas de cada barbero y informacion (caja de ahorro, division de ganancia local y barbero, registro de cada usuario (Barbero, admin y barberoadmin) ademas muchas metricas)
 
-# ============================================
+-- BACKEND --
 
-# 3. AUTH - LOGIN
+Tecnologias : Nodejs Express Typescript Docker (Phpmyadmin, y mysql)
 
-# ============================================
+Utilizacion : La idea es que maneje ambas paginas, la forma de ordenar las carpetas sea mvc , maneje de todo lo necesario para ambas paginas, un solo backend
 
-# Login Admin (password: Admin123!)
+¡¡ ACLARACION DE TRABAJO !!
 
-curl -X POST http://localhost:3000/api/auth/login/user \
- -H "Content-Type: application/json" \
- -d '{
-"email": "admin@barberia.com",
-"password": "Admin123!"
-}'
+Iremos con un trabajo de flujo real, la idea es que no agregues mensajes extra, en lo posible que sea todo codigo, nada de comentar cosas raras o con emoji
 
-# Login Barbero (password: Barber123!)
+Trabajaremos con mucho esfuerzo, primero iremos con backend, luego con el dashboard y despues con el landing page
 
-curl -X POST http://localhost:3000/api/auth/login/user \
- -H "Content-Type: application/json" \
- -d '{
-"email": "barber@barberia.com",
-"password": "Barber123!"
-}'
+trabajariamos con codigo completo, si yo te pido la correccion de algo vos tenes que ayudarme a ubicar esa correccion de ese codigo, un ejemplo app. ts quiero modificar esto (linea 116) o directamente el codigo del archivo completo con la correcion
 
-# Login Cliente (password: Client123!)
+otra cosa a mencionar es que la idea es que funcione todo en local, nada enla nube ni nada mas
 
-curl -X POST http://localhost:3000/api/auth/login/client \
- -H "Content-Type: application/json" \
- -d '{
-"phone": "123456789",
-"password": "Client123!"
-}'
+vamos a trabajr por etapas, un ejemplo seria terminar con el registro de admin o con la base de datos o con partes completas y subir a github los cambios y asi
 
-# ============================================
+nada de codigos ultra largosde 300 lineas o 600 lineas, si hay que crear varios archivos asi sera
 
-# 4. AUTH - GET ME (requiere token)
+creo que con eso esta todo, quiero que ademas de las lineas de codigo, nombre de archivo me pases los arboles de archivos de proyectos, las lineas de comandos, pruebas curl
 
-# ============================================
+todo
 
-# Reemplazar TOKEN con el token obtenido del login
+este proyecto la idea es solo funcionar local
 
-TOKEN="tu_token_aqui"
+# Glosario BarberiaWeb (ES → EN)
 
-curl -X GET http://localhost:3000/api/auth/me \
- -H "Authorization: Bearer $TOKEN"
+| Español              | Inglés                    | Descripción                                             |
+| -------------------- | ------------------------- | ------------------------------------------------------- |
+| Usuarios             | `users`                   | Barberos y admins que inician sesión en el dashboard    |
+| Clientes             | `clients`                 | Personas que sacan turnos desde la landing              |
+| Turnos               | `appointments`            | Reservas de corte entre cliente y barbero               |
+| Agendas              | `schedules`               | Configuración semanal de disponibilidad de un barbero   |
+| Fotos de barbero     | `barber_photos`           | Imágenes subidas por el barbero para su perfil público  |
+| Rol                  | `role`                    | admin / barber / admin_barber                           |
+| Contraseña           | `password_hash`           | Contraseña ya hasheada (nunca se guarda en texto plano) |
+| Nombre               | `first_name`              |                                                         |
+| Apellido             | `last_name`               |                                                         |
+| Teléfono             | `phone`                   |                                                         |
+| Descripción          | `bio`                     | Texto del barbero mostrado en su perfil público         |
+| Semana de inicio     | `week_start`              | Fecha desde la cual arranca una agenda                  |
+| Días de trabajo      | `work_days`               | Días que el barbero atiende esa semana                  |
+| Hora inicio / fin    | `start_time` / `end_time` | Rango horario de atención                               |
+| Duración de turno    | `slot_duration_minutes`   | Minutos entre corte y corte                             |
+| Estado               | `status`                  | active / cancelled / completed                          |
+| Fecha                | `date`                    |                                                         |
+| Hora                 | `time`                    |                                                         |
+| Caja                 | `cash_register`           | Registro de ingresos del local                          |
+| Ganancia             | `earnings`                |                                                         |
+| División de ganancia | `earnings_split`          | Porcentaje entre barbero y local                        |
 
-# ============================================
+## Convención de nombres (estilo industria)
 
-# 5. ADMIN - DASHBOARD (requiere token admin)
-
-# ============================================
-
-curl -X GET "http://localhost:3000/api/admin/dashboard?startDate=2024-01-01&endDate=2024-12-31" \
- -H "Authorization: Bearer $TOKEN_ADMIN"
-
-# ============================================
-
-# 6. ADMIN - BARBEROS (requiere token admin)
-
-# ============================================
-
-# Obtener todos los barberos
-
-curl -X GET http://localhost:3000/api/admin/barbers \
- -H "Authorization: Bearer $TOKEN_ADMIN"
-
-# Crear barbero (requiere admin)
-
-curl -X POST http://localhost:3000/api/admin/barbers \
- -H "Content-Type: application/json" \
- -H "Authorization: Bearer $TOKEN_ADMIN" \
- -d '{
-"email": "nuevobarbero@barberia.com",
-"password": "Barber123!",
-"fullName": "Nuevo Barbero",
-"phone": "555555555",
-"branchId": 1,
-"specialty": "Corte y Barba",
-"experienceYears": 3,
-"bio": "Especialista en cortes modernos"
-}'
-
-# Desactivar barbero
-
-curl -X PUT http://localhost:3000/api/admin/barbers/1/deactivate \
- -H "Authorization: Bearer $TOKEN_ADMIN"
-
-# ============================================
-
-# 7. ADMIN - SEDES (requiere token admin)
-
-# ============================================
-
-# Obtener todas las sedes
-
-curl -X GET http://localhost:3000/api/admin/branches \
- -H "Authorization: Bearer $TOKEN_ADMIN"
-
-# Crear sede
-
-curl -X POST http://localhost:3000/api/admin/branches \
- -H "Content-Type: application/json" \
- -H "Authorization: Bearer $TOKEN_ADMIN" \
- -d '{
-"name": "Sede Sur",
-"address": "Av. Sur 789",
-"phone": "111222333",
-"email": "sur@barberia.com",
-"scheduleInfo": "Lun-Sab 10:00-19:00"
-}'
-
-# ============================================
-
-# 8. ADMIN - CLIENTES (requiere token admin)
-
-# ============================================
-
-curl -X GET http://localhost:3000/api/admin/clients \
- -H "Authorization: Bearer $TOKEN_ADMIN"
-
-# ============================================
-
-# 9. BARBER - PROFILE (requiere token barber)
-
-# ============================================
-
-TOKEN_BARBER="tu_token_barber_aqui"
-
-curl -X GET http://localhost:3000/api/barber/profile \
- -H "Authorization: Bearer $TOKEN_BARBER"
-
-# ============================================
-
-# 10. BARBER - HORARIOS (requiere token barber)
-
-# ============================================
-
-# Obtener horario actual
-
-curl -X GET http://localhost:3000/api/barber/schedule \
- -H "Authorization: Bearer $TOKEN_BARBER"
-
-# Configurar semana completa
-
-curl -X POST http://localhost:3000/api/schedule/week \
- -H "Content-Type: application/json" \
- -H "Authorization: Bearer $TOKEN_BARBER" \
- -d '{
-"branchId": 1,
-"weekStartDate": "2026-07-06",
-"weekEndDate": "2026-07-12",
-"startTime": "09:00",
-"endTime": "19:00",
-"slotInterval": 30,
-"breakStart": "13:00",
-"breakEnd": "14:00",
-"days": [
-{ "dayOfWeek": 1, "isWorking": true },
-{ "dayOfWeek": 2, "isWorking": true },
-{ "dayOfWeek": 3, "isWorking": true },
-{ "dayOfWeek": 4, "isWorking": true },
-{ "dayOfWeek": 5, "isWorking": true },
-{ "dayOfWeek": 6, "isWorking": true },
-{ "dayOfWeek": 7, "isWorking": false }
-]
-}'
-
-# Obtener todos los horarios configurados
-
-curl -X GET http://localhost:3000/api/schedule \
- -H "Authorization: Bearer $TOKEN_BARBER"
-
-# ============================================
-
-# 11. BARBER - SERVICIOS (requiere token barber)
-
-# ============================================
-
-# Crear servicio
-
-curl -X POST http://localhost:3000/api/services \
- -H "Content-Type: application/json" \
- -H "Authorization: Bearer $TOKEN_BARBER" \
- -d '{
-"name": "Corte con Tijera",
-"description": "Corte detallado con tijera",
-"duration": 45,
-"price": 2000
-}'
-
-# Obtener servicios
-
-curl -X GET http://localhost:3000/api/services \
- -H "Authorization: Bearer $TOKEN_BARBER"
-
-# Actualizar servicio
-
-curl -X PUT http://localhost:3000/api/services/1 \
- -H "Content-Type: application/json" \
- -H "Authorization: Bearer $TOKEN_BARBER" \
- -d '{
-"name": "Corte Premium",
-"duration": 60,
-"price": 2500
-}'
-
-# Eliminar servicio
-
-curl -X DELETE http://localhost:3000/api/services/1 \
- -H "Authorization: Bearer $TOKEN_BARBER"
-
-# ============================================
-
-# 12. BARBER - TURNOS (requiere token barber)
-
-# ============================================
-
-# Obtener turnos del día
-
-curl -X GET "http://localhost:3000/api/barber/appointments?date=2026-07-06" \
- -H "Authorization: Bearer $TOKEN_BARBER"
-
-# Completar turno
-
-curl -X PUT http://localhost:3000/api/barber/appointments/1/complete \
- -H "Authorization: Bearer $TOKEN_BARBER"
-
-# Marcar como no asistió
-
-curl -X PUT http://localhost:3000/api/barber/appointments/1/no-show \
- -H "Authorization: Bearer $TOKEN_BARBER"
-
-# ============================================
-
-# 13. BARBER - FOTOS (requiere token barber)
-
-# ============================================
-
-# Subir foto (con archivo)
-
-curl -X POST http://localhost:3000/api/photos/upload \
- -H "Authorization: Bearer $TOKEN_BARBER" \
- -F "photo=@/ruta/a/tu/imagen.jpg" \
- -F "title=Mi trabajo" \
- -F "description=Corte moderno" \
- -F "isProfile=true"
-
-# Obtener fotos
-
-curl -X GET http://localhost:3000/api/photos \
- -H "Authorization: Bearer $TOKEN_BARBER"
-
-# Eliminar foto
-
-curl -X DELETE http://localhost:3000/api/photos/1 \
- -H "Authorization: Bearer $TOKEN_BARBER"
-
-# Establecer foto de perfil
-
-curl -X PUT http://localhost:3000/api/photos/1/profile \
- -H "Authorization: Bearer $TOKEN_BARBER"
-
-# ============================================
-
-# 14. CLIENTE - TURNOS (requiere token client)
-
-# ============================================
-
-TOKEN_CLIENT="tu_token_client_aqui"
-
-# Obtener horarios disponibles
-
-curl -X GET "http://localhost:3000/api/appointments/available-slots?barberId=1&date=2026-07-06" \
- -H "Authorization: Bearer $TOKEN_CLIENT"
-
-# Crear turno (con idempotency-key)
-
-curl -X POST http://localhost:3000/api/appointments \
- -H "Content-Type: application/json" \
- -H "Authorization: Bearer $TOKEN_CLIENT" \
- -H "Idempotency-Key: $(uuidgen || echo "test-key-123")" \
- -d '{
-"barberId": 1,
-"branchId": 1,
-"serviceId": 1,
-"date": "2026-07-06",
-"time": "10:00",
-"notes": "Primer turno"
-}'
-
-# Obtener mis turnos
-
-curl -X GET "http://localhost:3000/api/appointments/my?startDate=2026-07-01&endDate=2026-07-31" \
- -H "Authorization: Bearer $TOKEN_CLIENT"
-
-# Cancelar turno
-
-curl -X PUT http://localhost:3000/api/appointments/1/cancel \
- -H "Content-Type: application/json" \
- -H "Authorization: Bearer $TOKEN_CLIENT" \
- -d '{
-"reason": "No puedo asistir"
-}'
+- **Tablas**: plural, snake_case → `users`, `appointments`
+- **Columnas**: snake_case → `first_name`, `created_at`
+- **Foreign keys**: `<tabla_singular>_id` → `user_id`, `client_id`
+- **Archivos TypeScript**: camelCase → `user.model.ts`, `appointment.controller.ts`
+- **Interfaces/Types**: PascalCase → `User`, `AppointmentInput`
+- **Variables y funciones**: camelCase → `createUser`, `findByEmail`
+- **Constantes**: UPPER_SNAKE_CASE → `JWT_SECRET`
+  A partir de ahora todo el código (SQL, TS, variables) se maneja en inglés.

@@ -3,6 +3,8 @@ import { AuthRequest } from "../middlewares/auth.middleware";
 import { ClientAuthRequest } from "../middlewares/client-auth.middleware";
 import {
     cancelAppointmentById,
+    completeAppointmentById,
+    countActiveAppointmentsByClientInWeek,
     createAppointment,
     findActiveAppointmentByClientAndDate,
     findActiveAppointmentBySlot,
@@ -11,13 +13,22 @@ import {
     findAppointmentsByClient,
 } from "../models/appointment.model";
 import { findScheduleByBarberAndWeek } from "../models/schedule.model";
+import { findById } from "../models/user.model";
 import { generateSlots } from "../utils/slots";
+
+const MAX_APPOINTMENTS_PER_WEEK = Number(process.env.MAX_APPOINTMENTS_PER_WEEK) || 1;
 
 const getWeekStart = (date: string): string => {
     const d = new Date(date + "T00:00:00");
     const day = d.getDay();
     const diff = day === 0 ? -6 : 1 - day;
     d.setDate(d.getDate() + diff);
+    return d.toISOString().split("T")[0];
+};
+
+const getWeekEnd = (weekStart: string): string => {
+    const d = new Date(weekStart + "T00:00:00");
+    d.setDate(d.getDate() + 6);
     return d.toISOString().split("T")[0];
 };
 
@@ -39,6 +50,13 @@ export const createAppointmentHandler = async (req: ClientAuthRequest, res: Resp
     }
 
     const weekStart = getWeekStart(date);
+    const weekEnd = getWeekEnd(weekStart);
+
+    const weeklyCount = await countActiveAppointmentsByClientInWeek(clientId, weekStart, weekEnd);
+    if (weeklyCount >= MAX_APPOINTMENTS_PER_WEEK) {
+        return res.status(409).json({ error: "Weekly appointment limit reached" });
+    }
+
     const schedule = await findScheduleByBarberAndWeek(barber_id, weekStart);
     if (!schedule) {
         return res.status(404).json({ error: "Schedule not found for that week" });
@@ -54,12 +72,15 @@ export const createAppointmentHandler = async (req: ClientAuthRequest, res: Resp
         return res.status(409).json({ error: "Slot already taken" });
     }
 
+    const barber = await findById(barber_id);
+
     const id = await createAppointment({
         client_id: clientId,
         barber_id,
         schedule_id: schedule.id,
         date,
         time,
+        price: barber?.service_price || 0,
     });
 
     return res.status(201).json({ id });
@@ -91,11 +112,25 @@ export const getMyAppointments = async (req: ClientAuthRequest, res: Response) =
 export const getBarberWeekAppointments = async (req: AuthRequest, res: Response) => {
     const barberId = req.user!.id;
     const { weekStart } = req.params;
-
-    const d = new Date(weekStart + "T00:00:00");
-    d.setDate(d.getDate() + 6);
-    const weekEnd = d.toISOString().split("T")[0];
+    const weekEnd = getWeekEnd(weekStart);
 
     const appointments = await findAppointmentsByBarberAndWeek(barberId, weekStart, weekEnd);
     return res.json(appointments);
+};
+
+export const completeAppointmentHandler = async (req: AuthRequest, res: Response) => {
+    const barberId = req.user!.id;
+    const { id } = req.params;
+
+    const appointment = await findAppointmentById(Number(id));
+    if (!appointment || appointment.barber_id !== barberId) {
+        return res.status(404).json({ error: "Appointment not found" });
+    }
+
+    if (appointment.status !== "active") {
+        return res.status(409).json({ error: "Appointment is not active" });
+    }
+
+    await completeAppointmentById(appointment.id);
+    return res.json({ message: "Appointment completed" });
 };

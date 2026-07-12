@@ -4,9 +4,9 @@ import { Appointment, AppointmentInput } from "../types/appointment.types";
 
 export const createAppointment = async (data: AppointmentInput): Promise<number> => {
     const [result] = await pool.query<ResultSetHeader>(
-        `INSERT INTO appointments (client_id, barber_id, schedule_id, date, time)
-     VALUES (?, ?, ?, ?, ?)`,
-        [data.client_id, data.barber_id, data.schedule_id, data.date, data.time],
+        `INSERT INTO appointments (client_id, barber_id, schedule_id, date, time, price)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+        [data.client_id, data.barber_id, data.schedule_id, data.date, data.time, data.price],
     );
     return result.insertId;
 };
@@ -64,6 +64,7 @@ export const findAppointmentsByBarberAndWeek = async (
     );
     return rows as Appointment[];
 };
+
 export const countActiveAppointmentsByClientInWeek = async (
     clientId: number,
     weekStart: string,
@@ -75,4 +76,8 @@ export const countActiveAppointmentsByClientInWeek = async (
         [clientId, weekStart, weekEnd],
     );
     return (rows[0] as any).total;
+};
+
+export const completeAppointmentById = async (id: number): Promise<void> => {
+    await pool.query(`UPDATE appointments SET status = 'completed' WHERE id = ?`, [id]);
 };

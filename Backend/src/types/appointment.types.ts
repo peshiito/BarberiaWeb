@@ -8,6 +8,7 @@ export interface Appointment {
     date: string;
     time: string;
     status: AppointmentStatus;
+    price: number;
     created_at: Date;
 }
 
@@ -17,4 +18,5 @@ export interface AppointmentInput {
     schedule_id: number;
     date: string;
     time: string;
+    price: number;
 }

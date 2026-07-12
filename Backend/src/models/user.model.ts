@@ -4,9 +4,18 @@ import { User, UserInput } from "../types/user.types";
 
 export const createUser = async (data: UserInput): Promise<number> => {
     const [result] = await pool.query<ResultSetHeader>(
-        `INSERT INTO users (first_name, last_name, email, password_hash, role, bio)
-     VALUES (?, ?, ?, ?, ?, ?)`,
-        [data.first_name, data.last_name, data.email, data.password_hash, data.role, data.bio || null],
+        `INSERT INTO users (first_name, last_name, email, password_hash, role, bio, service_price, earnings_split_percentage)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+            data.first_name,
+            data.last_name,
+            data.email,
+            data.password_hash,
+            data.role,
+            data.bio || null,
+            data.service_price || 0,
+            data.earnings_split_percentage || 50,
+        ],
     );
     return result.insertId;
 };

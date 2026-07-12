@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
     cancelAppointmentHandler,
+    completeAppointmentHandler,
     createAppointmentHandler,
     getBarberWeekAppointments,
     getMyAppointments,
@@ -16,5 +17,7 @@ router.patch("/:id/cancel", authenticateClient, cancelAppointmentHandler);
 router.get("/mine", authenticateClient, getMyAppointments);
 
 router.get("/barber/week/:weekStart", authenticate, authorize("barber", "admin_barber"), getBarberWeekAppointments);
+
+router.patch("/:id/complete", authenticate, authorize("barber", "admin_barber"), completeAppointmentHandler);
 
 export default router;
