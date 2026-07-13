@@ -2,14 +2,11 @@ import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import { RowDataPacket } from "mysql2";
 import pool from "../config/db";
-import { createUser, findByEmail, listUsers } from "../models/user.model";
+import { createUser, findByEmail, listUsersPaginated } from "../models/user.model";
+import { getPagination } from "../utils/pagination";
 
 export const createBarber = async (req: Request, res: Response) => {
     const { first_name, last_name, email, password, role, bio, service_price, earnings_split_percentage } = req.body;
-
-    if (!first_name || !last_name || !email || !password || !role) {
-        return res.status(400).json({ error: "Missing required fields" });
-    }
 
     const existing = await findByEmail(email);
     if (existing) {
@@ -32,10 +29,20 @@ export const createBarber = async (req: Request, res: Response) => {
     return res.status(201).json({ id });
 };
 
-export const getAllUsers = async (_req: Request, res: Response) => {
-    const users = await listUsers();
+export const getAllUsers = async (req: Request, res: Response) => {
+    const { page, limit, offset } = getPagination(req);
+    const { users, total } = await listUsersPaginated(limit, offset);
     const sanitized = users.map(({ password_hash, ...rest }) => rest);
-    return res.json(sanitized);
+
+    return res.json({
+        data: sanitized,
+        pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+        },
+    });
 };
 
 export const getFinancialSummary = async (req: Request, res: Response) => {

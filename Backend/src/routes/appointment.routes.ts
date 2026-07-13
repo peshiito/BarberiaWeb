@@ -9,15 +9,28 @@ import {
 import { authenticate } from "../middlewares/auth.middleware";
 import { authenticateClient } from "../middlewares/client-auth.middleware";
 import { authorize } from "../middlewares/role.middleware";
+import { validate } from "../middlewares/validate.middleware";
+import { createAppointmentSchema } from "../schemas/appointment.schema";
+import { asyncHandler } from "../utils/asyncHandler";
 
 const router = Router();
 
-router.post("/", authenticateClient, createAppointmentHandler);
-router.patch("/:id/cancel", authenticateClient, cancelAppointmentHandler);
-router.get("/mine", authenticateClient, getMyAppointments);
+router.post("/", authenticateClient, validate(createAppointmentSchema), asyncHandler(createAppointmentHandler));
+router.patch("/:id/cancel", authenticateClient, asyncHandler(cancelAppointmentHandler));
+router.get("/mine", authenticateClient, asyncHandler(getMyAppointments));
 
-router.get("/barber/week/:weekStart", authenticate, authorize("barber", "admin_barber"), getBarberWeekAppointments);
+router.get(
+    "/barber/week/:weekStart",
+    authenticate,
+    authorize("barber", "admin_barber"),
+    asyncHandler(getBarberWeekAppointments),
+);
 
-router.patch("/:id/complete", authenticate, authorize("barber", "admin_barber"), completeAppointmentHandler);
+router.patch(
+    "/:id/complete",
+    authenticate,
+    authorize("barber", "admin_barber"),
+    asyncHandler(completeAppointmentHandler),
+);
 
 export default router;

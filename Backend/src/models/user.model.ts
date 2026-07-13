@@ -30,7 +30,11 @@ export const findById = async (id: number): Promise<User | null> => {
     return rows.length ? (rows[0] as User) : null;
 };
 
-export const listUsers = async (): Promise<User[]> => {
-    const [rows] = await pool.query<RowDataPacket[]>(`SELECT * FROM users`);
-    return rows as User[];
+export const listUsersPaginated = async (limit: number, offset: number): Promise<{ users: User[]; total: number }> => {
+    const [rows] = await pool.query<RowDataPacket[]>(`SELECT * FROM users ORDER BY id LIMIT ? OFFSET ?`, [
+        limit,
+        offset,
+    ]);
+    const [countRows] = await pool.query<RowDataPacket[]>(`SELECT COUNT(*) as total FROM users`);
+    return { users: rows as User[], total: (countRows[0] as any).total };
 };

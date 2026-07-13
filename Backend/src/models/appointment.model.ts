@@ -43,6 +43,10 @@ export const cancelAppointmentById = async (id: number): Promise<void> => {
     await pool.query(`UPDATE appointments SET status = 'cancelled' WHERE id = ?`, [id]);
 };
 
+export const completeAppointmentById = async (id: number): Promise<void> => {
+    await pool.query(`UPDATE appointments SET status = 'completed' WHERE id = ?`, [id]);
+};
+
 export const findAppointmentsByClient = async (clientId: number): Promise<Appointment[]> => {
     const [rows] = await pool.query<RowDataPacket[]>(
         `SELECT * FROM appointments WHERE client_id = ? ORDER BY date DESC, time DESC`,
@@ -51,18 +55,26 @@ export const findAppointmentsByClient = async (clientId: number): Promise<Appoin
     return rows as Appointment[];
 };
 
-export const findAppointmentsByBarberAndWeek = async (
+export const findAppointmentsByBarberAndWeekPaginated = async (
     barberId: number,
     weekStart: string,
     weekEnd: string,
-): Promise<Appointment[]> => {
+    limit: number,
+    offset: number,
+): Promise<{ appointments: Appointment[]; total: number }> => {
     const [rows] = await pool.query<RowDataPacket[]>(
         `SELECT * FROM appointments
      WHERE barber_id = ? AND date BETWEEN ? AND ? AND status = 'active'
-     ORDER BY date, time`,
+     ORDER BY date, time
+     LIMIT ? OFFSET ?`,
+        [barberId, weekStart, weekEnd, limit, offset],
+    );
+    const [countRows] = await pool.query<RowDataPacket[]>(
+        `SELECT COUNT(*) as total FROM appointments
+     WHERE barber_id = ? AND date BETWEEN ? AND ? AND status = 'active'`,
         [barberId, weekStart, weekEnd],
     );
-    return rows as Appointment[];
+    return { appointments: rows as Appointment[], total: (countRows[0] as any).total };
 };
 
 export const countActiveAppointmentsByClientInWeek = async (
@@ -76,8 +88,4 @@ export const countActiveAppointmentsByClientInWeek = async (
         [clientId, weekStart, weekEnd],
     );
     return (rows[0] as any).total;
-};
-
-export const completeAppointmentById = async (id: number): Promise<void> => {
-    await pool.query(`UPDATE appointments SET status = 'completed' WHERE id = ?`, [id]);
 };

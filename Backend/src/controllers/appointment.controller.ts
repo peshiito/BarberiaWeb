@@ -9,11 +9,12 @@ import {
     findActiveAppointmentByClientAndDate,
     findActiveAppointmentBySlot,
     findAppointmentById,
-    findAppointmentsByBarberAndWeek,
+    findAppointmentsByBarberAndWeekPaginated,
     findAppointmentsByClient,
 } from "../models/appointment.model";
 import { findScheduleByBarberAndWeek } from "../models/schedule.model";
 import { findById } from "../models/user.model";
+import { getPagination } from "../utils/pagination";
 import { generateSlots } from "../utils/slots";
 
 const MAX_APPOINTMENTS_PER_WEEK = Number(process.env.MAX_APPOINTMENTS_PER_WEEK) || 1;
@@ -39,10 +40,6 @@ export const createAppointmentHandler = async (req: ClientAuthRequest, res: Resp
         date: string;
         time: string;
     };
-
-    if (!barber_id || !date || !time) {
-        return res.status(400).json({ error: "Missing required fields" });
-    }
 
     const existingForDay = await findActiveAppointmentByClientAndDate(clientId, date);
     if (existingForDay) {
@@ -103,21 +100,6 @@ export const cancelAppointmentHandler = async (req: ClientAuthRequest, res: Resp
     return res.json({ message: "Appointment cancelled" });
 };
 
-export const getMyAppointments = async (req: ClientAuthRequest, res: Response) => {
-    const clientId = req.client!.clientId;
-    const appointments = await findAppointmentsByClient(clientId);
-    return res.json(appointments);
-};
-
-export const getBarberWeekAppointments = async (req: AuthRequest, res: Response) => {
-    const barberId = req.user!.id;
-    const { weekStart } = req.params;
-    const weekEnd = getWeekEnd(weekStart);
-
-    const appointments = await findAppointmentsByBarberAndWeek(barberId, weekStart, weekEnd);
-    return res.json(appointments);
-};
-
 export const completeAppointmentHandler = async (req: AuthRequest, res: Response) => {
     const barberId = req.user!.id;
     const { id } = req.params;
@@ -133,4 +115,35 @@ export const completeAppointmentHandler = async (req: AuthRequest, res: Response
 
     await completeAppointmentById(appointment.id);
     return res.json({ message: "Appointment completed" });
+};
+
+export const getMyAppointments = async (req: ClientAuthRequest, res: Response) => {
+    const clientId = req.client!.clientId;
+    const appointments = await findAppointmentsByClient(clientId);
+    return res.json(appointments);
+};
+
+export const getBarberWeekAppointments = async (req: AuthRequest, res: Response) => {
+    const barberId = req.user!.id;
+    const { weekStart } = req.params;
+    const weekEnd = getWeekEnd(weekStart);
+    const { page, limit, offset } = getPagination(req);
+
+    const { appointments, total } = await findAppointmentsByBarberAndWeekPaginated(
+        barberId,
+        weekStart,
+        weekEnd,
+        limit,
+        offset,
+    );
+
+    return res.json({
+        data: appointments,
+        pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+        },
+    });
 };

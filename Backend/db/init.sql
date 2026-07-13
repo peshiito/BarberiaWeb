@@ -55,3 +55,7 @@ CREATE TABLE appointments (
 ALTER TABLE users ADD COLUMN service_price DECIMAL(10,2) DEFAULT 0;
 ALTER TABLE users ADD COLUMN earnings_split_percentage DECIMAL(5,2) DEFAULT 50.00;
 ALTER TABLE appointments ADD COLUMN price DECIMAL(10,2) DEFAULT 0;
+
+CREATE INDEX idx_appointments_barber_date ON appointments(barber_id, date);
+CREATE INDEX idx_appointments_client_date ON appointments(client_id, date);
+CREATE INDEX idx_schedules_barber_week ON schedules(barber_id, week_start);
