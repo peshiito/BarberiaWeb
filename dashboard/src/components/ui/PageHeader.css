@@ -1,0 +1,29 @@
+.page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+    flex-wrap: wrap;
+}
+
+.page-header-eyebrow {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: var(--space-2);
+}
+
+.page-header-title {
+    font-size: 28px;
+    color: var(--text-primary);
+}
+
+.page-header-description {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-top: var(--space-1);
+}

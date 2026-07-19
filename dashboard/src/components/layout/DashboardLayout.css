@@ -1,0 +1,17 @@
+.dashboard-shell {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--bg-base);
+}
+
+.dashboard-content {
+    flex: 1;
+    min-width: 0;
+    padding: var(--space-6) var(--space-7);
+}
+
+@media (max-width: 900px) {
+    .dashboard-content {
+        padding: var(--space-4);
+    }
+}
