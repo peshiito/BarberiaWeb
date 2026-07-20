@@ -1,0 +1,196 @@
+.week-grid-wrapper {
+    overflow-x: auto;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    background-color: var(--bg-surface);
+}
+
+.week-grid {
+    display: grid;
+    min-width: 760px;
+}
+
+.week-grid-corner {
+    border-bottom: 1px solid var(--border-subtle);
+    border-right: 1px solid var(--border-subtle);
+    background-color: var(--bg-elevated);
+}
+
+.week-grid-day-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: var(--space-3) var(--space-2);
+    border-bottom: 1px solid var(--border-subtle);
+    border-right: 1px solid var(--border-subtle);
+    background-color: var(--bg-elevated);
+}
+
+.week-grid-day-header:last-child {
+    border-right: none;
+}
+
+.week-grid-day-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.week-grid-day-number {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.week-grid-day-header.is-today .week-grid-day-number {
+    color: var(--brass-bright);
+}
+
+.week-grid-day-header.is-today .week-grid-day-label {
+    color: var(--brass);
+}
+
+.week-grid-day-header.is-closed {
+    opacity: 0.4;
+}
+
+.week-grid-time {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-subtle);
+    border-right: 1px solid var(--border-subtle);
+    background-color: var(--bg-elevated);
+}
+
+.week-grid-cell {
+    min-height: 64px;
+    padding: 6px;
+    border-bottom: 1px solid var(--border-subtle);
+    border-right: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.week-grid-cell:last-child {
+    border-right: none;
+}
+
+.week-grid-cell.is-closed {
+    background-image: repeating-linear-gradient(
+        135deg,
+        var(--bg-surface) 0px,
+        var(--bg-surface) 6px,
+        var(--bg-elevated) 6px,
+        var(--bg-elevated) 12px
+    );
+}
+
+.week-grid-cell.is-free {
+    align-items: center;
+    justify-content: center;
+}
+
+.week-grid-free-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.week-grid-cell.is-free:hover {
+    background-color: var(--bg-surface-hover);
+}
+
+.week-grid-cell.is-free:hover .week-grid-free-label {
+    opacity: 1;
+}
+
+.week-grid-cell.is-booked {
+    background-color: rgba(184, 146, 90, 0.08);
+    border-left: 2px solid var(--brass);
+    padding: 8px;
+    justify-content: space-between;
+}
+
+.week-grid-cell.is-booked.is-completed {
+    background-color: rgba(74, 122, 92, 0.08);
+    border-left-color: var(--sage);
+}
+
+.week-grid-client {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.week-grid-phone {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--text-muted);
+}
+
+.week-grid-cell-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.week-grid-complete-btn {
+    background: none;
+    border: 1px solid var(--border-strong);
+    color: var(--text-secondary);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 6px;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    transition:
+        border-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.week-grid-complete-btn:hover:not(:disabled) {
+    border-color: var(--sage);
+    color: var(--sage-bright);
+}
+
+.week-grid-complete-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.week-grid-empty {
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8) var(--space-6);
+    text-align: center;
+}
+
+.week-grid-empty-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+}
+
+.week-grid-empty-text {
+    color: var(--text-secondary);
+    font-size: 14px;
+}

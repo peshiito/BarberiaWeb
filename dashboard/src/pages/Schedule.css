@@ -1,0 +1,123 @@
+.schedule-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 420px) 1fr;
+    gap: var(--space-6);
+    align-items: start;
+}
+
+.schedule-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.schedule-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.schedule-submit {
+    background-color: var(--brass);
+    color: var(--bg-base);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background-color 0.15s ease;
+}
+
+.schedule-submit:hover:not(:disabled) {
+    background-color: var(--brass-bright);
+}
+
+.schedule-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.schedule-feedback {
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+}
+
+.schedule-feedback.is-error {
+    background-color: rgba(139, 58, 58, 0.15);
+    border: 1px solid var(--burgundy);
+    color: var(--burgundy-bright);
+}
+
+.schedule-feedback.is-success {
+    background-color: rgba(74, 122, 92, 0.15);
+    border: 1px solid var(--sage);
+    color: var(--sage-bright);
+}
+
+.schedule-preview {
+    margin-top: var(--space-2);
+}
+
+.schedule-preview-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: var(--space-2);
+    display: block;
+}
+
+.schedule-preview-slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.schedule-preview-slot {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    background-color: var(--bg-elevated);
+    color: var(--text-secondary);
+}
+
+.schedule-list-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    color: var(--text-primary);
+    margin-bottom: var(--space-4);
+}
+
+.schedule-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.schedule-list-item:last-child {
+    border-bottom: none;
+}
+
+.schedule-list-week {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.schedule-list-detail {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+@media (max-width: 900px) {
+    .schedule-layout {
+        grid-template-columns: 1fr;
+    }
+}

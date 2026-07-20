@@ -38,3 +38,7 @@ export const listUsersPaginated = async (limit: number, offset: number): Promise
     const [countRows] = await pool.query<RowDataPacket[]>(`SELECT COUNT(*) as total FROM users`);
     return { users: rows as User[], total: (countRows[0] as any).total };
 };
+
+export const updateUserBio = async (userId: number, bio: string): Promise<void> => {
+    await pool.query(`UPDATE users SET bio = ? WHERE id = ?`, [bio, userId]);
+};

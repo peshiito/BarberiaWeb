@@ -2,6 +2,12 @@ import { ResultSetHeader, RowDataPacket } from "mysql2";
 import pool from "../config/db";
 import { Appointment, AppointmentInput } from "../types/appointment.types";
 
+export interface AppointmentWithClient extends Appointment {
+    client_first_name: string;
+    client_last_name: string;
+    client_phone: string;
+}
+
 export const createAppointment = async (data: AppointmentInput): Promise<number> => {
     const [result] = await pool.query<ResultSetHeader>(
         `INSERT INTO appointments (client_id, barber_id, schedule_id, date, time, price)
@@ -61,20 +67,25 @@ export const findAppointmentsByBarberAndWeekPaginated = async (
     weekEnd: string,
     limit: number,
     offset: number,
-): Promise<{ appointments: Appointment[]; total: number }> => {
+): Promise<{ appointments: AppointmentWithClient[]; total: number }> => {
     const [rows] = await pool.query<RowDataPacket[]>(
-        `SELECT * FROM appointments
-     WHERE barber_id = ? AND date BETWEEN ? AND ? AND status = 'active'
-     ORDER BY date, time
+        `SELECT a.*, c.first_name as client_first_name, c.last_name as client_last_name, c.phone as client_phone
+     FROM appointments a
+     JOIN clients c ON c.id = a.client_id
+     WHERE a.barber_id = ? AND a.date BETWEEN ? AND ? AND a.status IN ('active', 'completed')
+     ORDER BY a.date, a.time
      LIMIT ? OFFSET ?`,
         [barberId, weekStart, weekEnd, limit, offset],
     );
     const [countRows] = await pool.query<RowDataPacket[]>(
         `SELECT COUNT(*) as total FROM appointments
-     WHERE barber_id = ? AND date BETWEEN ? AND ? AND status = 'active'`,
+     WHERE barber_id = ? AND date BETWEEN ? AND ? AND status IN ('active', 'completed')`,
         [barberId, weekStart, weekEnd],
     );
-    return { appointments: rows as Appointment[], total: (countRows[0] as any).total };
+    return {
+        appointments: rows as AppointmentWithClient[],
+        total: (countRows[0] as any).total,
+    };
 };
 
 export const countActiveAppointmentsByClientInWeek = async (

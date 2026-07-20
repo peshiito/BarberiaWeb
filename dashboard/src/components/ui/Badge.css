@@ -1,0 +1,31 @@
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+}
+
+.badge-brass {
+    background-color: rgba(184, 146, 90, 0.15);
+    color: var(--brass-bright);
+}
+
+.badge-sage {
+    background-color: rgba(74, 122, 92, 0.18);
+    color: var(--sage-bright);
+}
+
+.badge-burgundy {
+    background-color: rgba(139, 58, 58, 0.18);
+    color: var(--burgundy-bright);
+}
+
+.badge-neutral {
+    background-color: var(--bg-elevated);
+    color: var(--text-secondary);
+}

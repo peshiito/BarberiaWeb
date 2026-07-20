@@ -9,6 +9,7 @@ import appointmentRoutes from "./routes/appointment.routes";
 import authRoutes from "./routes/auth.routes";
 import clientRoutes from "./routes/client.routes";
 import photoRoutes from "./routes/photo.routes";
+import profileRoutes from "./routes/profile.routes";
 import publicRoutes from "./routes/public.routes";
 import scheduleRoutes from "./routes/schedule.routes";
 
@@ -36,6 +37,7 @@ app.use("/api/appointments", appointmentsRateLimit, appointmentRoutes);
 app.use("/api/photos", photoRoutes);
 app.use("/api/public", publicRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/profile", profileRoutes);
 
 app.use(errorHandler);
 
