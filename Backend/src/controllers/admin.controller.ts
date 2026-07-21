@@ -85,3 +85,51 @@ export const getFinancialSummary = async (req: Request, res: Response) => {
 
     return res.json(summary);
 };
+
+export const getFinancialPeriod = async (req: Request, res: Response) => {
+    const { from, to } = req.query;
+
+    if (!from || !to) {
+        return res.status(400).json({ error: "Missing from/to date range" });
+    }
+
+    const [rows] = await pool.query<RowDataPacket[]>(
+        `WITH barber_earnings AS (
+      SELECT 
+        u.id as barber_id,
+        u.first_name,
+        u.last_name,
+        u.earnings_split_percentage,
+        COUNT(a.id) as total_appointments,
+        COALESCE(SUM(a.price), 0) as total_revenue
+      FROM users u
+      LEFT JOIN appointments a
+        ON a.barber_id = u.id
+        AND a.status = 'completed'
+        AND a.date BETWEEN ? AND ?
+      WHERE u.role IN ('barber', 'admin_barber')
+      GROUP BY u.id
+    )
+    SELECT 
+      COALESCE(SUM(be.total_revenue), 0) as total_revenue,
+      COALESCE(SUM(be.barber_earnings), 0) as total_barber_earnings,
+      COALESCE(SUM(be.shop_earnings), 0) as total_shop_earnings,
+      COALESCE(COUNT(DISTINCT be.barber_id), 0) as active_barbers,
+      COALESCE(COUNT(a.id), 0) as total_appointments
+    FROM barber_earnings be
+    LEFT JOIN appointments a ON a.barber_id = be.barber_id AND a.date BETWEEN ? AND ?`,
+        [from, to, from, to],
+    );
+
+    const periodData = {
+        from,
+        to,
+        total_revenue: rows[0]?.total_revenue || 0,
+        total_barber_earnings: rows[0]?.total_barber_earnings || 0,
+        total_shop_earnings: rows[0]?.total_shop_earnings || 0,
+        active_barbers: rows[0]?.active_barbers || 0,
+        total_appointments: rows[0]?.total_appointments || 0,
+    };
+
+    return res.json(periodData);
+};

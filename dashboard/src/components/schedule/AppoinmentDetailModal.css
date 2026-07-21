@@ -1,0 +1,73 @@
+.appt-detail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.appt-detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.appt-detail-row:last-of-type {
+    border-bottom: none;
+}
+
+.appt-detail-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.appt-detail-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.appt-detail-mono {
+    font-family: var(--font-mono);
+    font-weight: 500;
+}
+
+.appt-detail-actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+}
+
+.appt-detail-btn {
+    flex: 1;
+    padding: 11px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 0.15s ease;
+}
+
+.appt-detail-btn.is-cancel {
+    background: none;
+    border: 1px solid var(--burgundy);
+    color: var(--burgundy-bright);
+}
+
+.appt-detail-btn.is-cancel:hover:not(:disabled) {
+    background-color: rgba(139, 58, 58, 0.15);
+}
+
+.appt-detail-btn.is-complete {
+    background-color: var(--sage);
+    border: 1px solid var(--sage);
+    color: var(--bg-base);
+}
+
+.appt-detail-btn.is-complete:hover:not(:disabled) {
+    background-color: var(--sage-bright);
+}
+
+.appt-detail-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

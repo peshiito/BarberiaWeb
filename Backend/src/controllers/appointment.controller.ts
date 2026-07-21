@@ -2,6 +2,7 @@ import { Response } from "express";
 import { AuthRequest } from "../middlewares/auth.middleware";
 import { ClientAuthRequest } from "../middlewares/client-auth.middleware";
 import {
+    cancelAppointmentByBarber,
     cancelAppointmentById,
     completeAppointmentById,
     countActiveAppointmentsByClientInWeek,
@@ -146,4 +147,17 @@ export const getBarberWeekAppointments = async (req: AuthRequest, res: Response)
             totalPages: Math.ceil(total / limit),
         },
     });
+};
+
+export const cancelAppointmentByBarberHandler = async (req: AuthRequest, res: Response) => {
+    const barberId = req.user!.id;
+    const { id } = req.params;
+
+    const cancelled = await cancelAppointmentByBarber(Number(id), barberId);
+
+    if (!cancelled) {
+        return res.status(404).json({ error: "Appointment not found or already inactive" });
+    }
+
+    return res.json({ message: "Appointment cancelled" });
 };

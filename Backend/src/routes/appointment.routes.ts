@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+    cancelAppointmentByBarberHandler,
     cancelAppointmentHandler,
     completeAppointmentHandler,
     createAppointmentHandler,
@@ -33,4 +34,10 @@ router.patch(
     asyncHandler(completeAppointmentHandler),
 );
 
+router.patch(
+    "/:id/cancel-by-barber",
+    authenticate,
+    authorize("barber", "admin_barber"),
+    asyncHandler(cancelAppointmentByBarberHandler),
+);
 export default router;

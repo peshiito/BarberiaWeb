@@ -100,3 +100,11 @@ export const countActiveAppointmentsByClientInWeek = async (
     );
     return (rows[0] as any).total;
 };
+
+export const cancelAppointmentByBarber = async (id: number, barberId: number): Promise<boolean> => {
+    const [result] = await pool.query<ResultSetHeader>(
+        `UPDATE appointments SET status = 'cancelled' WHERE id = ? AND barber_id = ? AND status = 'active'`,
+        [id, barberId],
+    );
+    return result.affectedRows > 0;
+};

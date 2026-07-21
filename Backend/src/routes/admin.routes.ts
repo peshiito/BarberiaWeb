@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createBarber, getAllUsers, getFinancialSummary } from "../controllers/admin.controller";
+import { createBarber, getAllUsers, getFinancialSummary, getFinancialPeriod } from "../controllers/admin.controller";
 import { authenticate } from "../middlewares/auth.middleware";
 import { authorize } from "../middlewares/role.middleware";
 import { validate } from "../middlewares/validate.middleware";
@@ -16,6 +16,7 @@ router.post(
     asyncHandler(createBarber),
 );
 router.get("/users", authenticate, authorize("admin", "admin_barber"), asyncHandler(getAllUsers));
-router.get("/finance", authenticate, authorize("admin", "admin_barber"), asyncHandler(getFinancialSummary));
+router.get("/finance/summary", authenticate, authorize("admin", "admin_barber"), asyncHandler(getFinancialSummary));
+router.get("/finance/period", authenticate, authorize("admin", "admin_barber"), asyncHandler(getFinancialPeriod));
 
 export default router;

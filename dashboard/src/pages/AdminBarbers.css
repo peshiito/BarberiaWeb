@@ -1,0 +1,112 @@
+/* Admin Barbers Page Styles */
+
+.admin-barbers-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+    margin-top: var(--space-6);
+}
+
+@media (max-width: 1200px) {
+    .admin-barbers-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.admin-section-title {
+    font-size: var(--font-size-2xl);
+    font-weight: 600;
+    margin-bottom: var(--space-4);
+    color: var(--text-primary);
+}
+
+.barber-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.barber-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.barber-submit-btn {
+    background-color: var(--accent-primary);
+    color: white;
+    border: none;
+    padding: var(--space-3) var(--space-6);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: var(--space-2);
+}
+
+.barber-submit-btn:hover:not(:disabled) {
+    background-color: var(--accent-primary-dark);
+}
+
+.barber-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.barbers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-4);
+}
+
+.barber-card {
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.barber-card:hover {
+    border-color: var(--accent-primary);
+    transform: translateY(-2px);
+}
+
+.barber-info h4 {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    margin-bottom: var(--space-1);
+    color: var(--text-primary);
+}
+
+.barber-email {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-3);
+}
+
+.barber-meta {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.feedback {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    margin-top: var(--space-2);
+    font-size: var(--font-size-sm);
+}
+
+.feedback.is-error {
+    background-color: var(--error-bg);
+    color: var(--error-text);
+    border: 1px solid var(--error-border);
+}
+
+.feedback.is-success {
+    background-color: var(--success-bg);
+    color: var(--success-text);
+    border: 1px solid var(--success-border);
+}

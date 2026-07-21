@@ -120,13 +120,33 @@
 .week-grid-cell.is-booked {
     background-color: rgba(184, 146, 90, 0.08);
     border-left: 2px solid var(--brass);
+    border-top: none;
+    border-bottom: 1px solid var(--border-subtle);
+    border-right: 1px solid var(--border-subtle);
     padding: 8px;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: flex-start;
+    text-align: left;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.week-grid-cell.is-booked:hover {
+    background-color: rgba(184, 146, 90, 0.16);
 }
 
 .week-grid-cell.is-booked.is-completed {
     background-color: rgba(74, 122, 92, 0.08);
     border-left-color: var(--sage);
+}
+
+.week-grid-cell.is-booked.is-completed:hover {
+    background-color: rgba(74, 122, 92, 0.16);
+}
+
+.week-grid-cell.is-now {
+    box-shadow: inset 0 2px 0 var(--brass-bright);
 }
 
 .week-grid-client {
@@ -136,44 +156,13 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 100%;
 }
 
 .week-grid-phone {
     font-family: var(--font-mono);
     font-size: 10.5px;
     color: var(--text-muted);
-}
-
-.week-grid-cell-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 4px;
-    margin-top: 4px;
-}
-
-.week-grid-complete-btn {
-    background: none;
-    border: 1px solid var(--border-strong);
-    color: var(--text-secondary);
-    font-size: 10px;
-    font-weight: 600;
-    padding: 3px 6px;
-    border-radius: var(--radius-sm);
-    white-space: nowrap;
-    transition:
-        border-color 0.15s ease,
-        color 0.15s ease;
-}
-
-.week-grid-complete-btn:hover:not(:disabled) {
-    border-color: var(--sage);
-    color: var(--sage-bright);
-}
-
-.week-grid-complete-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
 }
 
 .week-grid-empty {

@@ -11,3 +11,8 @@ export const completeAppointment = async id => {
     const { data } = await api.patch(`/appointments/${id}/complete`);
     return data;
 };
+
+export const cancelAppointmentByBarber = async id => {
+    const { data } = await api.patch(`/appointments/${id}/cancel-by-barber`);
+    return data;
+};
