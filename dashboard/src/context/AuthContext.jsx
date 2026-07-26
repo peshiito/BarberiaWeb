@@ -1,5 +1,10 @@
 import { createContext, useContext, useState } from "react";
-import { getStoredUser, login as loginService, logout as logoutService } from "../services/auth";
+import {
+    getStoredUser,
+    login as loginService,
+    logout as logoutService,
+    updateStoredUser,
+} from "../services/auth";
 
 const AuthContext = createContext(null);
 
@@ -17,10 +22,16 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
+    const updateUser = updates => {
+        const updated = updateStoredUser(updates);
+        setUser(updated);
+    };
+
     const value = {
         user,
         login,
         logout,
+        updateUser,
         isAuthenticated: Boolean(user),
         isAdmin: user?.role === "admin" || user?.role === "admin_barber",
         isBarber: user?.role === "barber" || user?.role === "admin_barber",

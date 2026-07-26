@@ -82,7 +82,7 @@ const Photos = () => {
     return (
         <div>
             <PageHeader
-                eyebrow="Perfil"
+                eyebrow="Fotos y bio"
                 title="Fotos y descripción"
                 description="Esto es lo que ven tus clientes en la landing page."
             />

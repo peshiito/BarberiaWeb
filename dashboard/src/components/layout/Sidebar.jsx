@@ -5,7 +5,8 @@ import "./Sidebar.css";
 const navItems = [
     { to: "/", label: "Agenda", icon: "calendar" },
     { to: "/schedule", label: "Mis horarios", icon: "clock" },
-    { to: "/photos", label: "Perfil y fotos", icon: "image" },
+    { to: "/profile", label: "Mi perfil", icon: "user" },
+    { to: "/photos", label: "Fotos y bio", icon: "image" },
 ];
 
 const adminItems = [
@@ -31,6 +32,17 @@ const icons = {
             <rect x="3" y="4" width="14" height="12" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
             <circle cx="7.5" cy="8.5" r="1.25" stroke="currentColor" strokeWidth="1.5" />
             <path d="M17 12.5l-3.5-3.5-7 7" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+        </svg>
+    ),
+    user: (
+        <svg viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="7" r="3.25" stroke="currentColor" strokeWidth="1.5" />
+            <path
+                d="M3.75 16.5c0-3.45 2.8-6.25 6.25-6.25s6.25 2.8 6.25 6.25"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+            />
         </svg>
     ),
     users: (

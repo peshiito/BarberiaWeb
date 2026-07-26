@@ -17,6 +17,13 @@ export const getStoredUser = () => {
     return raw ? JSON.parse(raw) : null;
 };
 
+export const updateStoredUser = updates => {
+    const current = getStoredUser();
+    const updated = { ...current, ...updates };
+    localStorage.setItem("barberia_user", JSON.stringify(updated));
+    return updated;
+};
+
 export const isAuthenticated = () => {
     return Boolean(localStorage.getItem("barberia_token"));
 };

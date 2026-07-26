@@ -42,3 +42,19 @@ export const listUsersPaginated = async (limit: number, offset: number): Promise
 export const updateUserBio = async (userId: number, bio: string): Promise<void> => {
     await pool.query(`UPDATE users SET bio = ? WHERE id = ?`, [bio, userId]);
 };
+
+export const updateUserProfileDetails = async (
+    userId: number,
+    data: { first_name: string; last_name: string; service_price: number },
+): Promise<void> => {
+    await pool.query(`UPDATE users SET first_name = ?, last_name = ?, service_price = ? WHERE id = ?`, [
+        data.first_name,
+        data.last_name,
+        data.service_price,
+        userId,
+    ]);
+};
+
+export const updateUserPassword = async (userId: number, passwordHash: string): Promise<void> => {
+    await pool.query(`UPDATE users SET password_hash = ? WHERE id = ?`, [passwordHash, userId]);
+};

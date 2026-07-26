@@ -14,7 +14,8 @@
 }
 
 .admin-section-title {
-    font-size: var(--font-size-2xl);
+    font-family: var(--font-display);
+    font-size: 16px;
     font-weight: 600;
     margin-bottom: var(--space-4);
     color: var(--text-primary);
@@ -33,20 +34,20 @@
 }
 
 .barber-submit-btn {
-    background-color: var(--accent-primary);
-    color: white;
+    background-color: var(--brass);
+    color: var(--bg-base);
     border: none;
     padding: var(--space-3) var(--space-6);
     border-radius: var(--radius-md);
-    font-size: var(--font-size-base);
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background-color 0.15s ease;
     margin-top: var(--space-2);
 }
 
 .barber-submit-btn:hover:not(:disabled) {
-    background-color: var(--accent-primary-dark);
+    background-color: var(--brass-bright);
 }
 
 .barber-submit-btn:disabled {
@@ -61,27 +62,30 @@
 }
 
 .barber-card {
-    background-color: var(--bg-secondary);
+    background-color: var(--bg-elevated);
     border-radius: var(--radius-lg);
     padding: var(--space-4);
-    border: 1px solid var(--border-color);
-    transition: all 0.2s ease;
+    border: 1px solid var(--border-subtle);
+    transition:
+        border-color 0.15s ease,
+        transform 0.15s ease;
 }
 
 .barber-card:hover {
-    border-color: var(--accent-primary);
+    border-color: var(--brass);
     transform: translateY(-2px);
 }
 
 .barber-info h4 {
-    font-size: var(--font-size-lg);
+    font-family: var(--font-display);
+    font-size: 15px;
     font-weight: 600;
     margin-bottom: var(--space-1);
     color: var(--text-primary);
 }
 
 .barber-email {
-    font-size: var(--font-size-sm);
+    font-size: 13px;
     color: var(--text-secondary);
     margin-bottom: var(--space-3);
 }
@@ -96,17 +100,17 @@
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-md);
     margin-top: var(--space-2);
-    font-size: var(--font-size-sm);
+    font-size: 13px;
 }
 
 .feedback.is-error {
-    background-color: var(--error-bg);
-    color: var(--error-text);
-    border: 1px solid var(--error-border);
+    background-color: rgba(139, 58, 58, 0.15);
+    color: var(--burgundy-bright);
+    border: 1px solid var(--burgundy);
 }
 
 .feedback.is-success {
-    background-color: var(--success-bg);
-    color: var(--success-text);
-    border: 1px solid var(--success-border);
+    background-color: rgba(74, 122, 92, 0.15);
+    color: var(--sage-bright);
+    border: 1px solid var(--sage);
 }
