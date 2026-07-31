@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import PhotoSlot from "../components/profile/PhotoSlot";
+import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
 import FormField from "../components/ui/FormField";
+import InlineFeedback from "../components/ui/InlineFeedback";
 import PageHeader from "../components/ui/PageHeader";
+import Skeleton from "../components/ui/Skeleton";
 import { deletePhoto, getMyPhotos, uploadPhoto } from "../services/photos";
 import { getMyProfile, updateMyBio } from "../services/profile";
 import "./Photos.css";
@@ -20,8 +23,12 @@ const Photos = () => {
     const [photoError, setPhotoError] = useState("");
 
     const loadProfile = async () => {
-        const profile = await getMyProfile();
-        setBio(profile.bio || "");
+        try {
+            const profile = await getMyProfile();
+            setBio(profile.bio || "");
+        } catch {
+            // silencioso: la bio no es crítica para el resto de la pantalla
+        }
     };
 
     const loadPhotos = async () => {
@@ -29,6 +36,8 @@ const Photos = () => {
         try {
             const data = await getMyPhotos();
             setPhotos(data);
+        } catch {
+            setPhotoError("No se pudieron cargar las fotos");
         } finally {
             setLoadingPhotos(false);
         }
@@ -102,16 +111,14 @@ const Photos = () => {
                         </FormField>
 
                         {bioFeedback && (
-                            <p
-                                className={`photos-feedback ${bioFeedback.type === "error" ? "is-error" : "is-success"}`}
-                            >
+                            <InlineFeedback tone={bioFeedback.type === "error" ? "error" : "success"}>
                                 {bioFeedback.message}
-                            </p>
+                            </InlineFeedback>
                         )}
 
-                        <button className="photos-save-btn" type="submit" disabled={savingBio}>
-                            {savingBio ? "Guardando..." : "Guardar descripción"}
-                        </button>
+                        <Button type="submit" loading={savingBio}>
+                            Guardar descripción
+                        </Button>
                     </form>
                 </Card>
 
@@ -119,9 +126,13 @@ const Photos = () => {
                     <h3 className="photos-section-title">
                         Fotos ({photos.length}/{MAX_PHOTOS})
                     </h3>
-                    {photoError && <p className="photos-feedback is-error">{photoError}</p>}
+                    {photoError && <InlineFeedback tone="error">{photoError}</InlineFeedback>}
                     {loadingPhotos ? (
-                        <p style={{ color: "var(--text-secondary)" }}>Cargando...</p>
+                        <div className="photos-grid">
+                            {Array.from({ length: MAX_PHOTOS }).map((_, i) => (
+                                <Skeleton key={i} variant="rect" style={{ aspectRatio: "3 / 4" }} />
+                            ))}
+                        </div>
                     ) : (
                         <div className="photos-grid">
                             {slots.map((photo, i) => (

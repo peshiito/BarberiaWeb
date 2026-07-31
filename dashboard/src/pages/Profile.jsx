@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
+import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
 import FormField from "../components/ui/FormField";
+import InlineFeedback from "../components/ui/InlineFeedback";
 import PageHeader from "../components/ui/PageHeader";
+import Skeleton from "../components/ui/Skeleton";
 import { useAuth } from "../context/AuthContext";
 import { changeMyPassword, getMyProfile, updateMyProfileDetails } from "../services/profile";
 import "./Profile.css";
@@ -101,13 +104,14 @@ const Profile = () => {
             />
 
             {loading ? (
-                <div className="profile-loading">
-                    <p>Cargando perfil...</p>
+                <div className="profile-layout">
+                    <Skeleton height="280px" />
+                    <Skeleton height="280px" />
                 </div>
             ) : (
                 <div className="profile-layout">
                     <Card>
-                        <h3 className="profile-section-title">Datos personales</h3>
+                        <h3 className="card-section-title">Datos personales</h3>
                         <form onSubmit={handleDetailsSubmit} className="profile-form">
                             <div className="profile-form-row">
                                 <FormField label="Nombre">
@@ -145,19 +149,19 @@ const Profile = () => {
                             </FormField>
 
                             {detailsFeedback && (
-                                <p className={`profile-feedback ${detailsFeedback.type === "error" ? "is-error" : "is-success"}`}>
+                                <InlineFeedback tone={detailsFeedback.type === "error" ? "error" : "success"}>
                                     {detailsFeedback.message}
-                                </p>
+                                </InlineFeedback>
                             )}
 
-                            <button className="profile-submit-btn" type="submit" disabled={savingDetails}>
-                                {savingDetails ? "Guardando..." : "Guardar cambios"}
-                            </button>
+                            <Button type="submit" loading={savingDetails}>
+                                Guardar cambios
+                            </Button>
                         </form>
                     </Card>
 
                     <Card>
-                        <h3 className="profile-section-title">Cambiar contraseña</h3>
+                        <h3 className="card-section-title">Cambiar contraseña</h3>
                         <form onSubmit={handlePasswordSubmit} className="profile-form">
                             <FormField label="Contraseña actual">
                                 <input
@@ -193,14 +197,14 @@ const Profile = () => {
                             </FormField>
 
                             {passwordFeedback && (
-                                <p className={`profile-feedback ${passwordFeedback.type === "error" ? "is-error" : "is-success"}`}>
+                                <InlineFeedback tone={passwordFeedback.type === "error" ? "error" : "success"}>
                                     {passwordFeedback.message}
-                                </p>
+                                </InlineFeedback>
                             )}
 
-                            <button className="profile-submit-btn" type="submit" disabled={savingPassword}>
-                                {savingPassword ? "Guardando..." : "Cambiar contraseña"}
-                            </button>
+                            <Button type="submit" loading={savingPassword}>
+                                Cambiar contraseña
+                            </Button>
                         </form>
                     </Card>
                 </div>

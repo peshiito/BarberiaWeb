@@ -61,6 +61,31 @@
     color: var(--text-secondary);
 }
 
+.stat-card-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.stat-card-trend.is-sage {
+    color: var(--sage-bright);
+}
+
+.stat-card-trend.is-burgundy {
+    color: var(--burgundy-bright);
+}
+
+.stat-card-trend.is-neutral {
+    color: var(--text-secondary);
+}
+
+.stat-card-trend-arrow {
+    font-size: 10px;
+}
+
 .stat-card-action {
     align-self: flex-start;
     margin-top: var(--space-1);

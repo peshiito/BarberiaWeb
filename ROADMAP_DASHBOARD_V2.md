@@ -51,6 +51,16 @@ Nada de lo que sigue está implementado. Cada ítem indica objetivo, beneficio, 
 - **Complejidad:** Media (por el cambio de esquema si se opta por la opción robusta).
 - **Prioridad:** Baja.
 
+### A5b. Registro de gastos/inversión y balance real (P&L) en Finanzas
+
+- **Objetivo de negocio:** que el panel de Finanzas pueda mostrar un balance contable real (ingresos menos costos operativos), no solo la división turno/barbero.
+- **Beneficio para el usuario:** responde "¿estoy ganando o perdiendo plata en este período?" de forma real — hoy es estructuralmente imposible: no existe ningún concepto de gasto/inversión en el modelo de datos, por lo que la "ganancia del local" siempre es un número no-negativo (es simplemente ingresos × (1 − % de reparto)), nunca puede reflejar una pérdida real del negocio.
+- **Cambios en backend:** nuevos endpoints CRUD de gastos (`GET/POST/DELETE /admin/expenses`), y sumar sus totales al cálculo de `getFinancialPeriod`.
+- **Cambios en base de datos:** nueva tabla `expenses (id, description, amount, category, date, created_at)`.
+- **Cambios en frontend:** en la auditoría de Admin Finance (Fase 3 del pedido original) se evaluaron tarjetas de "Inversión", "Ganancia Neta" y un "Balance" contable real — se dejaron afuera de v1.0 precisamente por este gap, y quedan listas para implementarse en cuanto exista este endpoint. El "Balance" que sí se implementó en v1.0 es una versión simplificada (solo indica si hubo turnos completados en el período), aclarado como tal en el propio componente.
+- **Complejidad:** Media.
+- **Prioridad:** Media — es lo único que le falta al panel de Finanzas para ser un balance contable real en vez de solo una vista de reparto de turnos.
+
 ### A5. Endpoint dedicado de "turnos de hoy" / "próximo turno"
 
 - **Objetivo de negocio:** eficiencia — evitar que el frontend tenga que traer toda la semana (paginada) y filtrar client-side para obtener solo "hoy" o "el próximo turno".

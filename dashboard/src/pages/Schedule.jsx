@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import DayPicker from "../components/schedule/DayPicker";
+import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
 import FormField from "../components/ui/FormField";
+import InlineFeedback from "../components/ui/InlineFeedback";
 import PageHeader from "../components/ui/PageHeader";
+import Skeleton from "../components/ui/Skeleton";
 import { createSchedule, getMySchedules } from "../services/schedules";
 import { formatWeekRange, getMonday, parseDateOnly, toISODate } from "../utils/date";
 import { generateSlots } from "../utils/slots";
@@ -86,6 +89,7 @@ const Schedule = () => {
 
             <div className="schedule-layout">
                 <Card>
+                    <h3 className="card-section-title">Nueva agenda</h3>
                     <form className="schedule-form" onSubmit={handleSubmit}>
                         <FormField label="Semana a abrir">
                             <input
@@ -132,23 +136,26 @@ const Schedule = () => {
                         )}
 
                         {feedback && (
-                            <p className={`schedule-feedback ${feedback.type === "error" ? "is-error" : "is-success"}`}>
+                            <InlineFeedback tone={feedback.type === "error" ? "error" : "success"}>
                                 {feedback.message}
-                            </p>
+                            </InlineFeedback>
                         )}
 
-                        <button className="schedule-submit" type="submit" disabled={submitting}>
-                            {submitting ? "Creando..." : "Abrir agenda"}
-                        </button>
+                        <Button type="submit" loading={submitting}>
+                            Abrir agenda
+                        </Button>
                     </form>
                 </Card>
 
                 <Card>
-                    <h3 className="schedule-list-title">Agendas abiertas</h3>
+                    <h3 className="card-section-title">Agendas abiertas</h3>
                     {loadingList ? (
-                        <p style={{ color: "var(--text-secondary)" }}>Cargando...</p>
+                        <div className="schedule-list-skeleton">
+                            <Skeleton height="52px" />
+                            <Skeleton height="52px" />
+                        </div>
                     ) : schedules.length === 0 ? (
-                        <p style={{ color: "var(--text-secondary)" }}>Todavía no abriste ninguna agenda.</p>
+                        <div className="state-box">Todavía no abriste ninguna agenda.</div>
                     ) : (
                         schedules.map(s => (
                             <div key={s.id} className="schedule-list-item">

@@ -59,6 +59,22 @@ a {
     outline-offset: 2px;
 }
 
+.card-section-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-4);
+}
+
+.state-box {
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8) var(--space-6);
+    text-align: center;
+    color: var(--text-secondary);
+}
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

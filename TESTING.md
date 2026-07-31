@@ -96,7 +96,7 @@ Para probar el sistema de punta a punta hace falta cargar manualmente lo siguien
 | **Clientes** | `POST /clients/register` (nombre, apellido, teléfono) — si el teléfono ya existe, devuelve el cliente existente en vez de duplicar | No requiere contraseña, el login de cliente es solo por teléfono |
 | **Fotos** | Pantalla "Fotos y bio" (`/photos`), sube hasta 4 imágenes por barbero | Solo `.jpg`, `.jpeg`, `.png`, `.webp`, máximo 5MB por archivo |
 | **Perfil** | Pantalla "Mi perfil" (`/profile`): nombre, apellido, precio de servicio, contraseña. La bio se edita desde "Fotos y bio", no desde "Mi perfil" | — |
-| **Finanzas** | Se calculan solo sobre turnos con `status = 'completed'` — hay que completar turnos (botón "Marcar completado" en el detalle del turno) para que aparezcan en `/admin/finance` | Los turnos "activos" o "cancelados" no suman a la facturación |
+| **Finanzas** | Se calculan solo sobre turnos con `status = 'completed'` — hay que completar turnos (botón "Marcar completado" en el detalle del turno) para que aparezcan en `/admin/finance` | Los turnos "activos" o "cancelados" no suman a la facturación. **Ya hay datos reales cargados para probar esto sin configurar nada**: Pedro Lopez (`pedro@test.com`) tiene agenda abierta y turnos completados tanto en la semana del 13/07/2026 como en la del 20/07/2026 — alcanza con entrar a `/admin/finance` como cualquier cuenta admin y poner ese rango de fechas para ver el panel de Métricas Financieras con tendencias reales (▲/▼) comparando ambas semanas. |
 
 ---
 
@@ -161,7 +161,7 @@ Base URL: `http://localhost:4000/api`
 | POST | `/admin/barbers` | JWT admin/admin_barber | Crea un nuevo barbero/admin/admin_barber |
 | GET | `/admin/users` | JWT admin/admin_barber | Lista usuarios paginada |
 | GET | `/admin/finance/summary` | JWT admin/admin_barber | Ingresos y reparto por barbero en un rango de fechas |
-| GET | `/admin/finance/period` | JWT admin/admin_barber | Totales agregados del período (no se usa hoy desde el Dashboard) |
+| GET | `/admin/finance/period` | JWT admin/admin_barber | ⚠️ Devuelve 500 siempre — la query SQL referencia columnas que su propia subconsulta nunca calcula. El Dashboard no lo usa (calcula los totales del período sumando `/admin/finance/summary` client-side) hasta que se corrija. Ver sección 6. |
 
 ### Clients — rate limit 10 req/15min
 | Método | Endpoint | Descripción |
@@ -198,6 +198,8 @@ Base URL: `http://localhost:4000/api`
 - [ ] Cancelar turno desde el barbero (modal de detalle, con confirmación de dos pasos)
 - [ ] Completar turno → aparece toast de confirmación y el turno pasa a "Completado"
 - [ ] Ver finanzas con un rango de fechas que incluya turnos completados
+- [ ] Panel "Métricas Financieras" muestra tendencias (▲/▼) comparando contra el período anterior de igual duración
+- [ ] Tabla de barberos: el de mayor ingreso del período tiene el badge "Top"
 - [ ] Alta de barbero desde `/admin/barbers`
 - [ ] Alta de barbero con un email ya registrado (debe rechazar con 409)
 - [ ] Verificar permisos por rol: barbero normal no ve "Administración" en el Sidebar
@@ -214,7 +216,8 @@ Base URL: `http://localhost:4000/api`
 - **El rol `admin` puro comparte pantallas pensadas para barberos** (Home, Agenda, Mis horarios, Perfil) sin que tengan sentido para una cuenta que no atiende turnos; y `/photos` rechaza con 403 a nivel de backend para ese rol aunque la ruta del Dashboard es visitable. No hay una experiencia separada para "admin sin turnos propios".
 - **Rate limiting agresivo en desarrollo**: 5 solicitudes/minuto en todo `/api/appointments` — pruebas manuales rápidas y repetidas pueden disparar un 429 real. No es un bug, es el límite configurado.
 - **No hay endpoint para que un barbero cree turnos manualmente** (walk-ins) — todo turno se origina desde el flujo de cliente.
-- **Responsive**: solo la Home fue rediseñada y verificada en este pase; el resto de las pantallas (Login, Schedule, Photos, Profile, Admin*) todavía no tuvo una pasada de consistencia visual ni una revisión de responsive dedicada.
+- **`GET /admin/finance/period` está roto (500 siempre)**: la query SQL del backend referencia `be.barber_earnings` y `be.shop_earnings`, columnas que la subconsulta (CTE) nunca calcula. Nadie lo había detectado porque el endpoint nunca se llamaba desde el Dashboard. El panel de Métricas Financieras de `/admin/finance` evita este endpoint a propósito y calcula los mismos totales sumando `/admin/finance/summary` (que sí funciona) del lado del frontend. Se puede seguir arreglando el endpoint en el backend sin que el Dashboard dependa de eso.
+- **Responsive**: solo la Home y Finanzas fueron rediseñadas y verificadas en este pase; el resto de las pantallas (Login, Schedule, Photos, Profile, AdminBarbers) todavía no tuvo una pasada de consistencia visual ni una revisión de responsive dedicada.
 - Para el detalle completo de funcionalidades que requieren backend nuevo (catálogo de servicios, POS, walk-ins, notificaciones, etc.), ver **`ROADMAP_DASHBOARD_V2.md`** en la raíz del repo — no se documentan de nuevo acá para no duplicar.
 
 ---
@@ -223,7 +226,7 @@ Base URL: `http://localhost:4000/api`
 
 **Backend:** Funcionalmente completo para el alcance de v1.0 (auth, perfil, agendas, turnos, fotos, administración de barberos, finanzas básicas). Sin tests automatizados. Rate limiting y validación con Zod en su lugar.
 
-**Dashboard:** Home ("Centro de Operaciones") rediseñada, verificada end-to-end y con role-gating corregido. El resto de las pantallas (Login, Mis horarios, Perfil, Fotos, Administración) están funcionales pero todavía no recibieron la misma pasada de diseño/consistencia visual que la Home.
+**Dashboard:** Home ("Centro de Operaciones") y Finanzas (panel "Métricas Financieras" + tabla profesional) rediseñadas y verificadas end-to-end, con role-gating corregido. El resto de las pantallas (Login, Mis horarios, Perfil, Fotos, AdminBarbers) están funcionales pero todavía no recibieron la misma pasada de diseño/consistencia visual.
 
 **Landing Page:** No iniciada — fuera de alcance de este sprint por decisión explícita del proyecto.
 

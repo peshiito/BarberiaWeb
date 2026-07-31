@@ -214,8 +214,9 @@ const AgendaHome = () => {
             {error && <p className="error-message">{error}</p>}
 
             {loading ? (
-                <div className="loading-state">
-                    <p>Cargando agenda...</p>
+                <div className="week-grid-skeleton">
+                    <Skeleton height="52px" />
+                    <Skeleton height="320px" />
                 </div>
             ) : (
                 <WeekGrid

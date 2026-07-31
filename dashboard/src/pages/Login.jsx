@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Button from "../components/ui/Button";
+import InlineFeedback from "../components/ui/InlineFeedback";
 import { useAuth } from "../context/AuthContext";
 import "./Login.css";
 
@@ -65,11 +67,11 @@ const Login = () => {
                         />
                     </div>
 
-                    {error && <p className="login-error">{error}</p>}
+                    {error && <InlineFeedback tone="error">{error}</InlineFeedback>}
 
-                    <button className="login-submit" type="submit" disabled={loading}>
-                        {loading ? "Ingresando..." : "Ingresar"}
-                    </button>
+                    <Button type="submit" loading={loading}>
+                        Ingresar
+                    </Button>
                 </form>
             </div>
 

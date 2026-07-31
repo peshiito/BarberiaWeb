@@ -1,0 +1,17 @@
+.inline-feedback {
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+}
+
+.inline-feedback.is-error {
+    background-color: rgba(139, 58, 58, 0.15);
+    border: 1px solid var(--burgundy);
+    color: var(--burgundy-bright);
+}
+
+.inline-feedback.is-success {
+    background-color: rgba(74, 122, 92, 0.15);
+    border: 1px solid var(--sage);
+    color: var(--sage-bright);
+}

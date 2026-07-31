@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
 import Badge from "../components/ui/Badge";
+import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
 import FormField from "../components/ui/FormField";
+import InlineFeedback from "../components/ui/InlineFeedback";
 import PageHeader from "../components/ui/PageHeader";
+import Skeleton from "../components/ui/Skeleton";
 import { createBarber, getAllUsers } from "../services/admin";
 import "./AdminBarbers.css";
+
+const ROLE_TONE = { admin: "brass", admin_barber: "brass", barber: "sage" };
 
 const AdminBarbers = () => {
     const [users, setUsers] = useState([]);
@@ -89,7 +94,7 @@ const AdminBarbers = () => {
 
             <div className="admin-barbers-layout">
                 <Card>
-                    <h3 className="admin-section-title">Crear nuevo barbero</h3>
+                    <h3 className="card-section-title">Crear nuevo barbero</h3>
                     <form onSubmit={handleSubmit} className="barber-form">
                         <div className="barber-form-row">
                             <FormField label="Nombre">
@@ -165,21 +170,26 @@ const AdminBarbers = () => {
                         </FormField>
 
                         {feedback && (
-                            <p className={`feedback ${feedback.type === "error" ? "is-error" : "is-success"}`}>{feedback.message}</p>
+                            <InlineFeedback tone={feedback.type === "error" ? "error" : "success"}>
+                                {feedback.message}
+                            </InlineFeedback>
                         )}
 
-                        <button className="barber-submit-btn" type="submit" disabled={creating}>
-                            {creating ? "Creando..." : "Crear barbero"}
-                        </button>
+                        <Button type="submit" loading={creating}>
+                            Crear barbero
+                        </Button>
                     </form>
                 </Card>
 
                 <Card>
-                    <h3 className="admin-section-title">Barberos existentes ({users.length})</h3>
+                    <h3 className="card-section-title">Barberos existentes ({users.length})</h3>
                     {loading ? (
-                        <p style={{ color: "var(--text-secondary)" }}>Cargando...</p>
+                        <div className="barbers-grid">
+                            <Skeleton height="112px" />
+                            <Skeleton height="112px" />
+                        </div>
                     ) : users.length === 0 ? (
-                        <p style={{ color: "var(--text-secondary)" }}>No hay barberos registrados.</p>
+                        <div className="state-box">No hay barberos registrados.</div>
                     ) : (
                         <div className="barbers-grid">
                             {users.map(user => (
@@ -189,7 +199,7 @@ const AdminBarbers = () => {
                                         <p className="barber-email">{user.email}</p>
                                         <div className="barber-meta">
                                             <Badge tone="neutral">ID: {user.id}</Badge>
-                                            <Badge tone="blue">{user.role}</Badge>
+                                            <Badge tone={ROLE_TONE[user.role] || "neutral"}>{user.role}</Badge>
                                         </div>
                                     </div>
                                 </div>

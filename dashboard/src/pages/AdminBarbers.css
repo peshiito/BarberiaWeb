@@ -1,24 +1,14 @@
-/* Admin Barbers Page Styles */
-
 .admin-barbers-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 420px) 1fr;
     gap: var(--space-6);
-    margin-top: var(--space-6);
+    align-items: start;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 900px) {
     .admin-barbers-layout {
         grid-template-columns: 1fr;
     }
-}
-
-.admin-section-title {
-    font-family: var(--font-display);
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: var(--space-4);
-    color: var(--text-primary);
 }
 
 .barber-form {
@@ -33,28 +23,6 @@
     gap: var(--space-4);
 }
 
-.barber-submit-btn {
-    background-color: var(--brass);
-    color: var(--bg-base);
-    border: none;
-    padding: var(--space-3) var(--space-6);
-    border-radius: var(--radius-md);
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.15s ease;
-    margin-top: var(--space-2);
-}
-
-.barber-submit-btn:hover:not(:disabled) {
-    background-color: var(--brass-bright);
-}
-
-.barber-submit-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
 .barbers-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -67,8 +35,8 @@
     padding: var(--space-4);
     border: 1px solid var(--border-subtle);
     transition:
-        border-color 0.15s ease,
-        transform 0.15s ease;
+        border-color var(--duration-fast) var(--ease-out),
+        transform var(--duration-fast) var(--ease-out);
 }
 
 .barber-card:hover {
@@ -94,23 +62,4 @@
     display: flex;
     gap: var(--space-2);
     flex-wrap: wrap;
-}
-
-.feedback {
-    padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-md);
-    margin-top: var(--space-2);
-    font-size: 13px;
-}
-
-.feedback.is-error {
-    background-color: rgba(139, 58, 58, 0.15);
-    color: var(--burgundy-bright);
-    border: 1px solid var(--burgundy);
-}
-
-.feedback.is-success {
-    background-color: rgba(74, 122, 92, 0.15);
-    color: var(--sage-bright);
-    border: 1px solid var(--sage);
 }
