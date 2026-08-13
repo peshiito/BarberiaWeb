@@ -12,8 +12,68 @@
     padding: var(--space-6) var(--space-7);
 }
 
+.mobile-topbar {
+    display: none;
+}
+
+.sidebar-overlay {
+    display: none;
+}
+
 @media (max-width: 900px) {
+    .dashboard-shell {
+        flex-direction: column;
+    }
+
     .dashboard-content {
+        /* `margin: 0 auto` (arriba) centra la columna en desktop vía auto-margins
+           de flex; en un flex item eso lo saca del stretch por defecto y lo
+           dimensiona a su contenido en vez de al ancho disponible, causando
+           overflow horizontal apenas algún hijo pide más de 100vw. */
+        max-width: 100%;
+        margin: 0;
         padding: var(--space-4);
+    }
+
+    .mobile-topbar {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        height: var(--topbar-height);
+        padding: 0 var(--space-4);
+        background-color: var(--bg-surface);
+        border-bottom: 1px solid var(--border-subtle);
+        position: sticky;
+        top: 0;
+        z-index: 60;
+    }
+
+    .icon-btn.mobile-topbar-menu {
+        color: var(--text-primary);
+    }
+
+    .mobile-topbar-title {
+        font-family: var(--font-display);
+        font-size: var(--text-lg);
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .sidebar-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background-color: rgb(var(--bg-base-rgb) / 0.6);
+        z-index: 140;
+        animation: sidebar-overlay-in var(--duration-fast) var(--ease-out);
+    }
+}
+
+@keyframes sidebar-overlay-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
     }
 }

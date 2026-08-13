@@ -98,11 +98,10 @@ const Photos = () => {
 
             <div className="photos-layout">
                 <Card>
-                    <h3 className="photos-section-title">Descripción</h3>
+                    <h3 className="card-section-title">Descripción</h3>
                     <form onSubmit={handleBioSubmit} className="photos-bio-form">
                         <FormField label="Sobre vos" hint={`${bio.length}/1000 caracteres`}>
                             <textarea
-                                className="textarea"
                                 value={bio}
                                 onChange={e => setBio(e.target.value)}
                                 maxLength={1000}
@@ -123,7 +122,7 @@ const Photos = () => {
                 </Card>
 
                 <Card>
-                    <h3 className="photos-section-title">
+                    <h3 className="card-section-title">
                         Fotos ({photos.length}/{MAX_PHOTOS})
                     </h3>
                     {photoError && <InlineFeedback tone="error">{photoError}</InlineFeedback>}

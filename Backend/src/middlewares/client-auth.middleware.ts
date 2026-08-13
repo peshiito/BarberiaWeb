@@ -18,7 +18,7 @@ export const authenticateClient = (req: ClientAuthRequest, res: Response, next: 
     const token = header.split(" ")[1];
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as ClientJwtPayload;
+        const decoded = jwt.verify(token, JWT_SECRET, { algorithms: ["HS256"] }) as ClientJwtPayload;
         if (decoded.type !== "client") {
             return res.status(401).json({ error: "Invalid token type" });
         }

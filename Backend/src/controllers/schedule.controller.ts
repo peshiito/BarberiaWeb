@@ -1,8 +1,10 @@
 import { Response } from "express";
 import { AuthRequest } from "../middlewares/auth.middleware";
 import { createSchedule, findScheduleByBarberAndWeek, findSchedulesByBarber } from "../models/schedule.model";
+import { findById } from "../models/user.model";
 import { ScheduleInput } from "../types/schedule.types";
 import { generateSlots } from "../utils/slots";
+import { isValidCalendarDate, parsePositiveIntParam } from "../utils/validators";
 
 export const createScheduleHandler = async (req: AuthRequest, res: Response) => {
     const barberId = req.user!.id;
@@ -10,10 +12,6 @@ export const createScheduleHandler = async (req: AuthRequest, res: Response) => 
         ScheduleInput,
         "barber_id"
     >;
-
-    if (!week_start || !work_days || !start_time || !end_time || !slot_duration_minutes) {
-        return res.status(400).json({ error: "Missing required fields" });
-    }
 
     const existing = await findScheduleByBarberAndWeek(barberId, week_start);
     if (existing) {
@@ -39,14 +37,28 @@ export const getMySchedules = async (req: AuthRequest, res: Response) => {
 };
 
 export const getScheduleSlots = async (req: AuthRequest, res: Response) => {
-    const { barberId, weekStart } = req.params;
+    const { weekStart } = req.params;
 
-    const schedule = await findScheduleByBarberAndWeek(Number(barberId), weekStart);
+    const barberIdNum = parsePositiveIntParam(req.params.barberId);
+    if (barberIdNum === null) {
+        return res.status(400).json({ error: "Invalid barberId" });
+    }
+
+    if (!isValidCalendarDate(weekStart)) {
+        return res.status(400).json({ error: "Invalid date format. Expected YYYY-MM-DD" });
+    }
+
+    const barber = await findById(barberIdNum);
+    if (!barber || (barber.role !== "barber" && barber.role !== "admin_barber")) {
+        return res.status(404).json({ error: "Barber not found" });
+    }
+
+    const schedule = await findScheduleByBarberAndWeek(barberIdNum, weekStart);
     if (!schedule) {
-        return res.status(404).json({ error: "Schedule not found" });
+        return res.json({ has_schedule: false, work_days: null, slots: [] });
     }
 
     const slots = generateSlots(schedule.start_time, schedule.end_time, schedule.slot_duration_minutes);
 
-    return res.json({ work_days: schedule.work_days, slots });
+    return res.json({ has_schedule: true, work_days: schedule.work_days, slots });
 };

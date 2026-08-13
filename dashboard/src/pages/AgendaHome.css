@@ -1,11 +1,18 @@
-.error-message {
-    background-color: rgba(139, 58, 58, 0.15);
-    border: 1px solid var(--burgundy);
-    color: var(--burgundy-bright);
-    border-radius: var(--radius-md);
-    padding: var(--space-3) var(--space-4);
-    font-size: 13px;
+.home-error {
     margin-bottom: var(--space-5);
+}
+
+.home-header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.home-metrics-header {
+    margin-bottom: var(--space-3);
 }
 
 .week-grid-skeleton {
@@ -41,6 +48,7 @@
 
 .home-quick-links {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--space-3);
     margin-top: var(--space-6);
     padding-top: var(--space-5);

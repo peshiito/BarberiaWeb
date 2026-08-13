@@ -21,3 +21,8 @@ export const getFinancialPeriod = async (from, to) => {
     const { data } = await api.get("/admin/finance/period", { params: { from, to } });
     return data;
 };
+
+export const getFinancialSeries = async (from, to, bucket) => {
+    const { data } = await api.get("/admin/finance/series", { params: { from, to, bucket } });
+    return data;
+};

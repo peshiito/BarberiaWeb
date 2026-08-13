@@ -1,7 +1,31 @@
 import { z } from "zod";
+import { calendarDateField, requireAtLeastOneField, timeField } from "./common";
+
+const dateField = calendarDateField;
 
 export const createAppointmentSchema = z.object({
     barber_id: z.number().int().positive(),
-    date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format"),
-    time: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
+    date: dateField,
+    time: timeField,
 });
+
+export const createAppointmentByAdminSchema = z.object({
+    client_id: z.number().int().positive(),
+    barber_id: z.number().int().positive(),
+    date: dateField,
+    time: timeField,
+});
+
+export const createAppointmentByBarberSchema = z.object({
+    client_id: z.number().int().positive(),
+    date: dateField,
+    time: timeField,
+});
+
+export const updateAppointmentByAdminSchema = requireAtLeastOneField(
+    z.object({
+        barber_id: z.number().int().positive().optional(),
+        date: dateField.optional(),
+        time: timeField.optional(),
+    }),
+);

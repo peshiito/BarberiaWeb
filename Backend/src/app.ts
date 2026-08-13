@@ -3,7 +3,7 @@ import express from "express";
 import helmet from "helmet";
 import path from "path";
 import { errorHandler } from "./middlewares/error.middleware";
-import { appointmentsRateLimit, authRateLimit } from "./middlewares/rate-limit.middleware";
+import { authRateLimit } from "./middlewares/rate-limit.middleware";
 import adminRoutes from "./routes/admin.routes";
 import appointmentRoutes from "./routes/appointment.routes";
 import authRoutes from "./routes/auth.routes";
@@ -32,12 +32,16 @@ app.get("/health", (_req, res) => {
 
 app.use("/api/auth", authRateLimit, authRoutes);
 app.use("/api/schedules", scheduleRoutes);
-app.use("/api/clients", authRateLimit, clientRoutes);
-app.use("/api/appointments", appointmentsRateLimit, appointmentRoutes);
+app.use("/api/clients", clientRoutes);
+app.use("/api/appointments", appointmentRoutes);
 app.use("/api/photos", photoRoutes);
 app.use("/api/public", publicRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/profile", profileRoutes);
+
+app.use((_req, res) => {
+    res.status(404).json({ error: "Not found" });
+});
 
 app.use(errorHandler);
 

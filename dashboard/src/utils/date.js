@@ -1,4 +1,4 @@
-const DAY_NAMES = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
+export const DAY_NAMES = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
 
 const DAY_LABELS_SHORT = {
     lunes: "Lun",

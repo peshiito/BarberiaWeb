@@ -9,21 +9,22 @@
 
 .page-header-eyebrow {
     display: block;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
     color: var(--brass);
     margin-bottom: var(--space-2);
 }
 
 .page-header-title {
-    font-size: 28px;
+    font-size: var(--text-3xl);
     color: var(--text-primary);
 }
 
 .page-header-description {
     color: var(--text-secondary);
-    font-size: 14px;
+    font-size: var(--text-md);
     margin-top: var(--space-1);
+}
+
+.page-header-action {
+    min-width: 0;
+    max-width: 100%;
 }

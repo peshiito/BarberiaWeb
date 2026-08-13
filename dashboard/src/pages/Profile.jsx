@@ -137,15 +137,18 @@ const Profile = () => {
                             </div>
 
                             <FormField label="Precio del servicio" hint="Precio que se cobra por corte">
-                                <input
-                                    type="number"
-                                    name="service_price"
-                                    value={details.service_price}
-                                    onChange={handleDetailsChange}
-                                    min="0"
-                                    step="0.01"
-                                    required
-                                />
+                                <div className="input-affix">
+                                    <span className="input-affix-symbol">$</span>
+                                    <input
+                                        type="number"
+                                        name="service_price"
+                                        value={details.service_price}
+                                        onChange={handleDetailsChange}
+                                        min="0"
+                                        step="0.01"
+                                        required
+                                    />
+                                </div>
                             </FormField>
 
                             {detailsFeedback && (

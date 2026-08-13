@@ -1,3 +1,5 @@
+import { toISODate } from "./date";
+
 export const generateSlots = (startTime, endTime, durationMinutes) => {
     if (!startTime || !endTime || !durationMinutes) return [];
 
@@ -16,4 +18,21 @@ export const generateSlots = (startTime, endTime, durationMinutes) => {
     }
 
     return slots;
+};
+
+export const getAvailableSlots = (slots, appointments, dateIso) => {
+    const occupied = new Set(
+        appointments.filter(a => a.date.slice(0, 10) === dateIso).map(a => a.time.slice(0, 5)),
+    );
+
+    const now = new Date();
+    const isToday = dateIso === toISODate(now);
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+
+    return slots.filter(slot => {
+        if (occupied.has(slot)) return false;
+        if (!isToday) return true;
+        const [h, m] = slot.split(":").map(Number);
+        return h * 60 + m > nowMinutes;
+    });
 };

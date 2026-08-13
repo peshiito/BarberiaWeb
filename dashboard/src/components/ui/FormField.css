@@ -5,28 +5,70 @@
 }
 
 .form-field-label {
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 500;
     color: var(--text-secondary);
 }
 
 .form-field-hint {
-    font-size: 12px;
-    color: var(--text-muted);
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+}
+
+.form-field-error {
+    font-size: var(--text-xs);
+    /* Sin borde/fondo que respalde el color en este texto suelto —
+       burgundy-bright no pasa AA a este tamaño, y sin otro portador del
+       color el mensaje debe priorizar ser legible. */
+    color: var(--text-primary);
 }
 
 .form-field input,
-.form-field select {
+.form-field select,
+.form-field textarea {
+    width: 100%;
     background-color: var(--bg-base);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
-    padding: 10px 12px;
+    padding: var(--space-2-5) var(--space-3);
     color: var(--text-primary);
-    transition: border-color 0.15s ease;
+    font-size: var(--text-md);
+    transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.form-field textarea {
+    resize: vertical;
+    min-height: 88px;
+    line-height: 1.5;
 }
 
 .form-field input:focus,
-.form-field select:focus {
+.form-field select:focus,
+.form-field textarea:focus {
     border-color: var(--brass);
     outline: none;
+}
+
+.form-field.is-invalid input,
+.form-field.is-invalid select,
+.form-field.is-invalid textarea {
+    border-color: var(--burgundy);
+}
+
+.input-affix {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-affix-symbol {
+    position: absolute;
+    left: var(--space-3);
+    color: var(--text-muted);
+    font-size: var(--text-md);
+    pointer-events: none;
+}
+
+.input-affix input {
+    padding-left: var(--space-7);
 }

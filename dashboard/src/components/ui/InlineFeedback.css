@@ -1,17 +1,20 @@
 .inline-feedback {
-    font-size: 13px;
-    padding: 10px 12px;
+    font-size: var(--text-sm);
+    padding: var(--space-2-5) var(--space-3);
     border-radius: var(--radius-md);
 }
 
-.inline-feedback.is-error {
-    background-color: rgba(139, 58, 58, 0.15);
+.inline-feedback-error {
+    background-color: rgb(var(--burgundy-rgb) / 0.15);
     border: 1px solid var(--burgundy);
-    color: var(--burgundy-bright);
+    /* burgundy-bright de fondo tintado da ~2.8:1, peor que sobre bg-base —
+       el fondo/borde ya comunican "error", el texto pasa a text-primary
+       para que el mensaje sea legible (WCAG AA). */
+    color: var(--text-primary);
 }
 
-.inline-feedback.is-success {
-    background-color: rgba(74, 122, 92, 0.15);
+.inline-feedback-success {
+    background-color: rgb(var(--sage-rgb) / 0.15);
     border: 1px solid var(--sage);
     color: var(--sage-bright);
 }

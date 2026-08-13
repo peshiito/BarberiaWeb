@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { createScheduleHandler, getMySchedules, getScheduleSlots } from "../controllers/schedule.controller";
 import { authenticate } from "../middlewares/auth.middleware";
+import { publicRateLimit } from "../middlewares/rate-limit.middleware";
 import { authorize } from "../middlewares/role.middleware";
 import { validate } from "../middlewares/validate.middleware";
 import { createScheduleSchema } from "../schemas/schedule.schema";
@@ -18,6 +19,6 @@ router.post(
 
 router.get("/mine", authenticate, authorize("barber", "admin_barber"), asyncHandler(getMySchedules));
 
-router.get("/:barberId/:weekStart/slots", asyncHandler(getScheduleSlots));
+router.get("/:barberId/:weekStart/slots", publicRateLimit, asyncHandler(getScheduleSlots));
 
 export default router;

@@ -1,0 +1,29 @@
+# Redundant with the repo-root .gitignore by design — kept explicit here so
+# this directory is safe to ignore correctly even if it's ever split into its
+# own repository.
+node_modules/
+dist/
+build/
+
+.env
+.env.*
+!.env.example
+
+*.log
+npm-debug.log*
+
+coverage/
+.nyc_output/
+
+.DS_Store
+.vscode/
+.idea/
+
+*.tmp
+*.temp
+
+# User-uploaded content (barber photos) is runtime data, not source — it
+# shouldn't be versioned. Existing already-tracked files are left as-is
+# (this only affects future uploads).
+src/uploads/*
+!src/uploads/.gitkeep

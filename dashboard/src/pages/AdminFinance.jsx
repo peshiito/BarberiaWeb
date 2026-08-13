@@ -1,16 +1,19 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import Badge from "../components/ui/Badge";
 import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
+import ChartCanvas from "../components/ui/ChartCanvas";
+import FormField from "../components/ui/FormField";
+import InlineFeedback from "../components/ui/InlineFeedback";
 import PageHeader from "../components/ui/PageHeader";
 import Skeleton from "../components/ui/Skeleton";
 import StatCard from "../components/ui/StatCard";
-import { getFinancialSummary } from "../services/admin";
-import { addDays, getMonday, parseDateOnly, toISODate } from "../utils/date";
+import { useFinanceDashboard } from "../hooks/useFinanceDashboard";
+import { chartAnimation, chartColors, chartFont, chartTooltipBase, hexToRgba } from "../utils/chartTheme";
+import { addDays, getMonday, toISODate } from "../utils/date";
+import { computeTrend } from "../utils/finance";
+import { formatMoney } from "../utils/format";
 import "./AdminFinance.css";
-
-const formatMoney = value =>
-    `$${Math.round(Number(value)).toLocaleString("es-AR", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 
 const iconCoin = (
     <svg viewBox="0 0 20 20" fill="none">
@@ -61,81 +64,31 @@ const iconGauge = (
     </svg>
 );
 
-const iconFlag = (
-    <svg viewBox="0 0 20 20" fill="none">
-        <path d="M5 17.5V3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M5 4h9l-2.5 3L14 10H5" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-    </svg>
-);
-
-const sumSummary = rows =>
-    rows.reduce(
-        (acc, row) => ({
-            total_appointments: acc.total_appointments + Number(row.total_appointments),
-            total_revenue: acc.total_revenue + Number(row.total_revenue),
-            total_barber_earnings: acc.total_barber_earnings + Number(row.barber_earnings),
-            total_shop_earnings: acc.total_shop_earnings + Number(row.shop_earnings),
-        }),
-        { total_appointments: 0, total_revenue: 0, total_barber_earnings: 0, total_shop_earnings: 0 },
-    );
-
-const getPreviousPeriod = (fromIso, toIso) => {
-    const from = parseDateOnly(fromIso);
-    const to = parseDateOnly(toIso);
-    const durationDays = Math.round((to - from) / 86400000) + 1;
-    const prevTo = addDays(from, -1);
-    const prevFrom = addDays(prevTo, -(durationDays - 1));
-    return { prevFrom: toISODate(prevFrom), prevTo: toISODate(prevTo) };
-};
-
-const computeTrend = (current, previous) => {
-    if (previous === 0) {
-        return current > 0 ? { direction: "up", tone: "sage", label: "Nuevo" } : null;
-    }
-    const change = ((current - previous) / previous) * 100;
-    if (Math.abs(change) < 1) {
-        return { direction: null, tone: "neutral", label: "Sin cambios" };
-    }
-    const direction = change > 0 ? "up" : "down";
-    const tone = direction === "up" ? "sage" : "burgundy";
-    return { direction, tone, label: `${change > 0 ? "+" : ""}${Math.round(change)}%` };
-};
+const defaultFrom = toISODate(getMonday(new Date()));
+const defaultTo = toISODate(addDays(getMonday(new Date()), 6));
 
 const AdminFinance = () => {
-    const [from, setFrom] = useState(() => toISODate(getMonday(new Date())));
-    const [to, setTo] = useState(() => toISODate(addDays(getMonday(new Date()), 6)));
-    const [summary, setSummary] = useState([]);
-    const [period, setPeriod] = useState(null);
-    const [prevPeriod, setPrevPeriod] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+    const [draftFrom, setDraftFrom] = useState(defaultFrom);
+    const [draftTo, setDraftTo] = useState(defaultTo);
+    const [appliedFrom, setAppliedFrom] = useState(defaultFrom);
+    const [appliedTo, setAppliedTo] = useState(defaultTo);
 
-    const loadSummary = async () => {
-        setLoading(true);
-        setError("");
-        try {
-            const { prevFrom, prevTo } = getPreviousPeriod(from, to);
-            const [summaryData, prevSummaryData] = await Promise.all([
-                getFinancialSummary(from, to),
-                getFinancialSummary(prevFrom, prevTo),
-            ]);
-            setSummary(summaryData);
-            setPeriod(sumSummary(summaryData));
-            setPrevPeriod(sumSummary(prevSummaryData));
-        } catch {
-            setSummary([]);
-            setPeriod(null);
-            setPrevPeriod(null);
-            setError("No se pudo cargar el resumen financiero.");
-        } finally {
-            setLoading(false);
+    const { loading, error, data, reload } = useFinanceDashboard(appliedFrom, appliedTo);
+
+    const handleSubmit = e => {
+        e.preventDefault();
+        if (draftFrom === appliedFrom && draftTo === appliedTo) {
+            reload();
+        } else {
+            setAppliedFrom(draftFrom);
+            setAppliedTo(draftTo);
         }
     };
 
-    useEffect(() => {
-        loadSummary();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    const period = data?.period ?? null;
+    const prevPeriod = data?.prevPeriod ?? null;
+    const summary = data?.summary ?? [];
+    const hasActivity = Boolean(period && Number(period.total_appointments) > 0);
 
     const activeBarbers = summary.filter(row => Number(row.total_appointments) > 0);
     const bestBarber = activeBarbers.length
@@ -146,99 +99,319 @@ const AdminFinance = () => {
         period && Number(period.total_appointments) > 0 ? Number(period.total_revenue) / Number(period.total_appointments) : null;
     const repartoPromedio =
         period && Number(period.total_revenue) > 0 ? (Number(period.total_barber_earnings) / Number(period.total_revenue)) * 100 : null;
-    const hasActivity = period && Number(period.total_appointments) > 0;
 
     const revenueTrend = period && prevPeriod ? computeTrend(Number(period.total_revenue), Number(prevPeriod.total_revenue)) : null;
-    const shopTrend =
-        period && prevPeriod ? computeTrend(Number(period.total_shop_earnings), Number(prevPeriod.total_shop_earnings)) : null;
+    const shopTrend = period && prevPeriod ? computeTrend(Number(period.total_shop_earnings), Number(prevPeriod.total_shop_earnings)) : null;
     const appointmentsTrend =
         period && prevPeriod ? computeTrend(Number(period.total_appointments), Number(prevPeriod.total_appointments)) : null;
+
+    const revenueSeriesConfig = useMemo(() => {
+        if (!data || !hasActivity) return null;
+        const colors = chartColors();
+        return {
+            type: "line",
+            data: {
+                labels: data.series.map(s => s.label),
+                datasets: [
+                    {
+                        label: "Ingresos",
+                        data: data.series.map(s => s.total_revenue),
+                        borderColor: colors.brass,
+                        backgroundColor: hexToRgba(colors.brass, 0.14),
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        pointHoverRadius: 4,
+                        pointBackgroundColor: colors.brass,
+                        pointBorderColor: colors.bgSurface,
+                        pointBorderWidth: 2,
+                        tension: 0.35,
+                        fill: true,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: chartAnimation(),
+                interaction: { mode: "index", intersect: false },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { ...chartTooltipBase(colors), callbacks: { label: ctx => formatMoney(ctx.parsed.y) } },
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: colors.textMuted, font: chartFont() } },
+                    y: {
+                        grid: { color: colors.borderSubtle },
+                        ticks: { color: colors.textMuted, font: chartFont(), callback: value => formatMoney(value) },
+                    },
+                },
+            },
+        };
+    }, [data, hasActivity]);
+
+    const splitConfig = useMemo(() => {
+        if (!period || !hasActivity) return null;
+        const colors = chartColors();
+        return {
+            type: "doughnut",
+            data: {
+                labels: ["Gana el local", "Gana el barbero"],
+                datasets: [
+                    {
+                        data: [period.total_shop_earnings, period.total_barber_earnings],
+                        backgroundColor: [colors.sage, colors.burgundy],
+                        borderColor: colors.bgSurface,
+                        borderWidth: 2,
+                        hoverOffset: 4,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: chartAnimation(),
+                cutout: "68%",
+                plugins: {
+                    legend: {
+                        position: "bottom",
+                        labels: {
+                            color: colors.textSecondary,
+                            font: chartFont(12, "body"),
+                            boxWidth: 10,
+                            boxHeight: 10,
+                            padding: 16,
+                            usePointStyle: true,
+                            pointStyle: "circle",
+                        },
+                    },
+                    tooltip: {
+                        ...chartTooltipBase(colors),
+                        callbacks: { label: ctx => `${ctx.label}: ${formatMoney(ctx.parsed)}` },
+                    },
+                },
+            },
+        };
+    }, [period, hasActivity]);
+
+    const barberBarConfig = useMemo(() => {
+        if (!summary.length || !hasActivity) return null;
+        const colors = chartColors();
+        const sorted = [...summary].filter(r => Number(r.total_revenue) > 0).sort((a, b) => Number(b.total_revenue) - Number(a.total_revenue));
+        const maxRevenue = Math.max(...sorted.map(r => Number(r.total_revenue)), 0);
+        return {
+            type: "bar",
+            data: {
+                labels: sorted.map(r => r.name),
+                datasets: [
+                    {
+                        data: sorted.map(r => Number(r.total_revenue)),
+                        backgroundColor: sorted.map(r =>
+                            Number(r.total_revenue) === maxRevenue && maxRevenue > 0 ? colors.brassBright : hexToRgba(colors.brass, 0.55),
+                        ),
+                        borderRadius: 4,
+                        maxBarThickness: 28,
+                    },
+                ],
+            },
+            options: {
+                indexAxis: "y",
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: chartAnimation(),
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { ...chartTooltipBase(colors), callbacks: { label: ctx => formatMoney(ctx.parsed.x) } },
+                },
+                scales: {
+                    x: {
+                        grid: { color: colors.borderSubtle },
+                        ticks: { color: colors.textMuted, font: chartFont(), callback: value => formatMoney(value) },
+                    },
+                    y: { grid: { display: false }, ticks: { color: colors.textSecondary, font: chartFont(12, "body") } },
+                },
+            },
+        };
+    }, [summary, hasActivity]);
+
+    const comparisonConfig = useMemo(() => {
+        if (!period || !prevPeriod || !hasActivity) return null;
+        const colors = chartColors();
+        return {
+            type: "bar",
+            data: {
+                labels: ["Ingresos", "Ganancia local", "Pago a barberos"],
+                datasets: [
+                    {
+                        label: "Período actual",
+                        data: [period.total_revenue, period.total_shop_earnings, period.total_barber_earnings],
+                        backgroundColor: colors.brass,
+                        borderRadius: 4,
+                        maxBarThickness: 32,
+                    },
+                    {
+                        label: "Período anterior",
+                        data: [prevPeriod.total_revenue, prevPeriod.total_shop_earnings, prevPeriod.total_barber_earnings],
+                        backgroundColor: colors.borderStrong,
+                        borderRadius: 4,
+                        maxBarThickness: 32,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: chartAnimation(),
+                plugins: {
+                    legend: {
+                        position: "bottom",
+                        labels: {
+                            color: colors.textSecondary,
+                            font: chartFont(12, "body"),
+                            boxWidth: 10,
+                            boxHeight: 10,
+                            padding: 16,
+                            usePointStyle: true,
+                            pointStyle: "circle",
+                        },
+                    },
+                    tooltip: {
+                        ...chartTooltipBase(colors),
+                        callbacks: { label: ctx => `${ctx.dataset.label}: ${formatMoney(ctx.parsed.y)}` },
+                    },
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: colors.textMuted, font: chartFont(11, "body") } },
+                    y: {
+                        grid: { color: colors.borderSubtle },
+                        ticks: { color: colors.textMuted, font: chartFont(), callback: value => formatMoney(value) },
+                    },
+                },
+            },
+        };
+    }, [period, prevPeriod, hasActivity]);
 
     return (
         <div>
             <PageHeader eyebrow="Administración" title="Finanzas" description="Ingresos, división de ganancias y caja." />
 
-            <Card className="finance-filters-card">
-                <div className="finance-filters">
-                    <div className="finance-filter-field">
-                        <label>Desde</label>
-                        <input type="date" value={from} onChange={e => setFrom(e.target.value)} />
-                    </div>
-                    <div className="finance-filter-field">
-                        <label>Hasta</label>
-                        <input type="date" value={to} onChange={e => setTo(e.target.value)} />
-                    </div>
-                    <Button variant="primary" size="md" loading={loading} onClick={loadSummary}>
+            <Card className="finance-filters-card is-elevated">
+                <form className="finance-filters" onSubmit={handleSubmit}>
+                    <FormField label="Desde">
+                        <input type="date" value={draftFrom} onChange={e => setDraftFrom(e.target.value)} required />
+                    </FormField>
+                    <FormField label="Hasta">
+                        <input type="date" value={draftTo} onChange={e => setDraftTo(e.target.value)} required />
+                    </FormField>
+                    <Button type="submit" variant="primary" size="md" loading={loading}>
                         Aplicar
                     </Button>
-                </div>
+                </form>
             </Card>
 
-            {error && <p className="error-message">{error}</p>}
+            {error && (
+                <InlineFeedback tone="error" className="finance-error">
+                    {error}
+                </InlineFeedback>
+            )}
 
             {loading ? (
                 <div className="finance-metrics-skeleton">
                     <div className="finance-metrics-grid">
-                        {Array.from({ length: 7 }).map((_, i) => (
+                        {Array.from({ length: 4 }).map((_, i) => (
                             <Skeleton key={i} height="112px" />
+                        ))}
+                    </div>
+                    <div className="finance-metrics-grid finance-metrics-grid-ops">
+                        {Array.from({ length: 2 }).map((_, i) => (
+                            <Skeleton key={i} height="112px" />
+                        ))}
+                    </div>
+                    <div className="finance-charts-grid">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <Skeleton key={i} height="280px" />
                         ))}
                     </div>
                     <Skeleton height="240px" />
                 </div>
-            ) : period ? (
+            ) : !hasActivity ? (
+                <div className="state-box">
+                    <span className="state-box-title">Sin datos para este rango</span>
+                    <p className="state-box-text">No hay turnos completados entre esas fechas. Probá con otro período.</p>
+                </div>
+            ) : (
                 <>
-                    <div className="finance-metrics-header">
-                        <span className="finance-metrics-eyebrow">Métricas financieras</span>
+                    <div className="finance-balance">
+                        <span className="eyebrow finance-balance-label">Balance del período</span>
+                        <Badge tone="sage">Positivo · con turnos completados</Badge>
                     </div>
 
+                    <div className="finance-metrics-header">
+                        <span className="eyebrow">Ingresos y reparto</span>
+                    </div>
                     <div className="finance-metrics-grid">
                         <StatCard icon={iconCoin} label="Ingresos" value={formatMoney(period.total_revenue)} trend={revenueTrend} highlight />
-                        <StatCard
-                            icon={iconVault}
-                            label="Ganancia del local"
-                            value={formatMoney(period.total_shop_earnings)}
-                            trend={shopTrend}
-                        />
+                        <StatCard icon={iconVault} label="Ganancia del local" value={formatMoney(period.total_shop_earnings)} trend={shopTrend} />
                         <StatCard
                             icon={iconOutflow}
                             label="Pago a barberos"
                             value={`-${formatMoney(period.total_barber_earnings)}`}
                             trend={{ direction: "down", tone: "burgundy", label: "Egreso" }}
                         />
-                        <StatCard
-                            icon={iconScissors}
-                            label="Turnos completados"
-                            value={period.total_appointments}
-                            trend={appointmentsTrend}
-                        />
-                        <StatCard
-                            icon={iconReceipt}
-                            label="Ticket promedio"
-                            value={ticketPromedio !== null ? formatMoney(ticketPromedio) : "—"}
-                        />
+                        <StatCard icon={iconReceipt} label="Ticket promedio" value={ticketPromedio !== null ? formatMoney(ticketPromedio) : "—"} />
+                    </div>
+
+                    <div className="finance-metrics-header">
+                        <span className="eyebrow">Actividad</span>
+                    </div>
+                    <div className="finance-metrics-grid finance-metrics-grid-ops">
+                        <StatCard icon={iconScissors} label="Turnos completados" value={period.total_appointments} trend={appointmentsTrend} />
                         <StatCard
                             icon={iconGauge}
                             label="Reparto promedio"
                             value={repartoPromedio !== null ? `${Math.round(repartoPromedio)}%` : "—"}
                         />
-                        <StatCard
-                            icon={iconFlag}
-                            label="Balance"
-                            value={hasActivity ? "Positivo" : "Sin actividad"}
-                            trend={{
-                                direction: null,
-                                tone: hasActivity ? "sage" : "neutral",
-                                label: hasActivity ? "Con turnos completados" : "Sin turnos completados",
-                            }}
-                        />
+                    </div>
+
+                    <div className="finance-charts-grid">
+                        <Card className="finance-chart-card">
+                            <h3 className="card-section-title">Evolución de ingresos</h3>
+                            {revenueSeriesConfig && (
+                                <ChartCanvas config={revenueSeriesConfig} height={260} ariaLabel="Evolución de ingresos en el período seleccionado" />
+                            )}
+                        </Card>
+
+                        <Card className="finance-chart-card">
+                            <h3 className="card-section-title">Reparto local vs. barberos</h3>
+                            {splitConfig && (
+                                <ChartCanvas config={splitConfig} height={260} ariaLabel="Reparto de ingresos entre el local y los barberos" />
+                            )}
+                        </Card>
+
+                        <Card className="finance-chart-card">
+                            <h3 className="card-section-title">Ingresos por barbero</h3>
+                            {barberBarConfig ? (
+                                <ChartCanvas config={barberBarConfig} height={260} ariaLabel="Ingresos por barbero en el período seleccionado" />
+                            ) : (
+                                <p className="finance-chart-empty">Sin turnos por barbero en este período.</p>
+                            )}
+                        </Card>
+
+                        <Card className="finance-chart-card">
+                            <h3 className="card-section-title">Período actual vs. anterior</h3>
+                            {comparisonConfig ? (
+                                <ChartCanvas config={comparisonConfig} height={260} ariaLabel="Comparación del período actual contra el período anterior" />
+                            ) : (
+                                <p className="finance-chart-empty">Sin datos del período anterior para comparar.</p>
+                            )}
+                        </Card>
                     </div>
 
                     <Card className="finance-table-card">
-                        <div className="finance-table-wrapper">
+                        <div className="finance-table-wrapper scroll-shadow-x">
                             <table className="table">
                                 <thead>
                                     <tr>
-                                        <th>Barbero</th>
+                                        <th className="table-sticky-col">Barbero</th>
                                         <th className="is-numeric">Turnos</th>
                                         <th className="is-numeric">Ingresos</th>
                                         <th className="is-numeric">Ticket promedio</th>
@@ -249,34 +422,24 @@ const AdminFinance = () => {
                                 <tbody>
                                     {summary.map(row => {
                                         const rowTicket =
-                                            Number(row.total_appointments) > 0
-                                                ? Number(row.total_revenue) / Number(row.total_appointments)
-                                                : null;
+                                            Number(row.total_appointments) > 0 ? Number(row.total_revenue) / Number(row.total_appointments) : null;
                                         const rowSplit =
-                                            Number(row.total_revenue) > 0
-                                                ? (Number(row.barber_earnings) / Number(row.total_revenue)) * 100
-                                                : null;
+                                            Number(row.total_revenue) > 0 ? (Number(row.barber_earnings) / Number(row.total_revenue)) * 100 : null;
 
                                         return (
                                             <tr key={row.barber_id}>
-                                                <td>
+                                                <td className="table-sticky-col">
                                                     <span className="finance-table-name">
                                                         {row.name}
-                                                        {bestBarber && row.barber_id === bestBarber.barber_id && (
-                                                            <Badge tone="brass">Top</Badge>
-                                                        )}
+                                                        {bestBarber && row.barber_id === bestBarber.barber_id && <Badge tone="brass">Top</Badge>}
                                                     </span>
                                                 </td>
                                                 <td className="is-numeric">{row.total_appointments}</td>
                                                 <td className="finance-table-amount is-numeric">{formatMoney(row.total_revenue)}</td>
-                                                <td className="finance-table-amount is-numeric">
-                                                    {rowTicket !== null ? formatMoney(rowTicket) : "—"}
-                                                </td>
+                                                <td className="finance-table-amount is-numeric">{rowTicket !== null ? formatMoney(rowTicket) : "—"}</td>
                                                 <td className="finance-table-amount is-numeric">
                                                     {formatMoney(row.barber_earnings)}
-                                                    {rowSplit !== null && (
-                                                        <span className="finance-table-sub">{Math.round(rowSplit)}% reparto</span>
-                                                    )}
+                                                    {rowSplit !== null && <span className="finance-table-sub">{Math.round(rowSplit)}% reparto</span>}
                                                 </td>
                                                 <td className="finance-table-amount is-numeric">{formatMoney(row.shop_earnings)}</td>
                                             </tr>
@@ -287,7 +450,7 @@ const AdminFinance = () => {
                         </div>
                     </Card>
                 </>
-            ) : null}
+            )}
         </div>
     );
 };

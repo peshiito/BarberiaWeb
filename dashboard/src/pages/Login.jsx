@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
+import FormField from "../components/ui/FormField";
 import InlineFeedback from "../components/ui/InlineFeedback";
 import { useAuth } from "../context/AuthContext";
 import "./Login.css";
@@ -42,8 +43,7 @@ const Login = () => {
                 <p className="login-subtitle">Ingresá con tu cuenta para ver tu agenda</p>
 
                 <form className="login-form" onSubmit={handleSubmit}>
-                    <div className="login-field">
-                        <label htmlFor="email">Email</label>
+                    <FormField label="Email" htmlFor="email">
                         <input
                             id="email"
                             type="email"
@@ -53,10 +53,9 @@ const Login = () => {
                             required
                             autoFocus
                         />
-                    </div>
+                    </FormField>
 
-                    <div className="login-field">
-                        <label htmlFor="password">Contraseña</label>
+                    <FormField label="Contraseña" htmlFor="password">
                         <input
                             id="password"
                             type="password"
@@ -65,7 +64,7 @@ const Login = () => {
                             placeholder="••••••••"
                             required
                         />
-                    </div>
+                    </FormField>
 
                     {error && <InlineFeedback tone="error">{error}</InlineFeedback>}
 

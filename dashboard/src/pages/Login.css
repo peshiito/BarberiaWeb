@@ -10,6 +10,18 @@
     justify-content: center;
     padding: var(--space-8);
     background-color: var(--bg-base);
+    animation: login-panel-in var(--duration-slow) var(--ease-out) both;
+}
+
+@keyframes login-panel-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .login-mark {
@@ -27,14 +39,14 @@
 
 .login-mark-label {
     font-family: var(--font-display);
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 600;
     letter-spacing: 0.2em;
     color: var(--brass);
 }
 
 .login-title {
-    font-size: 34px;
+    font-size: var(--text-4xl);
     color: var(--text-primary);
     margin-bottom: var(--space-2);
 }
@@ -50,33 +62,7 @@
     gap: var(--space-4);
 }
 
-.login-field {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-}
-
-.login-field label {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-secondary);
-}
-
-.login-field input {
-    background-color: var(--bg-base);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    padding: 10px 12px;
-    color: var(--text-primary);
-    transition: border-color 0.15s ease;
-}
-
-.login-field input:focus {
-    border-color: var(--brass);
-    outline: none;
-}
-
-.login-field input::placeholder {
+.login-form input::placeholder {
     color: var(--text-muted);
 }
 
@@ -111,7 +97,7 @@
 .login-side-eyebrow {
     display: block;
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: var(--text-xs);
     letter-spacing: 0.1em;
     color: var(--brass);
     text-transform: uppercase;
@@ -120,7 +106,7 @@
 
 .login-side-quote {
     font-family: var(--font-display);
-    font-size: 28px;
+    font-size: var(--text-3xl);
     font-weight: 500;
     line-height: 1.35;
     color: var(--text-primary);

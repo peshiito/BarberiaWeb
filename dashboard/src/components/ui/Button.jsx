@@ -15,6 +15,7 @@ const Button = ({
             type={type}
             className={`btn btn-${variant} btn-${size} ${className}`}
             disabled={disabled || loading}
+            aria-busy={loading || undefined}
             {...rest}
         >
             {loading && <span className="btn-spinner" aria-hidden="true" />}

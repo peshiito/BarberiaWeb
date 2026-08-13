@@ -19,6 +19,7 @@ const DayPicker = ({ selected, onToggle }) => {
                     type="button"
                     className={`day-picker-chip ${selected.includes(day.key) ? "is-selected" : ""}`}
                     onClick={() => onToggle(day.key)}
+                    aria-pressed={selected.includes(day.key)}
                 >
                     {day.label}
                 </button>

@@ -4,7 +4,7 @@ const PageHeader = ({ eyebrow, title, description, action }) => {
     return (
         <div className="page-header">
             <div>
-                {eyebrow && <span className="page-header-eyebrow">{eyebrow}</span>}
+                {eyebrow && <span className="page-header-eyebrow eyebrow">{eyebrow}</span>}
                 <h1 className="page-header-title">{title}</h1>
                 {description && <p className="page-header-description">{description}</p>}
             </div>

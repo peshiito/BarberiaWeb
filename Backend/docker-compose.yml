@@ -4,7 +4,7 @@ services:
         container_name: barberia_db
         restart: always
         environment:
-            MYSQL_ROOT_PASSWORD: root
+            MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
             MYSQL_DATABASE: sistema_barberia
         ports:
             - "3306:3306"
@@ -12,7 +12,7 @@ services:
             - db_data:/var/lib/mysql
             - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
         healthcheck:
-            test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+            test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${DB_ROOT_PASSWORD:-root}"]
             interval: 5s
             timeout: 5s
             retries: 10
@@ -24,7 +24,7 @@ services:
         environment:
             PMA_HOST: barberia_db
             PMA_USER: root
-            PMA_PASSWORD: root
+            PMA_PASSWORD: ${DB_ROOT_PASSWORD:-root}
         ports:
             - "8080:80"
         depends_on:

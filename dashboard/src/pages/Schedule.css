@@ -1,8 +1,12 @@
 .schedule-layout {
     display: grid;
-    grid-template-columns: minmax(0, 420px) 1fr;
+    grid-template-columns: minmax(0, 420px) minmax(0, 460px);
     gap: var(--space-6);
     align-items: start;
+    /* Sin este límite, en pantallas anchas la columna derecha (una lista corta
+       de agendas) se estira a cientos de px de aire vacío — se ve "sin
+       terminar" en vez de una página de configuración bien compuesta. */
+    max-width: 920px;
 }
 
 .schedule-form {
@@ -29,7 +33,7 @@
 
 .schedule-preview-label {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: var(--text-2xs);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--text-muted);
@@ -40,13 +44,13 @@
 .schedule-preview-slots {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: var(--space-1-5);
 }
 
 .schedule-preview-slot {
     font-family: var(--font-mono);
-    font-size: 11px;
-    padding: 3px 8px;
+    font-size: var(--text-2xs);
+    padding: var(--space-0-5) var(--space-2);
     border-radius: var(--radius-sm);
     background-color: var(--bg-elevated);
     color: var(--text-secondary);
@@ -66,19 +70,26 @@
 
 .schedule-list-week {
     font-weight: 600;
-    font-size: 14px;
+    font-size: var(--text-md);
     color: var(--text-primary);
 }
 
 .schedule-list-detail {
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--text-muted);
-    margin-top: 2px;
+    margin-top: var(--space-0-5);
+    overflow-wrap: break-word;
 }
 
 @media (max-width: 900px) {
     .schedule-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .schedule-form-row {
         grid-template-columns: 1fr;
     }
 }

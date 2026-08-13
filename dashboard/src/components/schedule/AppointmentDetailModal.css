@@ -17,12 +17,12 @@
 }
 
 .appt-detail-label {
-    font-size: 13px;
+    font-size: var(--text-sm);
     color: var(--text-secondary);
 }
 
 .appt-detail-value {
-    font-size: 14px;
+    font-size: var(--text-md);
     font-weight: 600;
     color: var(--text-primary);
 }
@@ -40,50 +40,13 @@
 
 .appt-detail-btn {
     flex: 1;
-    padding: 11px;
-    border-radius: var(--radius-md);
-    font-weight: 600;
-    font-size: 13px;
-    transition: all 0.15s ease;
-}
-
-.appt-detail-btn.is-cancel {
-    background: none;
-    border: 1px solid var(--burgundy);
-    color: var(--burgundy-bright);
-}
-
-.appt-detail-btn.is-cancel:hover:not(:disabled) {
-    background-color: rgba(139, 58, 58, 0.15);
-}
-
-.appt-detail-btn.is-complete {
-    background-color: var(--sage);
-    border: 1px solid var(--sage);
-    color: var(--bg-base);
-}
-
-.appt-detail-btn.is-complete:hover:not(:disabled) {
-    background-color: var(--sage-bright);
-}
-
-.appt-detail-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.appt-detail-btn.is-ghost {
-    background: none;
-    border: 1px solid var(--border-strong);
-    color: var(--text-secondary);
-}
-
-.appt-detail-btn.is-ghost:hover:not(:disabled) {
-    background-color: var(--bg-surface-hover);
 }
 
 .appt-detail-confirm {
-    font-size: 13px;
-    color: var(--burgundy-bright);
+    font-size: var(--text-sm);
+    /* El botón "Sí, cancelar" (burgundy) debajo ya comunica la severidad;
+       este texto suelto no tiene borde/fondo que respalde el color y
+       burgundy-bright no pasa AA a este tamaño. */
+    color: var(--text-primary);
     margin-top: var(--space-2);
 }

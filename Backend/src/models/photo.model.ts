@@ -25,6 +25,18 @@ export const countPhotosByUser = async (userId: number): Promise<number> => {
     return (rows[0] as any).total;
 };
 
-export const deletePhoto = async (id: number, userId: number): Promise<void> => {
-    await pool.query(`DELETE FROM barber_photos WHERE id = ? AND user_id = ?`, [id, userId]);
+export const findPhotoByIdAndUser = async (id: number, userId: number): Promise<BarberPhoto | null> => {
+    const [rows] = await pool.query<RowDataPacket[]>(`SELECT * FROM barber_photos WHERE id = ? AND user_id = ?`, [
+        id,
+        userId,
+    ]);
+    return rows.length ? (rows[0] as BarberPhoto) : null;
+};
+
+export const deletePhoto = async (id: number, userId: number): Promise<boolean> => {
+    const [result] = await pool.query<ResultSetHeader>(`DELETE FROM barber_photos WHERE id = ? AND user_id = ?`, [
+        id,
+        userId,
+    ]);
+    return result.affectedRows > 0;
 };

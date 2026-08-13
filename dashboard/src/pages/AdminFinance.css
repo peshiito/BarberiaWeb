@@ -1,53 +1,46 @@
+.finance-filters-card {
+    margin-bottom: var(--space-5);
+}
+
+.finance-error {
+    margin-bottom: var(--space-5);
+}
+
 .finance-filters {
     display: flex;
     align-items: flex-end;
     gap: var(--space-4);
-    margin-bottom: var(--space-5);
     flex-wrap: wrap;
 }
 
-.finance-filter-field {
+.finance-filters .form-field {
+    min-width: 160px;
+}
+
+.finance-balance {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
 }
 
-.finance-filter-field label {
-    font-size: 12px;
-    color: var(--text-secondary);
-}
-
-.finance-filter-field input {
-    background-color: var(--bg-base);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    padding: 9px 12px;
-    color: var(--text-primary);
-    transition: border-color var(--duration-fast) var(--ease-out);
-}
-
-.finance-filter-field input:focus {
-    border-color: var(--brass);
-    outline: none;
+.finance-balance-label {
+    color: var(--text-muted);
 }
 
 .finance-metrics-header {
     margin-bottom: var(--space-3);
 }
 
-.finance-metrics-eyebrow {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--brass);
-}
-
 .finance-metrics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: var(--space-4);
     margin-bottom: var(--space-6);
+}
+
+.finance-metrics-grid-ops {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
 .finance-metrics-skeleton {
@@ -56,62 +49,37 @@
     gap: var(--space-4);
 }
 
-.finance-metrics-skeleton .finance-metrics-grid {
-    margin-bottom: 0;
+.finance-charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.card.finance-chart-card {
+    display: flex;
+    flex-direction: column;
+    animation: finance-card-in var(--duration-base) var(--ease-out) both;
+}
+
+.finance-chart-empty {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    text-align: center;
+    min-height: 200px;
 }
 
 .card.finance-table-card {
     padding: var(--space-5) 0 0;
-    animation: finance-table-in var(--duration-base) var(--ease-out) both;
+    animation: finance-card-in var(--duration-base) var(--ease-out) both;
 }
 
 .finance-table-wrapper {
     overflow-x: auto;
-}
-
-.table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13.5px;
-}
-
-.table thead th {
-    text-align: left;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    font-weight: 600;
-    padding: 0 var(--space-5) var(--space-3);
-    border-bottom: 1px solid var(--border-strong);
-    white-space: nowrap;
-}
-
-.table tbody td {
-    padding: var(--space-4) var(--space-5);
-    border-bottom: 1px solid var(--border-subtle);
-    color: var(--text-primary);
-    vertical-align: middle;
-    white-space: nowrap;
-}
-
-.table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-.table tbody tr {
-    transition: background-color var(--duration-fast) var(--ease-out);
-}
-
-.table tbody tr:hover {
-    background-color: var(--bg-surface-hover);
-}
-
-.table th.is-numeric,
-.table td.is-numeric {
-    text-align: right;
-    font-variant-numeric: tabular-nums;
 }
 
 .finance-table-amount {
@@ -127,12 +95,12 @@
 
 .finance-table-sub {
     display: block;
-    font-size: 11px;
+    font-size: var(--text-2xs);
     color: var(--text-muted);
     margin-top: 2px;
 }
 
-@keyframes finance-table-in {
+@keyframes finance-card-in {
     from {
         opacity: 0;
         transform: translateY(6px);
@@ -143,14 +111,27 @@
     }
 }
 
+@media (max-width: 1200px) {
+    .finance-charts-grid {
+        /* minmax(0, 1fr), no un `1fr` desnudo: sin el mínimo explícito el
+           track del grid no se encoge por debajo del contenido del canvas
+           de Chart.js (~300px), lo que desborda horizontalmente la página
+           en 320-375px — solo se ve con datos reales, el estado vacío no
+           renderiza ningún ChartCanvas. */
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
 @media (max-width: 900px) {
-    .finance-metrics-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .finance-metrics-grid,
+    .finance-metrics-grid-ops {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 560px) {
-    .finance-metrics-grid {
-        grid-template-columns: 1fr;
+    .finance-metrics-grid,
+    .finance-metrics-grid-ops {
+        grid-template-columns: minmax(0, 1fr);
     }
 }

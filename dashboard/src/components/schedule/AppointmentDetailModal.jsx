@@ -1,9 +1,20 @@
 import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 import Badge from "../ui/Badge";
+import Button from "../ui/Button";
 import Modal from "../ui/Modal";
 import "./AppointmentDetailModal.css";
 
-const AppointmentDetailModal = ({ appointment, onClose, onComplete, onCancel, actionLoading }) => {
+const AppointmentDetailModal = ({
+    appointment,
+    onClose,
+    onComplete,
+    onCancel,
+    onReschedule,
+    onViewClient,
+    actionLoading,
+}) => {
+    const { isAdmin } = useAuth();
     const [confirmingCancel, setConfirmingCancel] = useState(false);
 
     if (!appointment) return null;
@@ -54,6 +65,26 @@ const AppointmentDetailModal = ({ appointment, onClose, onComplete, onCancel, ac
                     <Badge tone={isCompleted ? "sage" : "brass"}>{isCompleted ? "Completado" : "Activo"}</Badge>
                 </div>
 
+                <div className="appt-detail-actions">
+                    <Button
+                        variant="ghost"
+                        className="appt-detail-btn"
+                        onClick={() => onViewClient(appointment.client_id)}
+                    >
+                        Ver cliente
+                    </Button>
+                    {!isCompleted && isAdmin && (
+                        <Button
+                            variant="ghost"
+                            className="appt-detail-btn"
+                            onClick={() => onReschedule(appointment)}
+                            disabled={actionLoading}
+                        >
+                            Reprogramar
+                        </Button>
+                    )}
+                </div>
+
                 {!isCompleted && confirmingCancel && (
                     <p className="appt-detail-confirm">¿Seguro que querés cancelar este turno?</p>
                 )}
@@ -62,37 +93,41 @@ const AppointmentDetailModal = ({ appointment, onClose, onComplete, onCancel, ac
                     <div className="appt-detail-actions">
                         {confirmingCancel ? (
                             <>
-                                <button
-                                    className="appt-detail-btn is-ghost"
+                                <Button
+                                    variant="ghost"
+                                    className="appt-detail-btn"
                                     onClick={() => setConfirmingCancel(false)}
                                     disabled={actionLoading}
                                 >
                                     Volver
-                                </button>
-                                <button
-                                    className="appt-detail-btn is-cancel"
+                                </Button>
+                                <Button
+                                    variant="danger"
+                                    className="appt-detail-btn"
                                     onClick={() => onCancel(appointment.id)}
-                                    disabled={actionLoading}
+                                    loading={actionLoading}
                                 >
-                                    {actionLoading ? "Cancelando..." : "Sí, cancelar"}
-                                </button>
+                                    Sí, cancelar
+                                </Button>
                             </>
                         ) : (
                             <>
-                                <button
-                                    className="appt-detail-btn is-cancel"
+                                <Button
+                                    variant="danger"
+                                    className="appt-detail-btn"
                                     onClick={() => setConfirmingCancel(true)}
                                     disabled={actionLoading}
                                 >
                                     Cancelar turno
-                                </button>
-                                <button
-                                    className="appt-detail-btn is-complete"
+                                </Button>
+                                <Button
+                                    variant="success"
+                                    className="appt-detail-btn"
                                     onClick={() => onComplete(appointment.id)}
-                                    disabled={actionLoading}
+                                    loading={actionLoading}
                                 >
-                                    {actionLoading ? "Guardando..." : "Marcar completado"}
-                                </button>
+                                    Marcar completado
+                                </Button>
                             </>
                         )}
                     </div>

@@ -7,20 +7,17 @@ import { JwtPayload, LoginInput } from "../types/auth.types";
 const JWT_SECRET = process.env.JWT_SECRET as string;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
 
+// Valid bcrypt hash of a random value, used only to keep the timing of a
+// failed login constant whether or not the email exists (avoids user
+// enumeration via response-time side channel).
+const DUMMY_HASH = "$2b$10$CwTycUXWue0Thq9StjUM0uJ8p4a1uy9C8jXO5C0dqO4E7T5vw9F.G";
+
 export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body as LoginInput;
 
-    if (!email || !password) {
-        return res.status(400).json({ error: "Missing email or password" });
-    }
-
     const user = await findByEmail(email);
-    if (!user) {
-        return res.status(401).json({ error: "Invalid credentials" });
-    }
-
-    const valid = await bcrypt.compare(password, user.password_hash);
-    if (!valid) {
+    const valid = await bcrypt.compare(password, user?.password_hash || DUMMY_HASH);
+    if (!user || !valid) {
         return res.status(401).json({ error: "Invalid credentials" });
     }
 

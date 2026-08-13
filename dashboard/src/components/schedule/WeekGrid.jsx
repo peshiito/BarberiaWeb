@@ -19,14 +19,19 @@ const isCurrentSlot = (slot, index, slots) => {
     return nowMinutes >= slotMinutes && nowMinutes < nextMinutes;
 };
 
-const WeekGrid = ({ weekDays, schedule, slots, appointments, onSelectAppointment }) => {
+const isPastSlot = (date, slot) => {
+    const [h, m] = slot.split(":").map(Number);
+    const slotDateTime = new Date(date);
+    slotDateTime.setHours(h, m, 0, 0);
+    return slotDateTime < new Date();
+};
+
+const WeekGrid = ({ weekDays, schedule, slots, appointments, onSelectAppointment, onSelectFreeSlot }) => {
     if (!schedule) {
         return (
-            <div className="week-grid-empty">
-                <p className="week-grid-empty-title">No abriste agenda para esta semana</p>
-                <p className="week-grid-empty-text">
-                    Andá a "Mis horarios" para definir tus días y horarios de atención.
-                </p>
+            <div className="state-box">
+                <span className="state-box-title">No abriste agenda para esta semana</span>
+                <p className="state-box-text">Andá a "Mis horarios" para definir tus días y horarios de atención.</p>
             </div>
         );
     }
@@ -41,7 +46,7 @@ const WeekGrid = ({ weekDays, schedule, slots, appointments, onSelectAppointment
     };
 
     return (
-        <div className="week-grid-wrapper">
+        <div className="week-grid-wrapper scroll-shadow-x">
             <div className="week-grid" style={{ gridTemplateColumns: `72px repeat(${weekDays.length}, 1fr)` }}>
                 <div className="week-grid-corner" />
                 {weekDays.map(day => {
@@ -72,13 +77,23 @@ const WeekGrid = ({ weekDays, schedule, slots, appointments, onSelectAppointment
                             }
 
                             if (!appointment) {
+                                if (isPastSlot(day.date, slot)) {
+                                    return (
+                                        <div key={`${day.iso}-${slot}`} className="week-grid-cell is-past">
+                                            <span className="week-grid-free-label">pasado</span>
+                                        </div>
+                                    );
+                                }
+
                                 return (
-                                    <div
+                                    <button
                                         key={`${day.iso}-${slot}`}
+                                        type="button"
                                         className={`week-grid-cell is-free ${isNow ? "is-now" : ""}`}
+                                        onClick={() => onSelectFreeSlot(day.iso, slot)}
                                     >
                                         <span className="week-grid-free-label">libre</span>
-                                    </div>
+                                    </button>
                                 );
                             }
 

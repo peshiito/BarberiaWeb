@@ -1,8 +1,11 @@
 .profile-layout {
     display: grid;
-    grid-template-columns: minmax(0, 420px) 1fr;
+    grid-template-columns: minmax(0, 420px) minmax(0, 460px);
     gap: var(--space-6);
     align-items: start;
+    /* Mismo motivo que .schedule-layout: dos formularios cortos no deben
+       estirarse a todo el ancho del dashboard-content en pantallas grandes. */
+    max-width: 920px;
 }
 
 .profile-form {
@@ -19,6 +22,12 @@
 
 @media (max-width: 900px) {
     .profile-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-form-row {
         grid-template-columns: 1fr;
     }
 }

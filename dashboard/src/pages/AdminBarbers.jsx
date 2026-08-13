@@ -26,6 +26,7 @@ const AdminBarbers = () => {
         earnings_split_percentage: 50,
     });
     const [feedback, setFeedback] = useState(null);
+    const [fieldErrors, setFieldErrors] = useState({});
 
     const loadUsers = async () => {
         setLoading(true);
@@ -54,6 +55,7 @@ const AdminBarbers = () => {
     const handleSubmit = async e => {
         e.preventDefault();
         setFeedback(null);
+        setFieldErrors({});
         setCreating(true);
 
         if (!formData.email || !formData.password) {
@@ -77,8 +79,14 @@ const AdminBarbers = () => {
             });
             loadUsers();
         } catch (err) {
-            const message = err.response?.data?.error || "No se pudo crear el barbero";
-            setFeedback({ type: "error", message });
+            const details = err.response?.data?.details;
+            if (Array.isArray(details) && details.length > 0) {
+                setFieldErrors(Object.fromEntries(details.map(d => [d.field, d.message])));
+                setFeedback({ type: "error", message: "Revisá los campos marcados." });
+            } else {
+                const message = err.response?.data?.error || "No se pudo crear el barbero";
+                setFeedback({ type: "error", message });
+            }
         } finally {
             setCreating(false);
         }
@@ -97,27 +105,31 @@ const AdminBarbers = () => {
                     <h3 className="card-section-title">Crear nuevo barbero</h3>
                     <form onSubmit={handleSubmit} className="barber-form">
                         <div className="barber-form-row">
-                            <FormField label="Nombre">
+                            <FormField label="Nombre" error={fieldErrors.first_name}>
                                 <input
                                     type="text"
                                     name="first_name"
                                     value={formData.first_name}
                                     onChange={handleInputChange}
+                                    minLength={2}
+                                    maxLength={100}
                                     required
                                 />
                             </FormField>
-                            <FormField label="Apellido">
+                            <FormField label="Apellido" error={fieldErrors.last_name}>
                                 <input
                                     type="text"
                                     name="last_name"
                                     value={formData.last_name}
                                     onChange={handleInputChange}
+                                    minLength={2}
+                                    maxLength={100}
                                     required
                                 />
                             </FormField>
                         </div>
 
-                        <FormField label="Email">
+                        <FormField label="Email" error={fieldErrors.email}>
                             <input
                                 type="email"
                                 name="email"
@@ -127,28 +139,33 @@ const AdminBarbers = () => {
                             />
                         </FormField>
 
-                        <FormField label="Contraseña">
+                        <FormField label="Contraseña" error={fieldErrors.password} hint="Mínimo 6 caracteres">
                             <input
                                 type="password"
                                 name="password"
                                 value={formData.password}
                                 onChange={handleInputChange}
+                                minLength={6}
+                                maxLength={100}
                                 required
                             />
                         </FormField>
 
                         <div className="barber-form-row">
-                            <FormField label="Precio del servicio">
-                                <input
-                                    type="number"
-                                    name="service_price"
-                                    value={formData.service_price}
-                                    onChange={handleInputChange}
-                                    min="0"
-                                    step="0.01"
-                                />
+                            <FormField label="Precio del servicio" error={fieldErrors.service_price}>
+                                <div className="input-affix">
+                                    <span className="input-affix-symbol">$</span>
+                                    <input
+                                        type="number"
+                                        name="service_price"
+                                        value={formData.service_price}
+                                        onChange={handleInputChange}
+                                        min="0"
+                                        step="0.01"
+                                    />
+                                </div>
                             </FormField>
-                            <FormField label="Porcentaje de división">
+                            <FormField label="Porcentaje de división" error={fieldErrors.earnings_split_percentage}>
                                 <input
                                     type="number"
                                     name="earnings_split_percentage"
@@ -160,11 +177,12 @@ const AdminBarbers = () => {
                             </FormField>
                         </div>
 
-                        <FormField label="Bio">
+                        <FormField label="Bio" error={fieldErrors.bio}>
                             <textarea
                                 name="bio"
                                 value={formData.bio}
                                 onChange={handleInputChange}
+                                maxLength={1000}
                                 rows="3"
                             />
                         </FormField>
