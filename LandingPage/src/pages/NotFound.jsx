@@ -10,8 +10,10 @@ export default function NotFound() {
     return (
         <section className="section section-ink not-found">
             <div className="container not-found-inner">
-                <div className="not-found-icon">
-                    <IconScissors width={40} height={40} />
+                <div className="not-found-icon-wrap">
+                    <div className="not-found-icon">
+                        <IconScissors width={40} height={40} />
+                    </div>
                 </div>
                 <p className="eyebrow" style={{ justifyContent: "center" }}>
                     Error 404

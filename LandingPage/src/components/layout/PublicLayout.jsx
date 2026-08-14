@@ -1,8 +1,10 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 
 export default function PublicLayout() {
+    const location = useLocation();
+
     return (
         <>
             <a href="#main-content" className="skip-link">
@@ -10,7 +12,9 @@ export default function PublicLayout() {
             </a>
             <Header />
             <main id="main-content">
-                <Outlet />
+                <div key={location.pathname} className="page-transition">
+                    <Outlet />
+                </div>
             </main>
             <Footer />
         </>

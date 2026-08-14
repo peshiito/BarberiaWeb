@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useBarbers } from "../../hooks/useBarbers";
 import BarberCard from "../BarberCard";
-import Skeleton from "../ui/Skeleton";
+import BarberCardSkeleton from "../ui/BarberCardSkeleton";
 import EmptyState from "../ui/EmptyState";
 import Button from "../ui/Button";
 import Reveal from "../ui/Reveal";
@@ -27,7 +27,7 @@ export default function BarbersTeaser() {
                 {status === "loading" && (
                     <div className="barbers-teaser-grid">
                         {Array.from({ length: 3 }).map((_, i) => (
-                            <Skeleton key={i} height="320px" />
+                            <BarberCardSkeleton key={i} />
                         ))}
                     </div>
                 )}

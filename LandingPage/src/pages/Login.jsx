@@ -6,6 +6,7 @@ import { getErrorMessage } from "../utils/apiError";
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import FormField from "../components/ui/FormField";
+import Reveal from "../components/ui/Reveal";
 import "./Login.css";
 
 export default function Login() {
@@ -57,6 +58,7 @@ export default function Login() {
                     vas a entrar directo.
                 </p>
 
+                <Reveal delay={100}>
                 <Card style={{ padding: "var(--space-5)", marginTop: "var(--space-6)" }}>
                     <form onSubmit={handleSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
                         <FormField id="login-first-name" label="Nombre" required error={errors.firstName}>
@@ -102,6 +104,7 @@ export default function Login() {
                         </Button>
                     </form>
                 </Card>
+                </Reveal>
             </div>
         </section>
     );

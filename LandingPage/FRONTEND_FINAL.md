@@ -14,6 +14,13 @@ Este documento reemplaza a `FRONTEND_FINAL_AUDIT.md` (sesión anterior). No repi
 - Cada slot que hoy usa ilustración en lugar de foto real quedó marcado con `{/* reemplazar por imagen real ... */}` en el JSX correspondiente.
 - Limpieza de comentarios: se sacaron los bloques largos de racional/documentación repartidos por el código: quedan comentarios cortos solo donde el código no explica algo por sí mismo.
 
+**Segundo ajuste (mismo día, pulido de animaciones/skeletons/SEO social):**
+
+- Skeletons con la forma real del contenido (`BarberCardSkeleton`, `AppointmentRowSkeleton`) en vez de un rectángulo genérico, en Barbers, BarbersTeaser y Account.
+- Transición de fade real al cambiar de ruta (`PublicLayout` + `.page-transition`), reveal-on-scroll extendido a Barbers, Branches, Login y Account, y entrada escalonada en Legal y en la lista de turnos de Account.
+- 404 con entrada escalonada (ícono, texto y botón por separado, sin pisar la rotación del ícono) y el `ErrorBoundary` reutilizando la misma transición de página.
+- Tags Open Graph/Twitter completados (`og:site_name`, `og:locale`, `og:image:alt`, `twitter:title/description` estáticos) — la imagen de vista previa sigue siendo un único archivo reemplazable (`public/assets/images/og/og-image.png`) sin tocar código.
+
 ---
 
 ## 1. Qué había y qué se hizo en esta sesión

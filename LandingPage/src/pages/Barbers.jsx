@@ -1,9 +1,10 @@
 import { useDocumentHead } from "../hooks/useDocumentHead";
 import { useBarbers } from "../hooks/useBarbers";
 import BarberCard from "../components/BarberCard";
-import Skeleton from "../components/ui/Skeleton";
+import BarberCardSkeleton from "../components/ui/BarberCardSkeleton";
 import EmptyState from "../components/ui/EmptyState";
 import ErrorState from "../components/ui/ErrorState";
+import Reveal from "../components/ui/Reveal";
 import { IconUser } from "../components/ui/icons";
 import "./Barbers.css";
 
@@ -24,7 +25,7 @@ export default function Barbers() {
                 {status === "loading" && (
                     <div className="barbers-page-grid">
                         {Array.from({ length: 6 }).map((_, i) => (
-                            <Skeleton key={i} height="360px" />
+                            <BarberCardSkeleton key={i} />
                         ))}
                     </div>
                 )}
@@ -38,11 +39,11 @@ export default function Barbers() {
                 )}
 
                 {status === "success" && barbers.length > 0 && (
-                    <div className="barbers-page-grid">
+                    <Reveal className="barbers-page-grid">
                         {barbers.map((barber) => (
                             <BarberCard key={barber.id} barber={barber} />
                         ))}
-                    </div>
+                    </Reveal>
                 )}
             </div>
         </section>

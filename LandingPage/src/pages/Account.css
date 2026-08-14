@@ -26,6 +26,27 @@
     gap: var(--space-3);
 }
 
+.account-appointments-in .appointment-row {
+    animation: appointment-row-in 500ms var(--ease-soft) both;
+}
+
+@keyframes appointment-row-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .account-appointments-in .appointment-row {
+        animation: none;
+    }
+}
+
 .appointment-row {
     padding: var(--space-4) var(--space-5);
     display: flex;

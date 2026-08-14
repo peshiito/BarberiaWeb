@@ -15,7 +15,7 @@ export default class ErrorBoundary extends Component {
     render() {
         if (this.state.hasError) {
             return (
-                <div className="container section" style={{ textAlign: "center" }}>
+                <div className="container section page-transition" style={{ textAlign: "center" }}>
                     <p className="eyebrow" style={{ justifyContent: "center" }}>
                         Error inesperado
                     </p>

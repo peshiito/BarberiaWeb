@@ -188,6 +188,18 @@ select {
   align-items: center;
   gap: var(--space-3);
   color: var(--text-on-dark-secondary);
+  animation: state-box-in 420ms var(--ease-soft) both;
+}
+
+@keyframes state-box-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .section-cream .state-box {
@@ -242,6 +254,23 @@ select {
     var(--cream-dim) 75%
   );
   background-size: 200% 100%;
+}
+
+/* ---- Page transition ---- */
+
+.page-transition {
+  animation: page-fade-in 420ms var(--ease-soft) both;
+}
+
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ---- Scroll reveal ---- */

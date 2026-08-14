@@ -9,10 +9,11 @@ import { parseISODateOnly, formatFullDate } from "../utils/date";
 import Card from "../components/ui/Card";
 import Badge from "../components/ui/Badge";
 import Button from "../components/ui/Button";
-import Skeleton from "../components/ui/Skeleton";
+import AppointmentRowSkeleton from "../components/ui/AppointmentRowSkeleton";
 import EmptyState from "../components/ui/EmptyState";
 import ErrorState from "../components/ui/ErrorState";
 import Modal from "../components/ui/Modal";
+import Reveal from "../components/ui/Reveal";
 import { IconCalendar } from "../components/ui/icons";
 import "./Account.css";
 
@@ -75,7 +76,7 @@ export default function Account() {
     return (
         <section className="section section-dark account-page">
             <div className="container">
-                <div className="account-header">
+                <Reveal className="account-header">
                     <div>
                         <p className="eyebrow">Mi cuenta</p>
                         <h1 className="booking-step-title">
@@ -85,7 +86,7 @@ export default function Account() {
                     <Button variant="secondary" size="sm" onClick={handleLogout}>
                         Cerrar sesión
                     </Button>
-                </div>
+                </Reveal>
 
                 <div className="account-section-head">
                     <h2 className="account-section-title">Mis turnos</h2>
@@ -97,7 +98,7 @@ export default function Account() {
                 {state.status === "loading" && (
                     <div className="account-appointments">
                         {Array.from({ length: 3 }).map((_, i) => (
-                            <Skeleton key={i} height="88px" />
+                            <AppointmentRowSkeleton key={i} />
                         ))}
                     </div>
                 )}
@@ -118,9 +119,9 @@ export default function Account() {
                 )}
 
                 {state.status === "success" && sorted.length > 0 && (
-                    <div className="account-appointments">
-                        {sorted.map((appointment) => (
-                            <Card key={appointment.id} className="appointment-row">
+                    <div className="account-appointments account-appointments-in">
+                        {sorted.map((appointment, i) => (
+                            <Card key={appointment.id} className="appointment-row" style={{ animationDelay: `${i * 60}ms` }}>
                                 <div className="appointment-row-info">
                                     <p className="appointment-row-date">{formatFullDate(parseISODateOnly(appointment.date))}</p>
                                     <p className="appointment-row-meta">

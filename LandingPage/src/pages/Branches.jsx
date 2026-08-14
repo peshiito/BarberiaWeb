@@ -1,8 +1,8 @@
 import { useDocumentHead } from "../hooks/useDocumentHead";
 import { BRANCHES } from "../data/branches";
-import Card from "../components/ui/Card";
 import EmptyState from "../components/ui/EmptyState";
 import Button from "../components/ui/Button";
+import Reveal from "../components/ui/Reveal";
 import { IconPin, IconPhone, IconClock } from "../components/ui/icons";
 import "./Branches.css";
 
@@ -25,8 +25,8 @@ export default function Branches() {
                     </div>
                 ) : (
                     <div className="branches-grid">
-                        {BRANCHES.map((branch) => (
-                            <Card key={branch.id} className="branch-card">
+                        {BRANCHES.map((branch, i) => (
+                            <Reveal delay={i * 80} key={branch.id} className="card branch-card">
                                 {branch.lat && branch.lng && (
                                     <iframe
                                         className="branch-card-map"
@@ -54,7 +54,7 @@ export default function Branches() {
                                         Cómo llegar
                                     </Button>
                                 )}
-                            </Card>
+                            </Reveal>
                         ))}
                     </div>
                 )}
