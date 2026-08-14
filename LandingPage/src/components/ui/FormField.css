@@ -1,0 +1,58 @@
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    text-align: left;
+}
+
+.form-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-on-dark-secondary);
+}
+
+.section-cream .form-label {
+    color: var(--text-on-light-secondary);
+}
+
+.form-required {
+    color: var(--burgundy-bright);
+}
+
+.form-input {
+    width: 100%;
+    background: var(--carbon);
+    border: 1px solid var(--border-on-dark-strong);
+    border-radius: var(--radius-sm);
+    color: var(--text-on-dark);
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-base);
+    transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.section-cream .form-input {
+    background: var(--paper);
+    border-color: var(--border-on-light);
+    color: var(--text-on-light);
+}
+
+.form-input:focus {
+    border-color: var(--brass);
+    outline: none;
+}
+
+.form-input[aria-invalid="true"] {
+    border-color: var(--burgundy-bright);
+}
+
+.form-hint {
+    font-size: var(--text-xs);
+    color: var(--text-on-dark-muted);
+}
+
+.form-error {
+    font-size: var(--text-xs);
+    color: var(--burgundy-bright);
+}

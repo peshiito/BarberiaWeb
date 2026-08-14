@@ -1,0 +1,132 @@
+.hero {
+    /*
+      Slot listo para una foto real (ver NECESIDADES_FRONTEND.md, "Hero
+      principal"): mientras no exista, --hero-image queda sin definir y el
+      panel editorial de la derecha (PlateFrame) hace de imagen. Para
+      activarla más adelante alcanza con setear, por ejemplo en Hero.jsx:
+      style={{ "--hero-image": `url(${heroPhotoUrl})` }} — no hace falta
+      tocar el markup ni esta hoja de estilos.
+    */
+    --hero-image: none;
+    position: relative;
+    overflow: hidden;
+    padding-block: var(--space-10) var(--space-9);
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    background-image: var(--hero-image);
+    background-size: cover;
+    background-position: center;
+}
+
+.hero-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    align-items: center;
+}
+
+.hero-texture {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+        radial-gradient(circle at 85% 20%, rgba(var(--brass-rgb), 0.16), transparent 55%),
+        repeating-linear-gradient(
+            115deg,
+            rgba(255, 255, 255, 0.02) 0px,
+            rgba(255, 255, 255, 0.02) 1px,
+            transparent 1px,
+            transparent 64px
+        );
+    pointer-events: none;
+}
+
+/* Cuando haya foto real, este scrim garantiza contraste WCAG AA para el texto */
+.hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(90deg, rgba(20, 19, 15, 0.88) 0%, rgba(20, 19, 15, 0.55) 65%, rgba(20, 19, 15, 0.3) 100%);
+    pointer-events: none;
+}
+
+.hero-inner {
+    max-width: 760px;
+}
+
+.hero-plate {
+    display: none;
+    animation: hero-rise var(--duration-slow) var(--ease-out) 220ms both;
+    filter: drop-shadow(0 0 40px rgba(var(--brass-rgb), 0.18));
+}
+
+.hero-plate.plate-frame-dark {
+    background: var(--carbon-hover);
+    border-color: var(--border-on-dark-strong);
+}
+
+.hero-headline {
+    margin-top: var(--space-4);
+    font-size: var(--text-4xl);
+    color: var(--text-on-dark);
+    animation: hero-rise var(--duration-slow) var(--ease-out) both;
+}
+
+.hero-subtext {
+    margin-top: var(--space-5);
+    font-size: var(--text-lg);
+    color: var(--text-on-dark-secondary);
+    max-width: 52ch;
+    animation: hero-rise var(--duration-slow) var(--ease-out) 80ms both;
+}
+
+.hero-actions {
+    margin-top: var(--space-7);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    animation: hero-rise var(--duration-slow) var(--ease-out) 160ms both;
+}
+
+@keyframes hero-rise {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (min-width: 768px) {
+    .hero-headline {
+        font-size: var(--text-6xl);
+    }
+}
+
+@media (min-width: 1024px) {
+    .hero-grid {
+        grid-template-columns: 1.15fr 0.85fr;
+    }
+
+    .hero-plate {
+        display: flex;
+        width: 100%;
+        max-width: 340px;
+        justify-self: end;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-headline,
+    .hero-subtext,
+    .hero-actions,
+    .hero-plate {
+        animation: none;
+    }
+}

@@ -1,0 +1,49 @@
+.barber-detail-back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--text-on-dark-secondary);
+    margin-bottom: var(--space-6);
+}
+
+.barber-detail-back:hover {
+    color: var(--brass-bright);
+}
+
+.barber-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-7);
+}
+
+.barber-detail-thumbs {
+    margin-top: var(--space-3);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-2);
+}
+
+.barber-detail-name {
+    margin-top: var(--space-3);
+    font-size: var(--text-4xl);
+}
+
+.barber-detail-bio {
+    margin-top: var(--space-5);
+    color: var(--text-on-dark-secondary);
+    max-width: 52ch;
+    line-height: 1.7;
+}
+
+.barber-detail-info .btn {
+    margin-top: var(--space-7);
+}
+
+@media (min-width: 768px) {
+    .barber-detail-grid {
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+    }
+}

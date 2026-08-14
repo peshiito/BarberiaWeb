@@ -24,7 +24,19 @@ app.use(
     }),
 );
 app.use(express.json({ limit: "1mb" }));
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// Las fotos de barbero son recursos públicos pensados para embeberse en
+// frontends de otro origen (landing pública, dashboard). helmet() aplica
+// Cross-Origin-Resource-Policy: same-origin por defecto a toda la app, lo
+// que bloquea silenciosamente <img> cross-origin incluso con CORS habilitado.
+// Se relaja solo para /uploads, sin tocar el resto de los headers de la API.
+app.use(
+    "/uploads",
+    (req, res, next) => {
+        res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+        next();
+    },
+    express.static(path.join(__dirname, "uploads")),
+);
 
 app.get("/health", (_req, res) => {
     res.json({ status: "ok" });

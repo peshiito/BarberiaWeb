@@ -1,0 +1,211 @@
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(28, 27, 23, 0.72);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--duration-base) var(--ease-out), background-color var(--duration-base) var(--ease-out);
+}
+
+.site-header.is-scrolled {
+    background: rgba(20, 19, 15, 0.92);
+    border-bottom-color: var(--border-on-dark);
+}
+
+.site-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-height-scrolled);
+    gap: var(--space-3);
+}
+
+.site-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.site-logo-word {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-on-dark);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.brand-mark {
+    flex-shrink: 0;
+    transition: transform var(--duration-base) var(--ease-out);
+}
+
+.site-logo:hover .brand-mark {
+    transform: rotate(-8deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .site-logo:hover .brand-mark {
+        transform: none;
+    }
+}
+
+.site-nav {
+    display: none;
+    align-items: center;
+    gap: var(--space-6);
+}
+
+.site-nav-link {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    letter-spacing: 0.04em;
+    color: var(--text-on-dark-secondary);
+    padding-block: var(--space-2);
+    position: relative;
+    transition: color var(--duration-fast) var(--ease-out);
+}
+
+.site-nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--brass);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--duration-base) var(--ease-out);
+}
+
+.site-nav-link:hover,
+.site-nav-link.is-active {
+    color: var(--text-on-dark);
+}
+
+.site-nav-link.is-active::after {
+    transform: scaleX(1);
+}
+
+.site-header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-shrink: 0;
+}
+
+.site-header-actions .btn {
+    padding-inline: var(--space-3);
+    white-space: nowrap;
+}
+
+/* "turno" se oculta en el botón del header por debajo de 400px — el link de
+   /reservar sigue diciendo "Reservar turno" en el resto del sitio, esto es
+   puramente para que el header quepa en pantallas muy angostas (320-390px)
+   sin overflow horizontal. */
+.site-header-cta-suffix {
+    display: inline;
+}
+
+@media (max-width: 399px) {
+    .site-header-cta-suffix {
+        display: none;
+    }
+}
+
+.site-account-link {
+    display: none;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--text-on-dark-secondary);
+    transition: color var(--duration-fast) var(--ease-out);
+}
+
+.site-account-link:hover {
+    color: var(--brass-bright);
+}
+
+.site-menu-toggle {
+    background: none;
+    border: none;
+    color: var(--text-on-dark);
+    padding: var(--space-1);
+    cursor: pointer;
+    display: flex;
+    flex-shrink: 0;
+}
+
+.mobile-nav {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-3) var(--space-5) var(--space-5);
+    background: var(--ink);
+    border-bottom: 1px solid var(--border-on-dark);
+    animation: mobile-nav-in var(--duration-base) var(--ease-out);
+}
+
+.mobile-nav-link {
+    padding: var(--space-3) 0;
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    text-transform: uppercase;
+    color: var(--text-on-dark-secondary);
+    border-bottom: 1px solid var(--border-on-dark);
+}
+
+.mobile-nav-link:last-child {
+    border-bottom: none;
+}
+
+.mobile-nav-link.is-active {
+    color: var(--brass-bright);
+}
+
+@keyframes mobile-nav-in {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (min-width: 480px) {
+    .site-logo {
+        font-size: var(--text-xl);
+    }
+
+    .site-header-actions {
+        gap: var(--space-4);
+    }
+}
+
+@media (min-width: 1024px) {
+    .site-nav {
+        display: flex;
+    }
+
+    .site-account-link {
+        display: flex;
+    }
+
+    .site-menu-toggle {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mobile-nav {
+        animation: none;
+    }
+}

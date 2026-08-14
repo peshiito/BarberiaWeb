@@ -1,0 +1,50 @@
+.branches-grid {
+    margin-top: var(--space-7);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+}
+
+.branch-card {
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.branch-card-map {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
+    border-radius: var(--radius-md);
+}
+
+.branch-card-name {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    text-transform: uppercase;
+}
+
+.branch-card-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--text-on-dark-secondary);
+}
+
+.branch-card-row svg {
+    color: var(--brass);
+    flex-shrink: 0;
+}
+
+.branch-card .btn {
+    align-self: flex-start;
+    margin-top: var(--space-2);
+}
+
+@media (min-width: 768px) {
+    .branches-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

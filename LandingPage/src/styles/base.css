@@ -1,0 +1,263 @@
+@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--carbon);
+  color: var(--text-on-dark);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+img,
+picture,
+video,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+p {
+  margin: 0;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* Focus visibility — keyboard navigation must always be legible */
+:focus-visible {
+  outline: 2px solid var(--brass-bright);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+::selection {
+  background: rgba(var(--brass-rgb), 0.35);
+  color: var(--text-on-dark);
+}
+
+/* ---- Layout utilities ---- */
+
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding-inline: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-inline: var(--space-7);
+  }
+}
+
+.section {
+  padding-block: var(--space-9);
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding-block: var(--space-7);
+  }
+}
+
+.section-dark {
+  background: var(--carbon);
+  color: var(--text-on-dark);
+}
+
+.section-ink {
+  background: var(--ink);
+  color: var(--text-on-dark);
+}
+
+.section-cream {
+  background: var(--cream);
+  color: var(--text-on-light);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+/* --brass sobre --cream no llega a AA (2.47:1) — se usa la variante oscurecida */
+.section-cream .eyebrow {
+  color: var(--brass-ink);
+}
+
+.eyebrow::before {
+  content: "";
+  width: 20px;
+  height: 1px;
+  background: currentColor;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -48px;
+  left: var(--space-4);
+  z-index: 200;
+  background: var(--brass);
+  color: var(--ink);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  transition: top var(--duration-fast) var(--ease-out);
+}
+
+.skip-link:focus {
+  top: var(--space-4);
+}
+
+/* ---- Empty / error state box (mirrors dashboard's .state-box pattern) ---- */
+
+.state-box {
+  border: 1px dashed var(--border-on-dark-strong);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8) var(--space-5);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--text-on-dark-secondary);
+}
+
+.section-cream .state-box {
+  border-color: var(--border-on-light);
+  color: var(--text-on-light-secondary);
+}
+
+.state-box-title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  text-transform: uppercase;
+  color: var(--text-on-dark);
+}
+
+.section-cream .state-box-title {
+  color: var(--text-on-light);
+}
+
+.state-box-text {
+  font-size: var(--text-sm);
+  max-width: 40ch;
+}
+
+/* ---- Skeleton shimmer ---- */
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--carbon-elevated) 25%,
+    var(--carbon-hover) 50%,
+    var(--carbon-elevated) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer var(--duration-shimmer) ease-in-out infinite;
+  border-radius: var(--radius-md);
+}
+
+.section-cream .skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--cream-dim) 25%,
+    var(--border-on-light) 50%,
+    var(--cream-dim) 75%
+  );
+  background-size: 200% 100%;
+}
+
+/* ---- Reduced motion ---- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .skeleton {
+    animation: none;
+    background: var(--carbon-elevated);
+  }
+}

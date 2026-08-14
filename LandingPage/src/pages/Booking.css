@@ -1,0 +1,290 @@
+.booking-page {
+    min-height: 70vh;
+}
+
+.booking-shell {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.booking-header {
+    margin-bottom: var(--space-6);
+}
+
+.booking-step-title {
+    margin-top: var(--space-3);
+    font-size: var(--text-2xl);
+}
+
+.booking-step-lede {
+    margin-top: var(--space-2);
+    color: var(--text-on-dark-secondary);
+}
+
+.booking-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+}
+
+.option-grid {
+    margin-top: var(--space-6);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+}
+
+@media (min-width: 560px) {
+    .option-grid.option-grid-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .option-grid.option-grid-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.option-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+    text-align: left;
+    width: 100%;
+    background: var(--carbon-elevated);
+    border: 1px solid var(--border-on-dark);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    cursor: pointer;
+    transition: border-color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+}
+
+.option-btn:hover {
+    border-color: var(--brass-dim);
+}
+
+.option-btn.is-selected {
+    border-color: var(--brass);
+    background: rgba(var(--brass-rgb), 0.08);
+}
+
+.option-btn-title {
+    font-family: var(--font-display);
+    font-size: var(--text-md);
+    text-transform: uppercase;
+    color: var(--text-on-dark);
+}
+
+.option-btn-meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-on-dark-muted);
+}
+
+.option-btn-avatar {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: var(--radius-full);
+}
+
+.option-grid-3 .option-btn {
+    flex-direction: row;
+    align-items: center;
+}
+
+.day-picker {
+    margin-top: var(--space-6);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.day-picker-nav {
+    background: none;
+    border: 1px solid var(--border-on-dark-strong);
+    border-radius: var(--radius-sm);
+    color: var(--text-on-dark-secondary);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.day-picker-nav:hover:not(:disabled) {
+    border-color: var(--brass);
+    color: var(--brass-bright);
+}
+
+.day-picker-nav:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.day-picker-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: var(--space-1);
+    flex: 1;
+}
+
+.day-pill {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-1);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-on-dark);
+    background: var(--carbon-elevated);
+    color: var(--text-on-dark-secondary);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    transition: border-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+}
+
+.day-pill-weekday {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+}
+
+.day-pill-number {
+    font-size: var(--text-md);
+    font-family: var(--font-body);
+    font-weight: 600;
+}
+
+.day-pill:hover:not(:disabled) {
+    border-color: var(--brass-dim);
+}
+
+.day-pill.is-selected {
+    border-color: var(--brass);
+    background: rgba(var(--brass-rgb), 0.14);
+    color: var(--brass-bright);
+}
+
+.day-pill:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.slot-grid {
+    margin-top: var(--space-6);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-2);
+}
+
+@media (min-width: 480px) {
+    .slot-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.slot-btn {
+    padding: var(--space-3) var(--space-2);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-on-dark);
+    background: var(--carbon-elevated);
+    color: var(--text-on-dark);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: border-color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+}
+
+.slot-btn:hover {
+    border-color: var(--brass);
+    transform: translateY(-1px);
+}
+
+.slot-btn.is-selected {
+    background: var(--brass);
+    border-color: var(--brass);
+    color: var(--ink);
+}
+
+.booking-nav {
+    margin-top: var(--space-8);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.booking-confirm-list {
+    margin-top: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    background: var(--carbon-elevated);
+    border: 1px solid var(--border-on-dark);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+}
+
+.booking-confirm-row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    font-size: var(--text-sm);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--border-on-dark);
+}
+
+.booking-confirm-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.booking-confirm-label {
+    color: var(--text-on-dark-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+}
+
+.booking-confirm-value {
+    color: var(--text-on-dark);
+    font-weight: 600;
+    text-align: right;
+}
+
+.booking-success {
+    text-align: center;
+    padding-block: var(--space-8);
+}
+
+.booking-success-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto var(--space-5);
+    border-radius: var(--radius-full);
+    background: rgba(var(--sage-rgb), 0.14);
+    color: var(--sage-bright);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: success-pop var(--duration-slow) var(--ease-out);
+}
+
+@keyframes success-pop {
+    from {
+        transform: scale(0.6);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .booking-success-icon {
+        animation: none;
+    }
+}

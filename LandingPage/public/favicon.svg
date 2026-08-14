@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Oficio Barbería">
+  <circle cx="60" cy="60" r="57" fill="#1c1b17" stroke="#b8925a" stroke-width="4"/>
+  <circle cx="60" cy="60" r="31" fill="none" stroke="#b8925a" stroke-width="10"/>
+  <line x1="27" y1="85" x2="93" y2="35" stroke="#a84747" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="93" cy="35" r="5" fill="#d4ab73"/>
+  <circle cx="27" cy="85" r="5" fill="#d4ab73"/>
+</svg>

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# Sitemap: pendiente hasta contar con el dominio de producción definitivo
+# (ver NECESIDADES_FRONTEND.md, sección SEO). Un sitemap.xml requiere URLs
+# absolutas con dominio real, no se puede generar con datos de placeholder.

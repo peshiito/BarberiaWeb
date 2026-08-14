@@ -1,0 +1,25 @@
+.card {
+    background: var(--carbon-elevated);
+    border: 1px solid var(--border-on-dark);
+    border-radius: var(--radius-lg);
+    transition: border-color var(--duration-base) var(--ease-out),
+        transform var(--duration-base) var(--ease-out);
+}
+
+.section-cream .card {
+    background: var(--paper);
+    border-color: var(--border-on-light);
+}
+
+a.card:hover,
+.card.card-hover:hover {
+    border-color: var(--brass);
+    transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    a.card:hover,
+    .card.card-hover:hover {
+        transform: none;
+    }
+}

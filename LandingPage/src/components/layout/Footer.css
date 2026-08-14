@@ -1,0 +1,84 @@
+.site-footer {
+    background: var(--ink);
+    color: var(--text-on-dark-secondary);
+    border-top: 1px solid var(--border-on-dark);
+}
+
+.site-footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    padding-block: var(--space-8);
+}
+
+.site-footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.site-footer-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-on-dark);
+}
+
+.site-footer-tagline {
+    font-size: var(--text-sm);
+    max-width: 32ch;
+}
+
+.site-footer-whatsapp {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--sage-bright);
+    width: fit-content;
+}
+
+.site-footer-whatsapp:hover {
+    color: var(--text-on-dark);
+}
+
+.site-footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.site-footer-heading {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: var(--space-1);
+}
+
+.site-footer-col a {
+    font-size: var(--text-sm);
+    transition: color var(--duration-fast) var(--ease-out);
+}
+
+.site-footer-col a:hover {
+    color: var(--text-on-dark);
+}
+
+.site-footer-bottom {
+    border-top: 1px solid var(--border-on-dark);
+    padding-block: var(--space-4);
+    font-size: var(--text-xs);
+    font-family: var(--font-mono);
+}
+
+@media (min-width: 768px) {
+    .site-footer-grid {
+        grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    }
+}

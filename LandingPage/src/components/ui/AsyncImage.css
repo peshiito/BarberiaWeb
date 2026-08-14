@@ -1,0 +1,71 @@
+.async-image {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: var(--carbon-elevated);
+    border-radius: var(--radius-md);
+}
+
+.section-cream .async-image {
+    background: var(--cream-dim);
+}
+
+.async-image-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity var(--duration-slow) var(--ease-out);
+}
+
+.async-image-img.is-loaded {
+    opacity: 1;
+}
+
+.async-image-skeleton {
+    position: absolute;
+    inset: 0;
+    border-radius: 0;
+}
+
+.async-image-fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-on-dark-muted);
+}
+
+.async-image-fallback svg {
+    width: 28%;
+    height: 28%;
+    max-width: 48px;
+    max-height: 48px;
+}
+
+.async-image-monogram {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        radial-gradient(circle at 30% 20%, rgba(var(--brass-rgb), 0.22), transparent 60%),
+        var(--carbon-elevated);
+}
+
+.section-cream .async-image-monogram {
+    background:
+        radial-gradient(circle at 30% 20%, rgba(var(--brass-rgb), 0.16), transparent 60%),
+        var(--cream-dim);
+}
+
+.async-image-monogram span {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    letter-spacing: 0.04em;
+    color: var(--brass-bright);
+}

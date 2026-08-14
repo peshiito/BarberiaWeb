@@ -1,0 +1,63 @@
+.step-indicator {
+    display: flex;
+    gap: var(--space-2);
+    overflow-x: auto;
+    padding-bottom: var(--space-2);
+}
+
+.step-indicator-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-shrink: 0;
+    color: var(--text-on-dark-muted);
+}
+
+.step-indicator-item:not(:last-child)::after {
+    content: "";
+    width: 24px;
+    height: 1px;
+    background: var(--border-on-dark-strong);
+    margin-left: var(--space-2);
+}
+
+.step-indicator-bullet {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-on-dark-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    flex-shrink: 0;
+    transition: border-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+}
+
+.step-indicator-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.step-current .step-indicator-bullet {
+    border-color: var(--brass);
+    color: var(--brass-bright);
+}
+
+.step-current .step-indicator-label {
+    color: var(--text-on-dark);
+}
+
+.step-done .step-indicator-bullet {
+    background: var(--brass);
+    border-color: var(--brass);
+    color: var(--ink);
+}
+
+.step-done .step-indicator-label {
+    color: var(--text-on-dark-secondary);
+}

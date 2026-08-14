@@ -1,0 +1,12 @@
+.branches-teaser-inner {
+    text-align: center;
+    max-width: 560px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.branches-teaser-inner .eyebrow {
+    justify-content: center;
+}

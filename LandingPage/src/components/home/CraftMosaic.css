@@ -1,0 +1,55 @@
+.craft-mosaic-grid {
+    margin-top: var(--space-7);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+}
+
+.craft-mosaic-plate {
+    aspect-ratio: 1 / 1;
+    animation: craft-plate-in var(--duration-slow) var(--ease-out) both;
+}
+
+.craft-mosaic-plate:nth-child(1) { animation-delay: 0ms; }
+.craft-mosaic-plate:nth-child(2) { animation-delay: 60ms; }
+.craft-mosaic-plate:nth-child(3) { animation-delay: 120ms; }
+.craft-mosaic-plate:nth-child(4) { animation-delay: 180ms; }
+.craft-mosaic-plate:nth-child(5) { animation-delay: 240ms; }
+.craft-mosaic-plate:nth-child(6) { animation-delay: 300ms; }
+
+.craft-mosaic-plate:hover .plate-frame-art {
+    transform: scale(1.06);
+}
+
+.plate-frame-art {
+    transition: transform var(--duration-base) var(--ease-out);
+}
+
+@keyframes craft-plate-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (min-width: 640px) {
+    .craft-mosaic-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .craft-mosaic-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .craft-mosaic-plate {
+        animation: none;
+    }
+}
