@@ -19,8 +19,6 @@ import "./Account.css";
 const STATUS_TONE = { active: "accent", cancelled: "danger", completed: "success" };
 const STATUS_LABEL = { active: "Confirmado", cancelled: "Cancelado", completed: "Completado" };
 
-// price llega como DECIMAL de MySQL (puede tener 1 o 2 decimales, ej. 25.5):
-// toLocaleString sin opciones de precisión mostraba "$25,5" en vez de "$25,50".
 const currencyFormatter = new Intl.NumberFormat("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export default function Account() {
@@ -45,9 +43,6 @@ export default function Account() {
         fetchAndSet();
     }
 
-    // El estado inicial ya es "loading", así que el efecto de montaje solo
-    // necesita disparar el fetch (el setState real ocurre en las callbacks
-    // de la promesa, no de forma síncrona en el cuerpo del efecto).
     useEffect(fetchAndSet, []);
 
     function barberName(barberId) {

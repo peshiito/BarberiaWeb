@@ -4,6 +4,16 @@ Fecha: 2026-08-13/14 · Estado: **LISTO PARA PRODUCCIÓN** (con los pendientes d
 
 Este documento reemplaza a `FRONTEND_FINAL_AUDIT.md` (sesión anterior). No repite lo ya construido entonces salvo cuando cambió; se centra en el trabajo de esta sesión: cerrar el frontend público a nivel producción sobre una base que ya estaba funcionalmente completa e integrada al backend real.
 
+**Ajuste posterior (mismo día, feedback visual del usuario sobre una referencia real de barbería):**
+
+- Hero rediseñado a un tratamiento full-bleed (silueta grande del sillón de fondo, no un panel chico en un cuadro).
+- Sección Servicios sin precios (el precio se confirma al reservar, no en la Home); pasó de grilla de 6 tarjetas a una lista asimétrica junto a una placa ilustrada.
+- "Por qué elegirnos" y "El detalle que se nota" se fusionaron en una sola franja compacta de 4 ítems (ícono + texto corto), reduciendo la repetición de grillas de tarjetas que hacía sentir la página monótona.
+- "Quiénes somos" ampliado con más historia/filosofía inventada y una fila de estadísticas (2014 · 9 barberos · 0 cortes apurados).
+- Reveal-on-scroll real (`useReveal` + `<Reveal>`, IntersectionObserver) en todas las secciones de Home — antes solo el Hero animaba al cargar, el resto aparecía sin transición.
+- Cada slot que hoy usa ilustración en lugar de foto real quedó marcado con `{/* reemplazar por imagen real ... */}` en el JSX correspondiente.
+- Limpieza de comentarios: se sacaron los bloques largos de racional/documentación repartidos por el código: quedan comentarios cortos solo donde el código no explica algo por sí mismo.
+
 ---
 
 ## 1. Qué había y qué se hizo en esta sesión

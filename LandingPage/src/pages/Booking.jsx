@@ -44,17 +44,10 @@ export default function Booking() {
     const selectedBarber = barbers.find((b) => b.id === barberId);
     const selectedService = SERVICES.find((s) => s.id === serviceId);
 
-    // El paso "Cuenta" se salta una vez autenticado, pero la navegación se
-    // calcula siempre sobre la lista fija STEPS (por nombre, no por índice
-    // numérico): si tradujéramos "adelante" a un índice dentro de una lista
-    // que se achica justo al loguearse, el paso recién completado podía
-    // apuntar fuera de rango y dejar la pantalla en blanco.
+    // Navegación por nombre de paso, no por índice: STEPS se achica al loguearse.
     const visibleSteps = isAuthenticated ? STEPS.filter((s) => s !== "Cuenta") : STEPS;
     const currentIndex = visibleSteps.indexOf(currentStepName);
 
-    // Mueve el foco al contenido del paso nuevo en cada cambio: sin esto, un
-    // usuario de teclado/lector de pantalla queda con el foco en un botón
-    // "Continuar" que ya no pertenece al paso visible.
     const stepContentRef = useRef(null);
     useEffect(() => {
         stepContentRef.current?.focus();

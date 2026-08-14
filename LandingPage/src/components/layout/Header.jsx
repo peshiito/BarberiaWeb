@@ -19,9 +19,7 @@ export default function Header() {
     const { isAuthenticated } = useClientAuth();
     const location = useLocation();
 
-    // Cierra el menú móvil al cambiar de ruta, ajustando el estado durante el
-    // render (en vez de un efecto) siguiendo el patrón recomendado por React
-    // para derivar estado a partir de un cambio de props/route.
+    // Cierra el menú al cambiar de ruta (derivado en render, no en un efecto).
     const [menuOpenForPathname, setMenuOpenForPathname] = useState(location.pathname);
     if (menuOpenForPathname !== location.pathname) {
         setMenuOpenForPathname(location.pathname);

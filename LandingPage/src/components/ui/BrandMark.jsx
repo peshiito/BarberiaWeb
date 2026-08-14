@@ -1,10 +1,3 @@
-/*
-  Monograma provisional de marca — ver NECESIDADES_FRONTEND.md, sección Marca.
-  Un solo lugar para reemplazar por un isotipo definitivo más adelante: este
-  componente es el único punto donde vive el trazado del logo (Header, Footer,
-  favicon y la imagen OG se generan a partir del mismo mark, ver
-  scripts/generate-brand-assets.mjs).
-*/
 export default function BrandMark({ size = 32, className = "" }) {
     return (
         <svg

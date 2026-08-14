@@ -2,13 +2,14 @@ import { Link } from "react-router-dom";
 import { BRANCHES } from "../../data/branches";
 import Button from "../ui/Button";
 import EmptyState from "../ui/EmptyState";
+import Reveal from "../ui/Reveal";
 import { IconPin } from "../ui/icons";
 import "./BranchesTeaser.css";
 
 export default function BranchesTeaser() {
     return (
         <section className="section section-cream">
-            <div className="container branches-teaser-inner">
+            <Reveal as="div" className="container branches-teaser-inner">
                 <p className="eyebrow">Sucursales</p>
                 <h2 className="section-title">Dónde encontrarnos</h2>
 
@@ -27,7 +28,7 @@ export default function BranchesTeaser() {
                 <Button as={Link} to="/sucursales" variant="secondary" style={{ marginTop: "var(--space-6)" }}>
                     Ver sucursales
                 </Button>
-            </div>
+            </Reveal>
         </section>
     );
 }

@@ -1,10 +1,4 @@
-/*
-  Oficio Barbería — Design tokens (frontend público)
-  Paleta heredada y adaptada de dashboard/src/styles/token.css (brass/burgundy/sage
-  sobre carbón) hacia un registro más editorial/premium: se agrega "crema" como
-  superficie clara para alternar secciones, y se mantiene el dorado apagado (brass)
-  como único acento estratégico. No se inventan colores nuevos fuera de esta familia.
-*/
+/* Design tokens — paleta brass/burgundy/sage sobre carbón, heredada del Dashboard. */
 
 :root {
   /* ---- Superficies oscuras (heredadas de dashboard) ---- */
@@ -92,6 +86,7 @@
 
   /* ---- Motion (heredado de dashboard) ---- */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
   --duration-fast: 120ms;
   --duration-base: 220ms;
   --duration-slow: 420ms;

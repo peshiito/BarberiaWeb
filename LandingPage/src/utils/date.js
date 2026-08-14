@@ -1,7 +1,4 @@
-// Convenciones alineadas 1:1 con dashboard/src/utils/date.js — el backend
-// devuelve work_days como CSV de nombres de día en español sin tildes
-// (ej: "lunes,martes,miercoles"), indexado por Date.getDay() (0=domingo).
-
+// work_days llega como CSV en español sin tildes (ej: "lunes,martes"), indexado por Date.getDay() (0=domingo).
 export const DAY_NAMES = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
 
 const DAY_LABELS_SHORT = {

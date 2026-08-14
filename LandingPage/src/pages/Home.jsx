@@ -4,7 +4,6 @@ import Hero from "../components/home/Hero";
 import IntroSection from "../components/home/IntroSection";
 import ServicesSection from "../components/home/ServicesSection";
 import WhyUsSection from "../components/home/WhyUsSection";
-import CraftMosaic from "../components/home/CraftMosaic";
 import BarbersTeaser from "../components/home/BarbersTeaser";
 import GallerySection from "../components/home/GallerySection";
 import BranchesTeaser from "../components/home/BranchesTeaser";
@@ -22,7 +21,6 @@ export default function Home() {
             <IntroSection />
             <ServicesSection />
             <WhyUsSection />
-            <CraftMosaic />
             <BarbersTeaser />
             <GallerySection />
             <BranchesTeaser />

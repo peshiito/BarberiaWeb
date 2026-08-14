@@ -22,10 +22,6 @@ export function ClientAuthProvider({ children }) {
         setClient(null);
     }, []);
 
-    // Un 401 del backend ya limpia localStorage (ver services/api.js), pero
-    // sin esto el estado de React seguiría creyendo que hay sesión activa
-    // hasta el próximo login/logout manual — las rutas protegidas no
-    // redirigirían a /ingresar cuando el token expira en medio del uso.
     useEffect(() => {
         function handleExpired() {
             setClient(null);

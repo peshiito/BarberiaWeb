@@ -4,6 +4,7 @@ import BarberCard from "../BarberCard";
 import Skeleton from "../ui/Skeleton";
 import EmptyState from "../ui/EmptyState";
 import Button from "../ui/Button";
+import Reveal from "../ui/Reveal";
 import { IconUser } from "../ui/icons";
 import "./BarbersTeaser.css";
 
@@ -13,7 +14,7 @@ export default function BarbersTeaser() {
     return (
         <section className="section section-dark">
             <div className="container">
-                <div className="barbers-teaser-head">
+                <Reveal className="barbers-teaser-head">
                     <div>
                         <p className="eyebrow">Equipo</p>
                         <h2 className="section-title">Conocé a los barberos</h2>
@@ -21,7 +22,7 @@ export default function BarbersTeaser() {
                     <Button as={Link} to="/barberos" variant="secondary">
                         Ver a todos
                     </Button>
-                </div>
+                </Reveal>
 
                 {status === "loading" && (
                     <div className="barbers-teaser-grid">
@@ -38,11 +39,11 @@ export default function BarbersTeaser() {
                 )}
 
                 {status === "success" && barbers.length > 0 && (
-                    <div className="barbers-teaser-grid">
+                    <Reveal delay={100} className="barbers-teaser-grid">
                         {barbers.slice(0, 3).map((barber) => (
                             <BarberCard key={barber.id} barber={barber} />
                         ))}
-                    </div>
+                    </Reveal>
                 )}
             </div>
         </section>

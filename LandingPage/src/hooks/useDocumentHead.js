@@ -22,12 +22,6 @@ function setCanonical(href) {
     el.setAttribute("href", href);
 }
 
-// Gestión mínima de <title>/meta sin agregar react-helmet: alcanza con
-// efectos imperativos, ya que solo hay que setear un puñado de tags por página.
-//
-// El canonical se arma con window.location (no un dominio fijo inventado):
-// hoy resuelve correctamente contra localhost en desarrollo y automáticamente
-// contra el dominio real el día que se despliegue, sin tocar este archivo.
 export function useDocumentHead({ title, description, noIndex = false, image = "/assets/images/og/og-image.png" }) {
     useEffect(() => {
         const fullTitle = title ? `${title} · ${BRAND.name}` : BRAND.name;

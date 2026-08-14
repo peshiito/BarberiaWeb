@@ -1,13 +1,5 @@
 import "./PlateFrame.css";
 
-/*
-  Sistema de "placas editoriales": sustituye la fotografía que no existe hoy
-  (ver NECESIDADES_FRONTEND.md, sección Imágenes) por ilustraciones de línea
-  propias, presentadas como láminas de catálogo/blueprint clásico de
-  barbería — coherente con el marco de esquinas ya usado en la imagen OG.
-  Reemplazar por fotografía real más adelante es tan simple como cambiar el
-  children de <PlateFrame> por un <img>.
-*/
 export default function PlateFrame({ number, caption, children, tone = "dark", className = "" }) {
     return (
         <div className={`plate-frame plate-frame-${tone} ${className}`.trim()}>

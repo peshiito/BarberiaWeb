@@ -2,9 +2,7 @@ import { useState } from "react";
 import { IconImageBroken } from "./icons";
 import "./AsyncImage.css";
 
-// `initials` habilita un placeholder elegante (monograma) para el caso
-// esperado de "todavía no hay foto" — distinto del ícono de error, que
-// queda reservado para una carga que realmente falló (URL rota).
+// `initials` muestra un monograma en vez del ícono de error cuando no hay foto.
 export default function AsyncImage({ src, alt, className = "", aspectRatio = "1 / 1", eager = false, initials }) {
     const [status, setStatus] = useState(src ? "loading" : "empty");
 

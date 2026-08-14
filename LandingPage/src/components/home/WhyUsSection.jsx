@@ -1,46 +1,30 @@
+import { IconRazor, IconScissors, IconClock, IconChair } from "../ui/icons";
+import Reveal from "../ui/Reveal";
 import "./WhyUsSection.css";
 
 const REASONS = [
-    {
-        title: "Oficio real",
-        text: "Técnicas de barbería clásica —tijera, navaja, toalla caliente— que no se aprenden en un curso de fin de semana.",
-    },
-    {
-        title: "Profesionales con trayectoria",
-        text: "Cada barbero construye su propia cartera de clientes gracias al detalle, no a la rotación.",
-    },
-    {
-        title: "Sin apuro",
-        text: "Un turno es un turno: tu horario está reservado y te atendemos con el tiempo que el corte necesita.",
-    },
-    {
-        title: "Ambiente de barrio",
-        text: "Café, buena música y charla si tenés ganas. Silencio si no. La barbería como espacio, no como trámite.",
-    },
+    { icon: IconRazor, title: "Afeitado a navaja", text: "Técnica clásica, toalla caliente incluida." },
+    { icon: IconScissors, title: "Corte a tijera", text: "Sin apuro, con el tiempo que el corte necesita." },
+    { icon: IconClock, title: "Turno puntual", text: "Reservás la hora y te esperamos a esa hora." },
+    { icon: IconChair, title: "Ambiente de barrio", text: "Café, charla si querés, silencio si no." },
 ];
 
 export default function WhyUsSection() {
     return (
-        <section className="section section-cream">
-            <div className="container why-us-grid">
-                <div className="why-us-intro">
+        <section className="section section-cream why-us">
+            <div className="container">
+                <Reveal>
                     <p className="eyebrow">Por qué elegirnos</p>
                     <h2 className="section-title">Lo que nos distingue</h2>
-                    <p className="section-lede">
-                        No es solo el corte. Es la técnica, el tiempo que le dedicamos y el trato que recibís desde que
-                        cruzás la puerta.
-                    </p>
-                </div>
+                </Reveal>
 
-                <ul className="why-us-list">
-                    {REASONS.map((reason, i) => (
-                        <li key={reason.title} className="why-us-item">
-                            <span className="why-us-index">{String(i + 1).padStart(2, "0")}</span>
-                            <div>
-                                <p className="why-us-item-title">{reason.title}</p>
-                                <p className="why-us-item-text">{reason.text}</p>
-                            </div>
-                        </li>
+                <ul className="why-us-strip">
+                    {REASONS.map(({ icon: Icon, title, text }, i) => (
+                        <Reveal as="li" delay={i * 80} key={title} className="why-us-item">
+                            <Icon className="why-us-icon" />
+                            <p className="why-us-item-title">{title}</p>
+                            <p className="why-us-item-text">{text}</p>
+                        </Reveal>
                     ))}
                 </ul>
             </div>

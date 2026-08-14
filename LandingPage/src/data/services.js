@@ -1,10 +1,3 @@
-/*
-  Contenido comercial ilustrativo — NO proviene del backend.
-  El backend no modela un catálogo de servicios (ver NECESIDADES_FRONTEND.md,
-  gap #1): cada barbero tiene un único precio plano. Esta lista solo orienta
-  al cliente en la sección "Servicios" de la Home y en el paso 1 del booking;
-  el precio real y definitivo siempre lo confirma el barbero.
-*/
 export const SERVICES = [
     {
         id: "clasico",

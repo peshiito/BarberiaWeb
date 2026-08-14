@@ -244,6 +244,19 @@ select {
   background-size: 200% 100%;
 }
 
+/* ---- Scroll reveal ---- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 700ms var(--ease-soft), transform 700ms var(--ease-soft);
+}
+
+.reveal.is-inview {
+  opacity: 1;
+  transform: none;
+}
+
 /* ---- Reduced motion ---- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -259,5 +272,10 @@ select {
   .skeleton {
     animation: none;
     background: var(--carbon-elevated);
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
   }
 }
