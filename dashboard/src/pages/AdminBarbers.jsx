@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import EditBarberModal from "../components/admin/EditBarberModal";
+import SpecialtiesInput from "../components/admin/SpecialtiesInput";
 import Badge from "../components/ui/Badge";
 import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
@@ -6,27 +8,39 @@ import FormField from "../components/ui/FormField";
 import InlineFeedback from "../components/ui/InlineFeedback";
 import PageHeader from "../components/ui/PageHeader";
 import Skeleton from "../components/ui/Skeleton";
+import { useAuth } from "../context/AuthContext";
 import { createBarber, getAllUsers } from "../services/admin";
 import "./AdminBarbers.css";
 
+const EMPTY_FORM = {
+    first_name: "",
+    last_name: "",
+    email: "",
+    password: "",
+    role: "barber",
+    bio: "",
+    earnings_split_percentage: 50,
+    phone: "",
+    specialties: [],
+    social_media: "",
+    birth_date: "",
+    address: "",
+};
+
 const ROLE_TONE = { admin: "brass", admin_barber: "brass", barber: "sage" };
+const ROLE_LABEL = { admin: "Administrador", admin_barber: "Barbero admin", barber: "Barbero" };
 
 const AdminBarbers = () => {
+    const { user: currentUser } = useAuth();
+    const isPureAdmin = currentUser?.role === "admin";
+
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [creating, setCreating] = useState(false);
-    const [formData, setFormData] = useState({
-        first_name: "",
-        last_name: "",
-        email: "",
-        password: "",
-        role: "barber",
-        bio: "",
-        service_price: 0,
-        earnings_split_percentage: 50,
-    });
+    const [formData, setFormData] = useState(EMPTY_FORM);
     const [feedback, setFeedback] = useState(null);
     const [fieldErrors, setFieldErrors] = useState({});
+    const [editingBarber, setEditingBarber] = useState(null);
 
     const loadUsers = async () => {
         setLoading(true);
@@ -48,7 +62,7 @@ const AdminBarbers = () => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: name === "service_price" || name === "earnings_split_percentage" ? Number(value) : value,
+            [name]: name === "earnings_split_percentage" ? Number(value) : value,
         }));
     };
 
@@ -65,18 +79,20 @@ const AdminBarbers = () => {
         }
 
         try {
-            await createBarber(formData);
+            // Campos opcionales con formato estricto (ej. birth_date) fallan
+            // la validación Zod si van como string vacío en vez de ausentes.
+            const { phone, social_media, birth_date, address, specialties, ...rest } = formData;
+            const payload = {
+                ...rest,
+                ...(phone && { phone }),
+                ...(social_media && { social_media }),
+                ...(birth_date && { birth_date }),
+                ...(address && { address }),
+                ...(specialties.length > 0 && { specialties }),
+            };
+            await createBarber(payload);
             setFeedback({ type: "success", message: "Barbero creado correctamente" });
-            setFormData({
-                first_name: "",
-                last_name: "",
-                email: "",
-                password: "",
-                role: "barber",
-                bio: "",
-                service_price: 0,
-                earnings_split_percentage: 50,
-            });
+            setFormData(EMPTY_FORM);
             loadUsers();
         } catch (err) {
             const details = err.response?.data?.details;
@@ -151,20 +167,19 @@ const AdminBarbers = () => {
                             />
                         </FormField>
 
-                        <div className="barber-form-row">
-                            <FormField label="Precio del servicio" error={fieldErrors.service_price}>
-                                <div className="input-affix">
-                                    <span className="input-affix-symbol">$</span>
-                                    <input
-                                        type="number"
-                                        name="service_price"
-                                        value={formData.service_price}
-                                        onChange={handleInputChange}
-                                        min="0"
-                                        step="0.01"
-                                    />
-                                </div>
-                            </FormField>
+                        <FormField
+                            label="Rol"
+                            error={fieldErrors.role}
+                            hint={isPureAdmin ? undefined : "Solo un administrador puede crear otros administradores"}
+                        >
+                            <select name="role" value={formData.role} onChange={handleInputChange}>
+                                <option value="barber">Barbero</option>
+                                {isPureAdmin && <option value="admin_barber">Barbero admin</option>}
+                                {isPureAdmin && <option value="admin">Administrador</option>}
+                            </select>
+                        </FormField>
+
+                        {formData.role !== "admin" && (
                             <FormField label="Porcentaje de división" error={fieldErrors.earnings_split_percentage}>
                                 <input
                                     type="number"
@@ -175,7 +190,7 @@ const AdminBarbers = () => {
                                     max="100"
                                 />
                             </FormField>
-                        </div>
+                        )}
 
                         <FormField label="Bio" error={fieldErrors.bio}>
                             <textarea
@@ -186,6 +201,55 @@ const AdminBarbers = () => {
                                 rows="3"
                             />
                         </FormField>
+
+                        <details className="additional-fields">
+                            <summary>Datos adicionales (opcional)</summary>
+                            <div className="additional-fields-body">
+                                <FormField label="Teléfono" error={fieldErrors.phone}>
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        value={formData.phone}
+                                        onChange={handleInputChange}
+                                        maxLength={30}
+                                    />
+                                </FormField>
+                                <FormField label="Especialidades" error={fieldErrors.specialties}>
+                                    <SpecialtiesInput
+                                        value={formData.specialties}
+                                        onChange={specialties => setFormData(prev => ({ ...prev, specialties }))}
+                                    />
+                                </FormField>
+                                <FormField label="Redes sociales" error={fieldErrors.social_media} hint="Ej: @usuario en Instagram">
+                                    <input
+                                        type="text"
+                                        name="social_media"
+                                        value={formData.social_media}
+                                        onChange={handleInputChange}
+                                        maxLength={150}
+                                    />
+                                </FormField>
+                                <div className="barber-form-row">
+                                    <FormField label="Fecha de nacimiento" error={fieldErrors.birth_date}>
+                                        <input
+                                            type="date"
+                                            name="birth_date"
+                                            value={formData.birth_date}
+                                            onChange={handleInputChange}
+                                        />
+                                    </FormField>
+                                    <FormField label="Dirección" error={fieldErrors.address}>
+                                        <input
+                                            type="text"
+                                            name="address"
+                                            value={formData.address}
+                                            onChange={handleInputChange}
+                                            maxLength={255}
+                                        />
+                                    </FormField>
+                                </div>
+                            </div>
+                        </details>
 
                         {feedback && (
                             <InlineFeedback tone={feedback.type === "error" ? "error" : "success"}>
@@ -212,20 +276,61 @@ const AdminBarbers = () => {
                         <div className="barbers-grid">
                             {users.map(user => (
                                 <div key={user.id} className="barber-card">
-                                    <div className="barber-info">
-                                        <h4>{user.first_name} {user.last_name}</h4>
-                                        <p className="barber-email">{user.email}</p>
-                                        <div className="barber-meta">
-                                            <Badge tone="neutral">ID: {user.id}</Badge>
-                                            <Badge tone={ROLE_TONE[user.role] || "neutral"}>{user.role}</Badge>
+                                    <div className="barber-card-head">
+                                        <span className="avatar-monogram barber-avatar">
+                                            {user.first_name[0]}
+                                            {user.last_name[0]}
+                                        </span>
+                                        <div className="barber-info">
+                                            <h4>{user.first_name} {user.last_name}</h4>
+                                            <p className="barber-email">{user.email}</p>
                                         </div>
                                     </div>
+                                    <div className="barber-meta">
+                                        <Badge tone="neutral">ID: {user.id}</Badge>
+                                        <Badge tone={ROLE_TONE[user.role] || "neutral"}>
+                                            {ROLE_LABEL[user.role] || user.role}
+                                        </Badge>
+                                        {(user.role === "barber" || user.role === "admin_barber") && (
+                                            <Badge tone="sage">{Number(user.earnings_split_percentage)}%</Badge>
+                                        )}
+                                    </div>
+                                    {user.specialties && (
+                                        <div className="specialty-chip-list barber-card-specialties">
+                                            {user.specialties.split(",").map(specialty => (
+                                                <span key={specialty} className="specialty-chip">
+                                                    {specialty}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {(user.role !== "admin" || isPureAdmin) && (
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="barber-card-edit"
+                                            onClick={() => setEditingBarber(user)}
+                                        >
+                                            Editar
+                                        </Button>
+                                    )}
                                 </div>
                             ))}
                         </div>
                     )}
                 </Card>
             </div>
+
+            <EditBarberModal
+                barber={editingBarber}
+                isPureAdmin={isPureAdmin}
+                isSelf={editingBarber?.id === currentUser?.id}
+                onClose={() => setEditingBarber(null)}
+                onSaved={() => {
+                    setEditingBarber(null);
+                    loadUsers();
+                }}
+            />
         </div>
     );
 };

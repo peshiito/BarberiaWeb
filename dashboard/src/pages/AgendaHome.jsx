@@ -6,12 +6,27 @@ import AppointmentDetailModal from "../components/schedule/AppointmentDetailModa
 import AppointmentFormModal from "../components/schedule/AppointmentFormModal";
 import WeekGrid from "../components/schedule/WeekGrid";
 import WeekNavigator from "../components/schedule/WeekNavigator";
+import Badge from "../components/ui/Badge";
 import Button from "../components/ui/Button";
+import Card from "../components/ui/Card";
 import InlineFeedback from "../components/ui/InlineFeedback";
 import PageHeader from "../components/ui/PageHeader";
 import Skeleton from "../components/ui/Skeleton";
 import StatCard from "../components/ui/StatCard";
 import { useToast } from "../components/ui/Toast";
+import {
+    IconCalendar,
+    IconCheckCircle,
+    IconClock,
+    IconCoin,
+    IconGauge,
+    IconHourglass,
+    IconSunrise,
+    IconUnlock,
+    IconUserPlus,
+    IconUsers,
+    IconWeek,
+} from "../components/ui/icons";
 import { useAuth } from "../context/AuthContext";
 import { useHomeDashboard } from "../hooks/useHomeDashboard";
 import {
@@ -25,99 +40,22 @@ import { addDays, getMonday, getWeekDays, toISODate } from "../utils/date";
 import { formatMoney } from "../utils/format";
 import "./AgendaHome.css";
 
-const iconCalendarDay = (
-    <svg viewBox="0 0 20 20" fill="none">
-        <rect x="3" y="4" width="14" height="13" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M3 8h14M7 2.5v3M13 2.5v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-);
-
-const iconClock = (
-    <svg viewBox="0 0 20 20" fill="none">
-        <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M10 6.5V10l2.5 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-);
-
-const iconWeek = (
-    <svg viewBox="0 0 20 20" fill="none">
-        <rect x="2.5" y="4" width="15" height="12" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M2.5 8.5h15" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M6.5 2.5v3M13.5 2.5v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-);
-
-const iconUnlock = (
-    <svg viewBox="0 0 20 20" fill="none">
-        <rect x="4" y="9" width="12" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M6.5 9V6.5a3.5 3.5 0 016.5-1.8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-);
-
-const iconGauge = (
-    <svg viewBox="0 0 20 20" fill="none">
-        <path d="M3 14a7 7 0 1114 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M10 14l3.5-4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-);
-
-const iconCheck = (
-    <svg viewBox="0 0 20 20" fill="none">
-        <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M7 10l2 2 4-4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-);
-
-const iconSunrise = (
-    <svg viewBox="0 0 20 20" fill="none">
-        <circle cx="10" cy="11" r="3.5" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M2.5 16.5h15M10 3.5v2M4 7l1.5 1.5M16 7l-1.5 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-);
-
-const iconHourglass = (
-    <svg viewBox="0 0 20 20" fill="none">
-        <path
-            d="M5 3h10M5 17h10M5.5 3c0 3.5 2 5 4.5 7-2.5 2-4.5 3.5-4.5 7M14.5 3c0 3.5-2 5-4.5 7 2.5 2 4.5 3.5 4.5 7"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        />
-    </svg>
-);
-
-const iconCoin = (
-    <svg viewBox="0 0 20 20" fill="none">
-        <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.5" />
-        <path
-            d="M10 6.5v7M8 8h2.75a1.25 1.25 0 010 2.5H9.5a1.25 1.25 0 000 2.5H12"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        />
-    </svg>
-);
-
-const iconUsers = (
-    <svg viewBox="0 0 20 20" fill="none">
-        <circle cx="7.5" cy="6.5" r="2.5" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M2.5 16c0-2.76 2.24-5 5-5s5 2.24 5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <circle cx="14.5" cy="7" r="2" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M12.5 11.2c1.9.3 3.5 1.9 3.9 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-);
-
-const iconUserPlus = (
-    <svg viewBox="0 0 20 20" fill="none">
-        <circle cx="8" cy="7" r="3" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M2.5 17c0-3.3 2.5-6 5.5-6s5.5 2.7 5.5 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M16 6v5M13.5 8.5h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-);
+const iconCalendarDay = <IconCalendar />;
+const iconClock = <IconClock />;
+const iconWeek = <IconWeek />;
+const iconUnlock = <IconUnlock />;
+const iconGauge = <IconGauge />;
+const iconCheck = <IconCheckCircle />;
+const iconSunrise = <IconSunrise />;
+const iconHourglass = <IconHourglass />;
+const iconCoin = <IconCoin />;
+const iconUsers = <IconUsers />;
+const iconUserPlus = <IconUserPlus />;
 
 const formatHours = value => (value === null ? "—" : `${value.toFixed(1)} h`);
+
+const APPOINTMENT_STATUS_TONE = { active: "brass", completed: "sage", cancelled: "burgundy" };
+const APPOINTMENT_STATUS_LABEL = { active: "Confirmado", completed: "Completado", cancelled: "Cancelado" };
 
 const AgendaHome = () => {
     const { user, isAdmin } = useAuth();
@@ -379,6 +317,34 @@ const AgendaHome = () => {
                             />
                             <StatCard icon={iconHourglass} label="Horas disponibles hoy" value={formatHours(home.hoursAvailableToday)} />
                         </div>
+
+                        {home.todayAppointments.length > 0 && (
+                            <Card className="home-today-list">
+                                <h3 className="card-section-title">Turnos de hoy</h3>
+                                <div className="home-today-rows">
+                                    {home.todayAppointments
+                                        .slice()
+                                        .sort((a, b) => a.time.localeCompare(b.time))
+                                        .map(appointment => (
+                                            <button
+                                                key={appointment.id}
+                                                type="button"
+                                                className="home-today-row"
+                                                onClick={() => setSelectedAppointment(appointment)}
+                                            >
+                                                <span className="home-today-row-time">{appointment.time.slice(0, 5)}</span>
+                                                <span className="home-today-row-client">
+                                                    {appointment.client_first_name} {appointment.client_last_name}
+                                                </span>
+                                                <span className="home-today-row-service">{appointment.service_name || "—"}</span>
+                                                <Badge tone={APPOINTMENT_STATUS_TONE[appointment.status] || "neutral"}>
+                                                    {APPOINTMENT_STATUS_LABEL[appointment.status] || appointment.status}
+                                                </Badge>
+                                            </button>
+                                        ))}
+                                </div>
+                            </Card>
+                        )}
 
                         <div className="home-metrics-header">
                             <span className="eyebrow">Esta semana</span>

@@ -3,9 +3,10 @@ import { Request, Response } from "express";
 import { RowDataPacket } from "mysql2";
 import pool from "../config/db";
 import { AuthRequest } from "../middlewares/auth.middleware";
-import { createUser, findByEmail, listUsersPaginated } from "../models/user.model";
+import { replaceBarberServices } from "../models/service.model";
+import { createUser, findByEmail, findById, listUsersPaginated, updateBarberByAdmin } from "../models/user.model";
 import { getPagination } from "../utils/pagination";
-import { isValidCalendarDate } from "../utils/validators";
+import { isValidCalendarDate, parsePositiveIntParam } from "../utils/validators";
 
 const parseDateRange = (from: unknown, to: unknown): { error: string } | { from: string; to: string } => {
     if (!from || !to) {
@@ -27,7 +28,20 @@ const isFinanceBucket = (value: unknown): value is FinanceBucket =>
     typeof value === "string" && (FINANCE_BUCKETS as readonly string[]).includes(value);
 
 export const createBarber = async (req: AuthRequest, res: Response) => {
-    const { first_name, last_name, email, password, role, bio, service_price, earnings_split_percentage } = req.body;
+    const {
+        first_name,
+        last_name,
+        email,
+        password,
+        role,
+        bio,
+        earnings_split_percentage,
+        phone,
+        specialties,
+        social_media,
+        birth_date,
+        address,
+    } = req.body;
 
     if (role !== "barber" && req.user!.role !== "admin") {
         return res.status(403).json({ error: "Only admins can create admin or admin_barber accounts" });
@@ -47,11 +61,73 @@ export const createBarber = async (req: AuthRequest, res: Response) => {
         password_hash,
         role,
         bio,
-        service_price,
         earnings_split_percentage,
+        phone,
+        specialties,
+        social_media,
+        birth_date,
+        address,
     });
 
     return res.status(201).json({ id });
+};
+
+export const updateBarber = async (req: AuthRequest, res: Response) => {
+    const id = parsePositiveIntParam(req.params.id);
+    if (id === null) {
+        return res.status(400).json({ error: "Invalid barber id" });
+    }
+
+    const target = await findById(id);
+    if (!target) {
+        return res.status(404).json({ error: "User not found" });
+    }
+
+    const isAdmin = req.user!.role === "admin";
+
+    // Un admin_barber puede editar barberos/otros admin_barber (ya podía
+    // crearlos), pero no tocar una cuenta admin ni ascender a nadie a
+    // admin/admin_barber — misma restricción que ya existe en createBarber.
+    if (target.role === "admin" && !isAdmin) {
+        return res.status(403).json({ error: "Only admins can edit admin accounts" });
+    }
+
+    const {
+        first_name,
+        last_name,
+        bio,
+        role,
+        earnings_split_percentage,
+        service_ids,
+        phone,
+        specialties,
+        social_media,
+        birth_date,
+        address,
+    } = req.body;
+
+    if (role !== undefined && role !== "barber" && !isAdmin) {
+        return res.status(403).json({ error: "Only admins can assign admin or admin_barber roles" });
+    }
+
+    await updateBarberByAdmin(id, {
+        first_name,
+        last_name,
+        bio,
+        role,
+        earnings_split_percentage,
+        phone,
+        specialties,
+        social_media,
+        birth_date,
+        address,
+    });
+
+    if (service_ids !== undefined) {
+        await replaceBarberServices(id, service_ids);
+    }
+
+    return res.json({ message: "Barber updated" });
 };
 
 export const getAllUsers = async (req: Request, res: Response) => {

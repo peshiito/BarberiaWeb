@@ -1,9 +1,10 @@
 import api from "./api";
 
-// POST /api/appointments (requiere JWT de cliente) { barber_id, date, time } -> 201 { id }
-export async function createAppointment({ barberId, date, time }) {
+// POST /api/appointments (requiere JWT de cliente) { barber_id, service_id, date, time } -> 201 { id }
+export async function createAppointment({ barberId, serviceId, date, time }) {
     const { data } = await api.post("/appointments", {
         barber_id: barberId,
+        service_id: serviceId,
         date,
         time,
     });

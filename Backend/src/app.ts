@@ -12,6 +12,7 @@ import photoRoutes from "./routes/photo.routes";
 import profileRoutes from "./routes/profile.routes";
 import publicRoutes from "./routes/public.routes";
 import scheduleRoutes from "./routes/schedule.routes";
+import serviceRoutes from "./routes/service.routes";
 
 const app = express();
 
@@ -50,6 +51,7 @@ app.use("/api/photos", photoRoutes);
 app.use("/api/public", publicRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/profile", profileRoutes);
+app.use("/api/services", serviceRoutes);
 
 app.use((_req, res) => {
     res.status(404).json({ error: "Not found" });

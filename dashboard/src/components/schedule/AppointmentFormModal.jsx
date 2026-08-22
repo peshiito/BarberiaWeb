@@ -10,6 +10,7 @@ import {
 } from "../../services/appointments";
 import { searchClients } from "../../services/clients";
 import { getScheduleSlots } from "../../services/schedules";
+import { getServicesByBarber } from "../../services/services";
 import { DAY_NAMES, getMonday, parseDateOnly, parseWorkDays, toISODate } from "../../utils/date";
 import { getAvailableSlots } from "../../utils/slots";
 import Badge from "../ui/Badge";
@@ -40,6 +41,9 @@ const AppointmentFormModal = ({
     const [date, setDate] = useState("");
     const [time, setTime] = useState("");
 
+    const [services, setServices] = useState([]);
+    const [serviceId, setServiceId] = useState(null);
+
     const [selectedClient, setSelectedClient] = useState(null);
     const [clientQuery, setClientQuery] = useState("");
     const [clientResults, setClientResults] = useState([]);
@@ -65,6 +69,7 @@ const AppointmentFormModal = ({
         );
         setClientQuery("");
         setClientResults([]);
+        setServiceId(null);
     }, [open, mode, appointment, initialClient, initialBarberId, initialDate, initialTime, isAdmin, user]);
 
     useEffect(() => {
@@ -73,6 +78,25 @@ const AppointmentFormModal = ({
             .then(res => setBarbers(res.data.filter(u => u.role === "barber" || u.role === "admin_barber")))
             .catch(() => setBarbers([]));
     }, [open, isAdmin]);
+
+    // El servicio depende de qué barbero está seleccionado (cada barbero
+    // ofrece un subconjunto del catálogo) — no aplica en reprogramar, ahí el
+    // backend mantiene el servicio original del turno.
+    useEffect(() => {
+        if (!open || isReschedule || !barberId) {
+            setServices([]);
+            return;
+        }
+        getServicesByBarber(barberId)
+            .then(setServices)
+            .catch(() => setServices([]));
+    }, [open, isReschedule, barberId]);
+
+    useEffect(() => {
+        if (!services.some(s => s.id === serviceId)) {
+            setServiceId(null);
+        }
+    }, [services, serviceId]);
 
     useEffect(() => {
         if (!open || isReschedule) return;
@@ -160,10 +184,16 @@ const AppointmentFormModal = ({
                 await updateAppointmentByAdmin(appointment.id, { barber_id: barberId, date, time });
                 showToast("Turno reprogramado correctamente.");
             } else if (isAdmin) {
-                await createAppointmentByAdmin({ client_id: selectedClient.id, barber_id: barberId, date, time });
+                await createAppointmentByAdmin({
+                    client_id: selectedClient.id,
+                    barber_id: barberId,
+                    service_id: serviceId,
+                    date,
+                    time,
+                });
                 showToast("Turno creado correctamente.");
             } else {
-                await createAppointmentByBarber({ client_id: selectedClient.id, date, time });
+                await createAppointmentByBarber({ client_id: selectedClient.id, service_id: serviceId, date, time });
                 showToast("Turno creado correctamente.");
             }
             onSaved();
@@ -174,7 +204,7 @@ const AppointmentFormModal = ({
         }
     };
 
-    const canSubmit = barberId && date && time && selectedClient && !saving;
+    const canSubmit = barberId && date && time && selectedClient && (isReschedule || serviceId) && !saving;
 
     return (
         <Modal open={open} onClose={onClose} title={isReschedule ? "Reprogramar turno" : "Nuevo turno"}>
@@ -255,6 +285,27 @@ const AppointmentFormModal = ({
                         <p className="appt-form-static-value">
                             {user.first_name} {user.last_name} (vos)
                         </p>
+                    </FormField>
+                )}
+
+                {!isReschedule && (
+                    <FormField label="Servicio">
+                        {!barberId ? (
+                            <p className="appt-form-search-status">Elegí un barbero para ver sus servicios.</p>
+                        ) : services.length === 0 ? (
+                            <p className="appt-form-search-status">Ese barbero no tiene servicios asignados.</p>
+                        ) : (
+                            <select value={serviceId || ""} onChange={e => setServiceId(Number(e.target.value))}>
+                                <option value="" disabled>
+                                    Elegí un servicio
+                                </option>
+                                {services.map(s => (
+                                    <option key={s.id} value={s.id}>
+                                        {s.name} — ${Number(s.price).toLocaleString("es-AR")}
+                                    </option>
+                                ))}
+                            </select>
+                        )}
                     </FormField>
                 )}
 

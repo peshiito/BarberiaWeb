@@ -5,12 +5,13 @@ import {
     getFinancialPeriod,
     getFinancialSeries,
     getFinancialSummary,
+    updateBarber,
 } from "../controllers/admin.controller";
 import { authenticate } from "../middlewares/auth.middleware";
 import { staffActionsRateLimit } from "../middlewares/rate-limit.middleware";
 import { authorize } from "../middlewares/role.middleware";
 import { validate } from "../middlewares/validate.middleware";
-import { createBarberSchema } from "../schemas/admin.schema";
+import { createBarberSchema, updateBarberSchema } from "../schemas/admin.schema";
 import { asyncHandler } from "../utils/asyncHandler";
 
 const router = Router();
@@ -23,6 +24,13 @@ router.post(
     authorize("admin", "admin_barber"),
     validate(createBarberSchema),
     asyncHandler(createBarber),
+);
+router.patch(
+    "/barbers/:id",
+    authenticate,
+    authorize("admin", "admin_barber"),
+    validate(updateBarberSchema),
+    asyncHandler(updateBarber),
 );
 router.get("/users", authenticate, authorize("admin", "admin_barber"), asyncHandler(getAllUsers));
 router.get("/finance/summary", authenticate, authorize("admin", "admin_barber"), asyncHandler(getFinancialSummary));

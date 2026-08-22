@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PhotoGuide from "../components/profile/PhotoGuide";
 import PhotoSlot from "../components/profile/PhotoSlot";
 import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
@@ -125,11 +126,12 @@ const Photos = () => {
                     <h3 className="card-section-title">
                         Fotos ({photos.length}/{MAX_PHOTOS})
                     </h3>
+                    <PhotoGuide />
                     {photoError && <InlineFeedback tone="error">{photoError}</InlineFeedback>}
                     {loadingPhotos ? (
                         <div className="photos-grid">
                             {Array.from({ length: MAX_PHOTOS }).map((_, i) => (
-                                <Skeleton key={i} variant="rect" style={{ aspectRatio: "3 / 4" }} />
+                                <Skeleton key={i} variant="rect" style={{ aspectRatio: i === 0 ? "4 / 5" : "1 / 1" }} />
                             ))}
                         </div>
                     ) : (
@@ -138,6 +140,7 @@ const Photos = () => {
                                 <PhotoSlot
                                     key={photo?.id || `empty-${i}`}
                                     photo={photo}
+                                    isMain={i === 0}
                                     onUpload={handleUpload}
                                     onRemove={handleRemove}
                                     uploading={uploading}

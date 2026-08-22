@@ -6,21 +6,37 @@ export interface AppointmentWithClient extends Appointment {
     client_first_name: string;
     client_last_name: string;
     client_phone: string;
+    service_name: string | null;
+}
+
+export interface AppointmentWithService extends Appointment {
+    service_name: string | null;
 }
 
 // Explicit column list (not `SELECT *`) so the two internal generated
 // columns used to enforce slot/day uniqueness at the DB level
 // (active_slot_key, active_client_day_key — see db/init.sql) never leak
 // into API responses and change the existing response shape.
-const APPOINTMENT_COLUMN_LIST = ["id", "client_id", "barber_id", "schedule_id", "date", "time", "status", "created_at", "price"];
+const APPOINTMENT_COLUMN_LIST = [
+    "id",
+    "client_id",
+    "barber_id",
+    "schedule_id",
+    "service_id",
+    "date",
+    "time",
+    "status",
+    "created_at",
+    "price",
+];
 const APPOINTMENT_COLUMNS = APPOINTMENT_COLUMN_LIST.join(", ");
 const APPOINTMENT_COLUMNS_PREFIXED = APPOINTMENT_COLUMN_LIST.map(c => `a.${c}`).join(", ");
 
 export const createAppointment = async (data: AppointmentInput): Promise<number> => {
     const [result] = await pool.query<ResultSetHeader>(
-        `INSERT INTO appointments (client_id, barber_id, schedule_id, date, time, price)
-     VALUES (?, ?, ?, ?, ?, ?)`,
-        [data.client_id, data.barber_id, data.schedule_id, data.date, data.time, data.price],
+        `INSERT INTO appointments (client_id, barber_id, schedule_id, service_id, date, time, price)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [data.client_id, data.barber_id, data.schedule_id, data.service_id, data.date, data.time, data.price],
     );
     return result.insertId;
 };
@@ -63,12 +79,15 @@ export const completeAppointmentById = async (id: number): Promise<void> => {
     await pool.query(`UPDATE appointments SET status = 'completed' WHERE id = ?`, [id]);
 };
 
-export const findAppointmentsByClient = async (clientId: number): Promise<Appointment[]> => {
+export const findAppointmentsByClient = async (clientId: number): Promise<AppointmentWithService[]> => {
     const [rows] = await pool.query<RowDataPacket[]>(
-        `SELECT ${APPOINTMENT_COLUMNS} FROM appointments WHERE client_id = ? ORDER BY date DESC, time DESC`,
+        `SELECT ${APPOINTMENT_COLUMNS_PREFIXED}, s.name as service_name
+     FROM appointments a
+     LEFT JOIN services s ON s.id = a.service_id
+     WHERE a.client_id = ? ORDER BY a.date DESC, a.time DESC`,
         [clientId],
     );
-    return rows as Appointment[];
+    return rows as AppointmentWithService[];
 };
 
 export const findAppointmentsByBarberAndWeekPaginated = async (
@@ -79,9 +98,10 @@ export const findAppointmentsByBarberAndWeekPaginated = async (
     offset: number,
 ): Promise<{ appointments: AppointmentWithClient[]; total: number }> => {
     const [rows] = await pool.query<RowDataPacket[]>(
-        `SELECT ${APPOINTMENT_COLUMNS_PREFIXED}, c.first_name as client_first_name, c.last_name as client_last_name, c.phone as client_phone
+        `SELECT ${APPOINTMENT_COLUMNS_PREFIXED}, c.first_name as client_first_name, c.last_name as client_last_name, c.phone as client_phone, s.name as service_name
      FROM appointments a
      JOIN clients c ON c.id = a.client_id
+     LEFT JOIN services s ON s.id = a.service_id
      WHERE a.barber_id = ? AND a.date BETWEEN ? AND ? AND a.status IN ('active', 'completed')
      ORDER BY a.date, a.time
      LIMIT ? OFFSET ?`,
@@ -135,10 +155,10 @@ export const findAppointmentsByClientAndBarber = async (clientId: number, barber
 
 export const updateAppointmentByAdmin = async (
     id: number,
-    data: { barber_id: number; schedule_id: number; date: string; time: string; price: number },
+    data: { barber_id: number; schedule_id: number; service_id: number | null; date: string; time: string; price: number },
 ): Promise<void> => {
     await pool.query(
-        `UPDATE appointments SET barber_id = ?, schedule_id = ?, date = ?, time = ?, price = ? WHERE id = ?`,
-        [data.barber_id, data.schedule_id, data.date, data.time, data.price, id],
+        `UPDATE appointments SET barber_id = ?, schedule_id = ?, service_id = ?, date = ?, time = ?, price = ? WHERE id = ?`,
+        [data.barber_id, data.schedule_id, data.service_id, data.date, data.time, data.price, id],
     );
 };

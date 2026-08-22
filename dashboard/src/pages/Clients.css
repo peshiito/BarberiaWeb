@@ -20,6 +20,12 @@
     overflow-x: auto;
 }
 
+.clients-table-identity {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
 .clients-table-name {
     font-weight: 500;
 }

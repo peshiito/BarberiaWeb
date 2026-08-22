@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Badge from "../components/ui/Badge";
 import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
 import FormField from "../components/ui/FormField";
@@ -9,11 +10,14 @@ import { useAuth } from "../context/AuthContext";
 import { changeMyPassword, getMyProfile, updateMyProfileDetails } from "../services/profile";
 import "./Profile.css";
 
+const ROLE_LABEL = { admin: "Administrador", admin_barber: "Barbero admin", barber: "Barbero" };
+const ROLE_TONE = { admin: "brass", admin_barber: "brass", barber: "sage" };
+
 const Profile = () => {
-    const { updateUser } = useAuth();
+    const { user, updateUser } = useAuth();
 
     const [loading, setLoading] = useState(true);
-    const [details, setDetails] = useState({ first_name: "", last_name: "", service_price: 0 });
+    const [details, setDetails] = useState({ first_name: "", last_name: "" });
     const [savingDetails, setSavingDetails] = useState(false);
     const [detailsFeedback, setDetailsFeedback] = useState(null);
 
@@ -33,7 +37,6 @@ const Profile = () => {
                 setDetails({
                     first_name: profile.first_name || "",
                     last_name: profile.last_name || "",
-                    service_price: profile.service_price || 0,
                 });
             } finally {
                 setLoading(false);
@@ -44,7 +47,7 @@ const Profile = () => {
 
     const handleDetailsChange = e => {
         const { name, value } = e.target;
-        setDetails(prev => ({ ...prev, [name]: name === "service_price" ? Number(value) : value }));
+        setDetails(prev => ({ ...prev, [name]: value }));
     };
 
     const handleDetailsSubmit = async e => {
@@ -100,8 +103,24 @@ const Profile = () => {
             <PageHeader
                 eyebrow="Perfil"
                 title="Mis datos"
-                description="Actualizá tu información personal, tu precio de servicio y tu contraseña."
+                description="Actualizá tu información personal y tu contraseña."
             />
+
+            {!loading && (
+                <Card className="profile-identity-card">
+                    <span className="avatar-monogram profile-identity-avatar">
+                        {user?.first_name?.[0]}
+                        {user?.last_name?.[0]}
+                    </span>
+                    <div className="profile-identity-info">
+                        <span className="profile-identity-name">
+                            {user?.first_name} {user?.last_name}
+                        </span>
+                        <span className="profile-identity-email">{user?.email}</span>
+                    </div>
+                    <Badge tone={ROLE_TONE[user?.role] || "neutral"}>{ROLE_LABEL[user?.role] || user?.role}</Badge>
+                </Card>
+            )}
 
             {loading ? (
                 <div className="profile-layout">
@@ -135,21 +154,6 @@ const Profile = () => {
                                     />
                                 </FormField>
                             </div>
-
-                            <FormField label="Precio del servicio" hint="Precio que se cobra por corte">
-                                <div className="input-affix">
-                                    <span className="input-affix-symbol">$</span>
-                                    <input
-                                        type="number"
-                                        name="service_price"
-                                        value={details.service_price}
-                                        onChange={handleDetailsChange}
-                                        min="0"
-                                        step="0.01"
-                                        required
-                                    />
-                                </div>
-                            </FormField>
 
                             {detailsFeedback && (
                                 <InlineFeedback tone={detailsFeedback.type === "error" ? "error" : "success"}>

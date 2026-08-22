@@ -25,9 +25,9 @@ export const updateMyBio = async (req: AuthRequest, res: Response) => {
 
 export const updateMyProfileDetails = async (req: AuthRequest, res: Response) => {
     const userId = req.user!.id;
-    const { first_name, last_name, service_price } = req.body;
+    const { first_name, last_name } = req.body;
 
-    await updateUserProfileDetails(userId, { first_name, last_name, service_price });
+    await updateUserProfileDetails(userId, { first_name, last_name });
 
     const user = await findById(userId);
     const { password_hash, ...profile } = user!;

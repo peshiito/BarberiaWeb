@@ -2,3 +2,48 @@
     max-width: 440px;
     margin: 0 auto;
 }
+
+.login-tabs {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-5);
+    border-bottom: 1px solid var(--border-on-dark);
+}
+
+.login-tab {
+    flex: 1;
+    padding: var(--space-3) var(--space-2);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-on-dark-secondary);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
+}
+
+.login-tab:hover {
+    color: var(--text-on-dark);
+}
+
+.login-tab.is-active {
+    color: var(--brass-bright);
+    border-bottom-color: var(--brass);
+}
+
+.login-back-link {
+    align-self: center;
+    background: none;
+    border: none;
+    color: var(--text-on-dark-secondary);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.login-back-link:hover {
+    color: var(--text-on-dark);
+}

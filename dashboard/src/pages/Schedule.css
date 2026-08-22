@@ -15,6 +15,46 @@
     gap: var(--space-5);
 }
 
+.schedule-week-picker {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+}
+
+.schedule-week-readout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding: 0 var(--space-1);
+}
+
+.schedule-week-readout-range {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--text-primary);
+}
+
+.schedule-week-today {
+    background: none;
+    border: 1px solid var(--border-strong);
+    color: var(--text-secondary);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    padding: var(--space-1) var(--space-2-5);
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+    transition:
+        border-color var(--duration-fast) var(--ease-out),
+        color var(--duration-fast) var(--ease-out);
+}
+
+.schedule-week-today:hover {
+    border-color: var(--brass);
+    color: var(--brass-bright);
+}
+
 .schedule-form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;

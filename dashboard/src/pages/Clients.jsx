@@ -129,9 +129,15 @@ const Clients = () => {
                                     {clients.map(client => (
                                         <tr key={client.id}>
                                             <td className="table-sticky-col">
-                                                <span className="clients-table-name">
-                                                    {client.first_name} {client.last_name}
-                                                </span>
+                                                <div className="clients-table-identity">
+                                                    <span className="avatar-monogram">
+                                                        {client.first_name[0]}
+                                                        {client.last_name[0]}
+                                                    </span>
+                                                    <span className="clients-table-name">
+                                                        {client.first_name} {client.last_name}
+                                                    </span>
+                                                </div>
                                             </td>
                                             <td className="clients-table-phone">{client.phone}</td>
                                             <td>{formatDate(client.created_at)}</td>

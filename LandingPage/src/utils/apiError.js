@@ -24,6 +24,10 @@ const KNOWN_MESSAGES = {
     "Not found": "No encontramos lo que buscabas.",
     "Internal server error": "Ocurrió un error inesperado. Intentá de nuevo en unos minutos.",
     "Payload too large": "El archivo o los datos enviados son demasiado grandes.",
+    "Invalid credentials": "Teléfono o contraseña incorrectos.",
+    "Phone already registered": "Ese teléfono ya está registrado. Iniciá sesión.",
+    "Account already claimed": "Esta cuenta ya tiene contraseña. Iniciá sesión.",
+    "legacy_account": "Necesitás crear una contraseña para tu cuenta.",
 };
 
 export function getErrorMessage(error, fallback = "Ocurrió un error inesperado. Intentá de nuevo.") {

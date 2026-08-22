@@ -42,15 +42,6 @@ const buildAlerts = ({ hasScheduleThisWeek, hasScheduleNextWeek, profile, photos
         });
     }
 
-    if (!Number(profile?.service_price)) {
-        alerts.push({
-            id: "missing-price",
-            message: "No configuraste el precio de tu servicio.",
-            actionLabel: "Configurar precio",
-            to: "/profile",
-        });
-    }
-
     if (!profile?.bio) {
         alerts.push({
             id: "missing-bio",

@@ -63,20 +63,8 @@ CREATE INDEX idx_schedules_barber_week ON schedules(barber_id, week_start);
 ALTER TABLE clients ADD UNIQUE INDEX ux_clients_phone (phone);
 ALTER TABLE clients ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
--- Security audit (2026-08-06): close TOCTOU race conditions confirmed live
--- (20 concurrent requests produced 15 duplicate active bookings for the same
--- barber/date/time slot). The application already checks "is this slot free"
--- before inserting, but that check-then-insert has no atomicity guarantee
--- without a DB constraint. A generated column + UNIQUE index enforces it at
--- the database level regardless of application-level races; MySQL treats
--- NULL as distinct across rows, so cancelled/completed appointments (where
--- the generated key is NULL) never collide.
 ALTER TABLE schedules ADD UNIQUE INDEX ux_schedules_barber_week (barber_id, week_start);
 
--- VIRTUAL (not STORED): with the existing FKs on this table, MySQL 8 rejects
--- ADD COLUMN ... STORED with a generic "Cannot add foreign key constraint"
--- error (COPY-algorithm rebuild interaction), while VIRTUAL applies via
--- INPLACE without issue and is equally indexable.
 ALTER TABLE appointments ADD COLUMN active_slot_key VARCHAR(40)
   GENERATED ALWAYS AS (CASE WHEN status = 'active' THEN CONCAT(barber_id, '_', date, '_', time) END) VIRTUAL;
 ALTER TABLE appointments ADD UNIQUE INDEX ux_appointments_active_slot (active_slot_key);
@@ -84,3 +72,45 @@ ALTER TABLE appointments ADD UNIQUE INDEX ux_appointments_active_slot (active_sl
 ALTER TABLE appointments ADD COLUMN active_client_day_key VARCHAR(40)
   GENERATED ALWAYS AS (CASE WHEN status = 'active' THEN CONCAT(client_id, '_', date) END) VIRTUAL;
 ALTER TABLE appointments ADD UNIQUE INDEX ux_appointments_active_client_day (active_client_day_key);
+
+-- Catálogo de servicios administrado por el admin: reemplaza el precio
+-- plano por-barbero (users.service_price) por un precio único por tipo de
+-- corte, y barber_services define qué subconjunto del catálogo ofrece cada
+-- barbero (se usa para filtrar barberos por servicio en la landing).
+CREATE TABLE services (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  description VARCHAR(255) NULL,
+  price DECIMAL(10,2) NOT NULL DEFAULT 0,
+  duration_minutes INT NOT NULL DEFAULT 30,
+  active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE barber_services (
+  barber_id INT NOT NULL,
+  service_id INT NOT NULL,
+  PRIMARY KEY (barber_id, service_id),
+  FOREIGN KEY (barber_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE
+);
+
+-- NULL-able: los turnos históricos, creados antes de este cambio, no tienen
+-- un servicio asociado y no hay forma de inferirlo retroactivamente.
+ALTER TABLE appointments ADD COLUMN service_id INT NULL;
+ALTER TABLE appointments ADD FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE SET NULL;
+
+ALTER TABLE users DROP COLUMN service_price;
+
+-- Password real de cliente (nullable: las cuentas creadas antes de este
+-- cambio no tienen contraseña todavía y pasan por el flujo de "reclamo" en
+-- POST /clients/claim la primera vez que intentan loguearse).
+ALTER TABLE clients ADD COLUMN password_hash VARCHAR(255) NULL;
+ALTER TABLE clients ADD COLUMN photo_url VARCHAR(255) NULL;
+ALTER TABLE clients ADD COLUMN notes VARCHAR(500) NULL;
+
+ALTER TABLE users ADD COLUMN phone VARCHAR(30) NULL;
+ALTER TABLE users ADD COLUMN specialties VARCHAR(255) NULL;
+ALTER TABLE users ADD COLUMN social_media VARCHAR(255) NULL;
+ALTER TABLE users ADD COLUMN birth_date DATE NULL;
+ALTER TABLE users ADD COLUMN address VARCHAR(255) NULL;

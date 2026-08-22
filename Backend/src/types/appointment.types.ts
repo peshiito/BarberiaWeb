@@ -5,6 +5,7 @@ export interface Appointment {
     client_id: number;
     barber_id: number;
     schedule_id: number;
+    service_id: number | null;
     date: string;
     time: string;
     status: AppointmentStatus;
@@ -16,6 +17,7 @@ export interface AppointmentInput {
     client_id: number;
     barber_id: number;
     schedule_id: number;
+    service_id: number;
     date: string;
     time: string;
     price: number;

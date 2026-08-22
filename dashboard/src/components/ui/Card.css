@@ -9,3 +9,14 @@
     background-color: var(--bg-elevated);
     box-shadow: var(--shadow-md);
 }
+
+/* Opt-in: solo para cards que son clickeables (ej. tarjetas de categoría,
+   filas de lista) — no se aplica por default para no meterle un hover
+   engañoso a cards estáticas de formulario. */
+.card.is-interactive {
+    transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.card.is-interactive:hover {
+    border-color: var(--border-strong);
+}

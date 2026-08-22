@@ -53,6 +53,13 @@ const AppointmentDetailModal = ({
                     <span className="appt-detail-value appt-detail-mono">{timeLabel}</span>
                 </div>
 
+                {appointment.service_name && (
+                    <div className="appt-detail-row">
+                        <span className="appt-detail-label">Servicio</span>
+                        <span className="appt-detail-value">{appointment.service_name}</span>
+                    </div>
+                )}
+
                 <div className="appt-detail-row">
                     <span className="appt-detail-label">Precio</span>
                     <span className="appt-detail-value appt-detail-mono">

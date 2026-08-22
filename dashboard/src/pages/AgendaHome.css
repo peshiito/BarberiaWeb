@@ -15,6 +15,68 @@
     margin-bottom: var(--space-3);
 }
 
+.home-metrics-header .eyebrow {
+    font-size: var(--text-xs);
+}
+
+.home-today-list {
+    margin-bottom: var(--space-6);
+}
+
+.home-today-rows {
+    display: flex;
+    flex-direction: column;
+    margin-top: var(--space-4);
+}
+
+.home-today-row {
+    display: grid;
+    grid-template-columns: 64px 1fr 1fr auto;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-2);
+    border-top: 1px solid var(--border-subtle);
+    background: none;
+    text-align: left;
+    color: var(--text-primary);
+    transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.home-today-row:hover {
+    background-color: var(--bg-surface-hover);
+}
+
+.home-today-row-time {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+}
+
+.home-today-row-client {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.home-today-row-service {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+    .home-today-row {
+        grid-template-columns: 52px 1fr auto;
+    }
+
+    .home-today-row-service {
+        display: none;
+    }
+}
+
 .week-grid-skeleton {
     display: flex;
     flex-direction: column;

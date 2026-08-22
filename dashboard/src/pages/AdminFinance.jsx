@@ -8,6 +8,7 @@ import InlineFeedback from "../components/ui/InlineFeedback";
 import PageHeader from "../components/ui/PageHeader";
 import Skeleton from "../components/ui/Skeleton";
 import StatCard from "../components/ui/StatCard";
+import { IconCoin, IconGauge, IconScissors } from "../components/ui/icons";
 import { useFinanceDashboard } from "../hooks/useFinanceDashboard";
 import { chartAnimation, chartColors, chartFont, chartTooltipBase, hexToRgba } from "../utils/chartTheme";
 import { addDays, getMonday, toISODate } from "../utils/date";
@@ -15,18 +16,7 @@ import { computeTrend } from "../utils/finance";
 import { formatMoney } from "../utils/format";
 import "./AdminFinance.css";
 
-const iconCoin = (
-    <svg viewBox="0 0 20 20" fill="none">
-        <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.5" />
-        <path
-            d="M10 6.5v7M8 8h2.75a1.25 1.25 0 010 2.5H9.5a1.25 1.25 0 000 2.5H12"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        />
-    </svg>
-);
+const iconCoin = <IconCoin />;
 
 const iconVault = (
     <svg viewBox="0 0 20 20" fill="none">
@@ -42,13 +32,7 @@ const iconOutflow = (
     </svg>
 );
 
-const iconScissors = (
-    <svg viewBox="0 0 20 20" fill="none">
-        <circle cx="5.5" cy="6" r="2" stroke="currentColor" strokeWidth="1.5" />
-        <circle cx="5.5" cy="14" r="2" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M7 7.3L16 15M7 12.7L16 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-);
+const iconScissors = <IconScissors />;
 
 const iconReceipt = (
     <svg viewBox="0 0 20 20" fill="none">
@@ -57,12 +41,7 @@ const iconReceipt = (
     </svg>
 );
 
-const iconGauge = (
-    <svg viewBox="0 0 20 20" fill="none">
-        <path d="M3 14a7 7 0 1114 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M10 14l3.5-4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-);
+const iconGauge = <IconGauge />;
 
 const defaultFrom = toISODate(getMonday(new Date()));
 const defaultTo = toISODate(addDays(getMonday(new Date()), 6));

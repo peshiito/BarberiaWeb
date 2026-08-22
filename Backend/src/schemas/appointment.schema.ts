@@ -5,6 +5,7 @@ const dateField = calendarDateField;
 
 export const createAppointmentSchema = z.object({
     barber_id: z.number().int().positive(),
+    service_id: z.number().int().positive(),
     date: dateField,
     time: timeField,
 });
@@ -12,12 +13,14 @@ export const createAppointmentSchema = z.object({
 export const createAppointmentByAdminSchema = z.object({
     client_id: z.number().int().positive(),
     barber_id: z.number().int().positive(),
+    service_id: z.number().int().positive(),
     date: dateField,
     time: timeField,
 });
 
 export const createAppointmentByBarberSchema = z.object({
     client_id: z.number().int().positive(),
+    service_id: z.number().int().positive(),
     date: dateField,
     time: timeField,
 });

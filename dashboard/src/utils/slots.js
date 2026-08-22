@@ -1,7 +1,11 @@
 import { toISODate } from "./date";
 
 export const generateSlots = (startTime, endTime, durationMinutes) => {
-    if (!startTime || !endTime || !durationMinutes) return [];
+    // El valor puede venir como string desde un <select>/<input> sin castear:
+    // sumar un string a un número hace concatenación ("600" + "20" = "60020"),
+    // no aritmética, y eso rompe la comparación de abajo silenciosamente.
+    const duration = Number(durationMinutes);
+    if (!startTime || !endTime || !duration || Number.isNaN(duration)) return [];
 
     const slots = [];
     const [startH, startM] = startTime.split(":").map(Number);
@@ -10,11 +14,11 @@ export const generateSlots = (startTime, endTime, durationMinutes) => {
     let current = startH * 60 + startM;
     const end = endH * 60 + endM;
 
-    while (current + durationMinutes <= end) {
+    while (current + duration <= end) {
         const h = String(Math.floor(current / 60)).padStart(2, "0");
         const m = String(current % 60).padStart(2, "0");
         slots.push(`${h}:${m}`);
-        current += durationMinutes;
+        current += duration;
     }
 
     return slots;

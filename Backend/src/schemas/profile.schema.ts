@@ -8,7 +8,6 @@ export const updateBioSchema = z.object({
 export const updateProfileDetailsSchema = z.object({
     first_name: z.string().min(2).max(100),
     last_name: z.string().min(2).max(100),
-    service_price: z.number().nonnegative(),
 });
 
 export const changePasswordSchema = z.object({

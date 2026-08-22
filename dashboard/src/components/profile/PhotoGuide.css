@@ -1,0 +1,72 @@
+.photo-guide {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    background-color: rgb(var(--brass-rgb) / 0.06);
+    border: 1px solid rgb(var(--brass-rgb) / 0.25);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.photo-guide-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.photo-guide-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--brass);
+    flex-shrink: 0;
+}
+
+.photo-guide-header h4 {
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.photo-guide-tips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1-5);
+}
+
+.photo-guide-tips li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.photo-guide-tip-icon {
+    width: 13px;
+    height: 13px;
+    margin-top: 2px;
+    color: var(--sage);
+    flex-shrink: 0;
+}
+
+.photo-guide-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1-5);
+}
+
+.photo-guide-note {
+    margin: 0;
+    padding-top: var(--space-2);
+    border-top: 1px solid rgb(var(--brass-rgb) / 0.18);
+    font-size: var(--text-2xs);
+    color: var(--text-secondary);
+    line-height: 1.5;
+}

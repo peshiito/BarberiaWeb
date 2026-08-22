@@ -18,7 +18,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        const isAuthRequest = error.config?.url?.includes("/clients/register");
+        const isAuthRequest = /\/clients\/(register|login|claim)$/.test(error.config?.url || "");
         if (error.response?.status === 401 && !isAuthRequest) {
             localStorage.removeItem(CLIENT_TOKEN_KEY);
             localStorage.removeItem(CLIENT_KEY);

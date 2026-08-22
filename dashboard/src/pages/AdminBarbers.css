@@ -11,12 +11,6 @@
     }
 }
 
-@media (max-width: 480px) {
-    .barber-form-row {
-        grid-template-columns: 1fr;
-    }
-}
-
 .barber-form {
     display: flex;
     flex-direction: column;
@@ -27,6 +21,15 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--space-4);
+}
+
+/* Debe ir después de la regla base: misma especificidad, y en el mismo
+   nivel de cascada gana la que aparece último en el archivo — antes estaba
+   arriba y nunca tenía efecto en mobile. */
+@media (max-width: 480px) {
+    .barber-form-row {
+        grid-template-columns: 1fr;
+    }
 }
 
 .barbers-grid {
@@ -43,10 +46,10 @@
     border-radius: var(--radius-lg);
     padding: var(--space-4);
     border: 1px solid var(--border-subtle);
-    min-height: 112px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    align-items: flex-start;
+    gap: var(--space-3);
     transition:
         border-color var(--duration-fast) var(--ease-out),
         transform var(--duration-fast) var(--ease-out);
@@ -55,6 +58,24 @@
 .barber-card:hover {
     border-color: var(--brass);
     transform: translateY(-2px);
+}
+
+.barber-card-head {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    min-width: 0;
+    width: 100%;
+}
+
+.barber-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: var(--text-sm);
+}
+
+.barber-info {
+    min-width: 0;
 }
 
 .barber-info h4 {
@@ -68,7 +89,6 @@
 .barber-email {
     font-size: var(--text-sm);
     color: var(--text-secondary);
-    margin-bottom: var(--space-3);
     overflow-wrap: break-word;
 }
 
@@ -76,4 +96,13 @@
     display: flex;
     gap: var(--space-2);
     flex-wrap: wrap;
+}
+
+.barber-card-specialties {
+    margin-top: calc(var(--space-2) * -1);
+}
+
+.barber-card-edit {
+    margin-top: var(--space-1);
+    align-self: flex-end;
 }

@@ -16,7 +16,7 @@ import {
 } from "../models/appointment.model";
 import { findClientById } from "../models/client.model";
 import { findScheduleByBarberAndWeek } from "../models/schedule.model";
-import { findById } from "../models/user.model";
+import { barberOffersService, findServiceById } from "../models/service.model";
 import { Appointment } from "../types/appointment.types";
 import { getPagination } from "../utils/pagination";
 import { generateSlots } from "../utils/slots";
@@ -47,12 +47,14 @@ interface AppointmentValidationError {
 
 interface AppointmentValidationOk {
     schedule_id: number;
+    service_id: number;
     price: number;
 }
 
 const validateAndBuildAppointment = async (
     clientId: number,
     barberId: number,
+    serviceId: number,
     date: string,
     time: string,
     excludeAppointmentId?: number,
@@ -60,6 +62,16 @@ const validateAndBuildAppointment = async (
     const client = await findClientById(clientId);
     if (!client) {
         return { status: 404, error: "Client not found" };
+    }
+
+    const service = await findServiceById(serviceId);
+    if (!service || !service.active) {
+        return { status: 404, error: "Service not found" };
+    }
+
+    const offersService = await barberOffersService(barberId, serviceId);
+    if (!offersService) {
+        return { status: 400, error: "This barber does not offer the selected service" };
     }
 
     const existingForDay = await findActiveAppointmentByClientAndDate(clientId, date);
@@ -92,8 +104,7 @@ const validateAndBuildAppointment = async (
         return { status: 409, error: "Slot already taken" };
     }
 
-    const barber = await findById(barberId);
-    return { schedule_id: schedule.id, price: barber?.service_price || 0 };
+    return { schedule_id: schedule.id, service_id: serviceId, price: service.price };
 };
 
 const findActionableAppointment = async (
@@ -112,13 +123,14 @@ const findActionableAppointment = async (
 
 export const createAppointmentHandler = async (req: ClientAuthRequest, res: Response) => {
     const clientId = req.client!.clientId;
-    const { barber_id, date, time } = req.body as {
+    const { barber_id, service_id, date, time } = req.body as {
         barber_id: number;
+        service_id: number;
         date: string;
         time: string;
     };
 
-    const result = await validateAndBuildAppointment(clientId, barber_id, date, time);
+    const result = await validateAndBuildAppointment(clientId, barber_id, service_id, date, time);
     if ("error" in result) {
         return res.status(result.status).json({ error: result.error });
     }
@@ -127,6 +139,7 @@ export const createAppointmentHandler = async (req: ClientAuthRequest, res: Resp
         client_id: clientId,
         barber_id,
         schedule_id: result.schedule_id,
+        service_id: result.service_id,
         date,
         time,
         price: result.price,
@@ -136,14 +149,15 @@ export const createAppointmentHandler = async (req: ClientAuthRequest, res: Resp
 };
 
 export const createAppointmentByAdminHandler = async (req: AuthRequest, res: Response) => {
-    const { client_id, barber_id, date, time } = req.body as {
+    const { client_id, barber_id, service_id, date, time } = req.body as {
         client_id: number;
         barber_id: number;
+        service_id: number;
         date: string;
         time: string;
     };
 
-    const result = await validateAndBuildAppointment(client_id, barber_id, date, time);
+    const result = await validateAndBuildAppointment(client_id, barber_id, service_id, date, time);
     if ("error" in result) {
         return res.status(result.status).json({ error: result.error });
     }
@@ -152,6 +166,7 @@ export const createAppointmentByAdminHandler = async (req: AuthRequest, res: Res
         client_id,
         barber_id,
         schedule_id: result.schedule_id,
+        service_id: result.service_id,
         date,
         time,
         price: result.price,
@@ -162,13 +177,14 @@ export const createAppointmentByAdminHandler = async (req: AuthRequest, res: Res
 
 export const createAppointmentByBarberHandler = async (req: AuthRequest, res: Response) => {
     const barberId = req.user!.id;
-    const { client_id, date, time } = req.body as {
+    const { client_id, service_id, date, time } = req.body as {
         client_id: number;
+        service_id: number;
         date: string;
         time: string;
     };
 
-    const result = await validateAndBuildAppointment(client_id, barberId, date, time);
+    const result = await validateAndBuildAppointment(client_id, barberId, service_id, date, time);
     if ("error" in result) {
         return res.status(result.status).json({ error: result.error });
     }
@@ -177,6 +193,7 @@ export const createAppointmentByBarberHandler = async (req: AuthRequest, res: Re
         client_id,
         barber_id: barberId,
         schedule_id: result.schedule_id,
+        service_id: result.service_id,
         date,
         time,
         price: result.price,
@@ -197,6 +214,10 @@ export const updateAppointmentByAdminHandler = async (req: AuthRequest, res: Res
     }
     const appointment = gate.appointment;
 
+    if (!appointment.service_id) {
+        return res.status(400).json({ error: "This appointment has no service linked and cannot be rescheduled" });
+    }
+
     const { barber_id, date, time } = req.body as { barber_id?: number; date?: string; time?: string };
     const targetBarberId = barber_id ?? appointment.barber_id;
     const targetDate = date ?? appointment.date;
@@ -205,6 +226,7 @@ export const updateAppointmentByAdminHandler = async (req: AuthRequest, res: Res
     const result = await validateAndBuildAppointment(
         appointment.client_id,
         targetBarberId,
+        appointment.service_id,
         targetDate,
         targetTime,
         appointmentId,
@@ -216,6 +238,7 @@ export const updateAppointmentByAdminHandler = async (req: AuthRequest, res: Res
     await updateAppointmentByAdmin(appointmentId, {
         barber_id: targetBarberId,
         schedule_id: result.schedule_id,
+        service_id: result.service_id,
         date: targetDate,
         time: targetTime,
         price: result.price,

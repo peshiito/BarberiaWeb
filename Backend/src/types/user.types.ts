@@ -8,8 +8,12 @@ export interface User {
     password_hash: string;
     role: Role;
     bio: string | null;
-    service_price: number;
     earnings_split_percentage: number;
+    phone: string | null;
+    specialties: string | null;
+    social_media: string | null;
+    birth_date: string | null;
+    address: string | null;
     created_at: Date;
 }
 
@@ -20,6 +24,10 @@ export interface UserInput {
     password_hash: string;
     role: Role;
     bio?: string;
-    service_price?: number;
     earnings_split_percentage?: number;
+    phone?: string;
+    specialties?: string[];
+    social_media?: string;
+    birth_date?: string;
+    address?: string;
 }

@@ -1,0 +1,114 @@
+.month-cal {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    background-color: var(--bg-base);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3-5);
+}
+
+.month-cal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.month-cal-title {
+    font-family: var(--font-display);
+    font-size: var(--text-md);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.month-cal-weekdays {
+    display: flex;
+}
+
+.month-cal-weekdays span {
+    flex: 1;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.month-cal-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.month-cal-week {
+    display: flex;
+    border-radius: var(--radius-full);
+    transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+/* Se pinta la fila entera (no un día suelto) porque acá se elige una semana
+   completa de agenda, no una fecha puntual — el círculo lleno marca el lunes
+   como ancla, pero el tinte comunica que toda la fila queda incluida. */
+.month-cal-week.is-selected {
+    background-color: rgb(var(--brass-rgb) / 0.14);
+}
+
+.month-cal-day {
+    flex: 1;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    transition:
+        background-color var(--duration-fast) var(--ease-out),
+        color var(--duration-fast) var(--ease-out);
+}
+
+.month-cal-day:hover {
+    background-color: var(--bg-surface-hover);
+    color: var(--text-primary);
+}
+
+.month-cal-day:focus-visible {
+    outline: 2px solid var(--brass);
+    outline-offset: -2px;
+}
+
+.month-cal-day.is-outside {
+    color: var(--text-muted);
+    opacity: 0.4;
+}
+
+.month-cal-day.is-today {
+    box-shadow: inset 0 0 0 1px var(--brass);
+    color: var(--brass-bright);
+    font-weight: 600;
+}
+
+.month-cal-day.is-anchor {
+    background-color: var(--brass);
+    color: var(--bg-base);
+    font-weight: 700;
+    box-shadow: none;
+}
+
+.month-cal-day.is-anchor:hover {
+    background-color: var(--brass-bright);
+}
+
+@media (max-width: 480px) {
+    .month-cal {
+        padding: var(--space-2-5);
+    }
+
+    .month-cal-day {
+        font-size: var(--text-2xs);
+    }
+}

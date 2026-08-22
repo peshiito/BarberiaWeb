@@ -12,6 +12,11 @@ export const createBarber = async payload => {
     return data;
 };
 
+export const updateBarber = async (id, payload) => {
+    const { data } = await api.patch(`/admin/barbers/${id}`, payload);
+    return data;
+};
+
 export const getFinancialSummary = async (from, to) => {
     const { data } = await api.get("/admin/finance/summary", { params: { from, to } });
     return data;

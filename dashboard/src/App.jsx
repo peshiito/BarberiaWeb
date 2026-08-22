@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 
 const AdminBarbers = lazy(() => import("./pages/AdminBarbers"));
 const AdminFinance = lazy(() => import("./pages/AdminFinance"));
+const AdminServices = lazy(() => import("./pages/AdminServices"));
 const Clients = lazy(() => import("./pages/Clients"));
 const Photos = lazy(() => import("./pages/Photos"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -73,6 +74,14 @@ function App() {
                                     element={
                                         <ProtectedRoute roles={ADMIN_ROLES}>
                                             <AdminFinance />
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                <Route
+                                    path="/admin/services"
+                                    element={
+                                        <ProtectedRoute roles={ADMIN_ROLES}>
+                                            <AdminServices />
                                         </ProtectedRoute>
                                     }
                                 />

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import DayPicker from "../components/schedule/DayPicker";
+import DurationPicker, { DURATION_MAX, DURATION_MIN } from "../components/schedule/DurationPicker";
+import MonthCalendar from "../components/schedule/MonthCalendar";
 import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
 import FormField from "../components/ui/FormField";
@@ -11,20 +13,32 @@ import { formatWeekRange, getMonday, parseDateOnly, toISODate } from "../utils/d
 import { generateSlots } from "../utils/slots";
 import "./Schedule.css";
 
-const DURATION_OPTIONS = [15, 20, 30, 45, 60];
-
 const Schedule = () => {
     const [selectedDays, setSelectedDays] = useState([]);
     const [startTime, setStartTime] = useState("10:00");
     const [endTime, setEndTime] = useState("20:00");
     const [duration, setDuration] = useState(30);
-    const [weekStart, setWeekStart] = useState(() => toISODate(getMonday(new Date())));
+    // Date, no string: parsear un <input type="date"> con `new Date(str)` lo
+    // interpreta como UTC y en huso horario negativo (Argentina) cae un día
+    // antes en hora local — al elegir el lunes siguiente, terminaba
+    // recalculando el lunes de ESTA semana y chocaba con la agenda ya creada
+    // ("ya existe una agenda para esa semana"), como si no dejara abrir la
+    // semana que viene.
+    const [weekStart, setWeekStart] = useState(() => getMonday(new Date()));
+    const weekStartIso = toISODate(weekStart);
     const [submitting, setSubmitting] = useState(false);
     const [feedback, setFeedback] = useState(null);
     const [schedules, setSchedules] = useState([]);
     const [loadingList, setLoadingList] = useState(true);
 
-    const preview = generateSlots(startTime, endTime, duration);
+    const durationError =
+        duration === "" || Number.isNaN(duration)
+            ? "Elegí una duración"
+            : duration < DURATION_MIN || duration > DURATION_MAX
+              ? `Tiene que estar entre ${DURATION_MIN} y ${DURATION_MAX} minutos`
+              : null;
+
+    const preview = durationError ? [] : generateSlots(startTime, endTime, duration);
 
     const loadSchedules = async () => {
         setLoadingList(true);
@@ -46,12 +60,19 @@ const Schedule = () => {
         setSelectedDays(prev => (prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]));
     };
 
+    const handleToday = () => setWeekStart(getMonday(new Date()));
+
     const handleSubmit = async e => {
         e.preventDefault();
         setFeedback(null);
 
         if (selectedDays.length === 0) {
             setFeedback({ type: "error", message: "Elegí al menos un día de trabajo" });
+            return;
+        }
+
+        if (durationError) {
+            setFeedback({ type: "error", message: durationError });
             return;
         }
 
@@ -63,7 +84,7 @@ const Schedule = () => {
         setSubmitting(true);
         try {
             await createSchedule({
-                week_start: weekStart,
+                week_start: weekStartIso,
                 work_days: selectedDays.join(","),
                 start_time: startTime,
                 end_time: endTime,
@@ -91,12 +112,16 @@ const Schedule = () => {
                 <Card>
                     <h3 className="card-section-title">Nueva agenda</h3>
                     <form className="schedule-form" onSubmit={handleSubmit}>
-                        <FormField label="Semana a abrir">
-                            <input
-                                type="date"
-                                value={weekStart}
-                                onChange={e => setWeekStart(toISODate(getMonday(new Date(e.target.value))))}
-                            />
+                        <FormField label="Semana a abrir" hint="Elegí cualquier día: se abre la semana completa, de lunes a domingo">
+                            <div className="schedule-week-picker">
+                                <div className="schedule-week-readout">
+                                    <span className="schedule-week-readout-range">{formatWeekRange(weekStart)}</span>
+                                    <button type="button" className="schedule-week-today" onClick={handleToday}>
+                                        Hoy
+                                    </button>
+                                </div>
+                                <MonthCalendar weekStart={weekStart} onSelectWeek={setWeekStart} />
+                            </div>
                         </FormField>
 
                         <FormField label="Días de trabajo">
@@ -112,14 +137,12 @@ const Schedule = () => {
                             </FormField>
                         </div>
 
-                        <FormField label="Duración entre cortes" hint="Cada cuánto empieza un turno nuevo">
-                            <select value={duration} onChange={e => setDuration(e.target.value)}>
-                                {DURATION_OPTIONS.map(min => (
-                                    <option key={min} value={min}>
-                                        {min} minutos
-                                    </option>
-                                ))}
-                            </select>
+                        <FormField
+                            label="Duración entre cortes"
+                            hint={durationError ? undefined : "Cada cuánto empieza un turno nuevo"}
+                            error={durationError}
+                        >
+                            <DurationPicker value={duration} onChange={setDuration} />
                         </FormField>
 
                         {preview.length > 0 && (

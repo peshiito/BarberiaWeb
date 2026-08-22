@@ -27,6 +27,18 @@ export const clientRegisterRateLimit = rateLimit({
     legacyHeaders: false,
 });
 
+// Propio contador, separado de clientRegisterRateLimit y de authRateLimit:
+// login/claim de cliente ahora comparan contraseña (bcrypt), así que
+// necesitan su propio backstop contra fuerza bruta sin compartir cupo con el
+// registro ni con el login de staff.
+export const clientLoginRateLimit = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 10,
+    message: { error: "Too many attempts, try again later" },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
 export const staffActionsRateLimit = rateLimit({
     windowMs: 60 * 1000,
     limit: 60,

@@ -2,12 +2,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useDocumentHead } from "../hooks/useDocumentHead";
 import { useBarbers } from "../hooks/useBarbers";
+import { useServices } from "../hooks/useServices";
 import { useWeekSlots } from "../hooks/useWeekSlots";
 import { useClientAuth } from "../hooks/useClientAuth";
 import { createAppointment } from "../services/appointments";
 import { getErrorMessage, isConflict } from "../utils/apiError";
 import { addDays, formatFullDate, getMonday, isPastDay, isToday, isWorkDay, toISODate } from "../utils/date";
-import { SERVICES } from "../data/services";
 import { buildAssetUrl } from "../services/api";
 import StepIndicator from "../components/booking/StepIndicator";
 import Button from "../components/ui/Button";
@@ -27,6 +27,7 @@ export default function Booking() {
     const [searchParams] = useSearchParams();
     const { isAuthenticated, client } = useClientAuth();
     const { status: barbersStatus, barbers, error: barbersError } = useBarbers();
+    const { status: servicesStatus, services, error: servicesError } = useServices();
 
     const preselectedBarber = searchParams.get("barbero");
 
@@ -42,7 +43,8 @@ export default function Booking() {
     const { status: slotsStatus, data: slotsData, error: slotsError } = useWeekSlots(barberId, weekStart, slotsNonce);
 
     const selectedBarber = barbers.find((b) => b.id === barberId);
-    const selectedService = SERVICES.find((s) => s.id === serviceId);
+    const selectedService = services.find((s) => s.id === serviceId);
+    const barbersForService = serviceId ? barbers.filter((b) => b.service_ids?.includes(serviceId)) : barbers;
 
     // Navegación por nombre de paso, no por índice: STEPS se achica al loguearse.
     const visibleSteps = isAuthenticated ? STEPS.filter((s) => s !== "Cuenta") : STEPS;
@@ -79,6 +81,7 @@ export default function Booking() {
         try {
             const result = await createAppointment({
                 barberId,
+                serviceId,
                 date: toISODate(selectedDate),
                 time: selectedTime,
             });
@@ -129,13 +132,20 @@ export default function Booking() {
 
                 <div ref={stepContentRef} tabIndex={-1}>
                 {currentStepName === "Servicio" && (
-                    <ServiceStep serviceId={serviceId} onSelect={(id) => setServiceId(id)} onNext={goNext} />
+                    <ServiceStep
+                        status={servicesStatus}
+                        services={services}
+                        error={servicesError}
+                        serviceId={serviceId}
+                        onSelect={(id) => setServiceId(id)}
+                        onNext={goNext}
+                    />
                 )}
 
                 {currentStepName === "Barbero" && (
                     <BarberStep
                         status={barbersStatus}
-                        barbers={barbers}
+                        barbers={barbersForService}
                         error={barbersError}
                         selectedId={barberId}
                         onSelect={(id) => {
@@ -197,28 +207,40 @@ export default function Booking() {
     );
 }
 
-function ServiceStep({ serviceId, onSelect, onNext }) {
+function ServiceStep({ status, services, error, serviceId, onSelect, onNext }) {
     return (
         <div>
             <h2 className="booking-step-title">¿Qué servicio buscás?</h2>
-            <p className="booking-step-lede">
-                Orientativo — el precio final y la duración los confirma el barbero al momento del turno.
-            </p>
-            <div className="option-grid option-grid-2">
-                {SERVICES.map((service) => (
-                    <button
-                        key={service.id}
-                        type="button"
-                        className={`option-btn ${serviceId === service.id ? "is-selected" : ""}`}
-                        onClick={() => onSelect(service.id)}
-                    >
-                        <span className="option-btn-title">{service.name}</span>
-                        <span className="option-btn-meta">
-                            {service.durationLabel} · {service.priceLabel}
-                        </span>
-                    </button>
-                ))}
-            </div>
+            <p className="booking-step-lede">Elegí un servicio para ver qué barberos lo hacen.</p>
+
+            {status === "loading" && (
+                <div className="option-grid option-grid-2">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                        <Skeleton key={i} height="72px" />
+                    ))}
+                </div>
+            )}
+
+            {status === "error" && <EmptyState title="No pudimos cargar los servicios" text={error} />}
+
+            {status === "success" && (
+                <div className="option-grid option-grid-2">
+                    {services.map((service) => (
+                        <button
+                            key={service.id}
+                            type="button"
+                            className={`option-btn ${serviceId === service.id ? "is-selected" : ""}`}
+                            onClick={() => onSelect(service.id)}
+                        >
+                            <span className="option-btn-title">{service.name}</span>
+                            <span className="option-btn-meta">
+                                {service.duration_minutes} min · ${Number(service.price).toLocaleString("es-AR")}
+                            </span>
+                        </button>
+                    ))}
+                </div>
+            )}
+
             <div className="booking-nav">
                 <span />
                 <Button onClick={onNext} disabled={!serviceId}>
@@ -245,7 +267,11 @@ function BarberStep({ status, barbers, error, selectedId, onSelect, onBack, onNe
 
             {status === "error" && <EmptyState title="No pudimos cargar los barberos" text={error} />}
 
-            {status === "success" && (
+            {status === "success" && barbers.length === 0 && (
+                <EmptyState title="Nadie ofrece este servicio todavía" text="Probá con otro servicio." />
+            )}
+
+            {status === "success" && barbers.length > 0 && (
                 <div className="option-grid option-grid-3">
                     {barbers.map((barber) => (
                         <button
@@ -518,10 +544,18 @@ function ConfirmStep({ service, barber, date, time, client, submitState, onBack,
 
             <div className="booking-confirm-list">
                 {service && (
-                    <div className="booking-confirm-row">
-                        <span className="booking-confirm-label">Servicio</span>
-                        <span className="booking-confirm-value">{service.name}</span>
-                    </div>
+                    <>
+                        <div className="booking-confirm-row">
+                            <span className="booking-confirm-label">Servicio</span>
+                            <span className="booking-confirm-value">{service.name}</span>
+                        </div>
+                        <div className="booking-confirm-row">
+                            <span className="booking-confirm-label">Precio</span>
+                            <span className="booking-confirm-value">
+                                ${Number(service.price).toLocaleString("es-AR")}
+                            </span>
+                        </div>
+                    </>
                 )}
                 <div className="booking-confirm-row">
                     <span className="booking-confirm-label">Barbero</span>

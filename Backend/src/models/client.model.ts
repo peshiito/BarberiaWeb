@@ -4,8 +4,8 @@ import { Client, ClientInput, ClientUpdateInput } from "../types/client.types";
 
 export const createClient = async (data: ClientInput): Promise<number> => {
     const [result] = await pool.query<ResultSetHeader>(
-        `INSERT INTO clients (first_name, last_name, phone) VALUES (?, ?, ?)`,
-        [data.first_name, data.last_name, data.phone],
+        `INSERT INTO clients (first_name, last_name, phone, password_hash) VALUES (?, ?, ?, ?)`,
+        [data.first_name, data.last_name, data.phone, data.password_hash ?? null],
     );
     return result.insertId;
 };
@@ -74,6 +74,10 @@ export const updateClient = async (id: number, data: ClientUpdateInput): Promise
         fields.push("phone = ?");
         values.push(data.phone);
     }
+    if (data.notes !== undefined) {
+        fields.push("notes = ?");
+        values.push(data.notes);
+    }
 
     if (!fields.length) {
         return;
@@ -81,4 +85,12 @@ export const updateClient = async (id: number, data: ClientUpdateInput): Promise
 
     values.push(id);
     await pool.query(`UPDATE clients SET ${fields.join(", ")} WHERE id = ?`, values);
+};
+
+export const updateClientPassword = async (id: number, passwordHash: string): Promise<void> => {
+    await pool.query(`UPDATE clients SET password_hash = ? WHERE id = ?`, [passwordHash, id]);
+};
+
+export const setClientPhoto = async (id: number, photoUrl: string): Promise<void> => {
+    await pool.query(`UPDATE clients SET photo_url = ? WHERE id = ?`, [photoUrl, id]);
 };

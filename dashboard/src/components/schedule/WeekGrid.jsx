@@ -38,6 +38,13 @@ const WeekGrid = ({ weekDays, schedule, slots, appointments, onSelectAppointment
 
     const workDays = parseWorkDays(schedule.work_days);
 
+    // Con turnos cortos (15-20 min) un día de agenda genera muchas más filas
+    // que con turnos de 30-60 min. Sin esto cada fila mide 64px fijos y la
+    // grilla se vuelve una tira larguísima — acá se compacta la fila y se
+    // recorta contenido secundario a medida que hay más slots por día.
+    const isDense = slots.length > 20;
+    const isVeryDense = slots.length > 28;
+
     const findAppointment = (dayIso, slot) => {
         return appointments.find(a => {
             const aDate = a.date.slice(0, 10);
@@ -46,7 +53,12 @@ const WeekGrid = ({ weekDays, schedule, slots, appointments, onSelectAppointment
     };
 
     return (
-        <div className="week-grid-wrapper scroll-shadow-x">
+        <div
+            className={`week-grid-wrapper scroll-shadow-x ${isDense ? "is-dense" : ""} ${
+                isVeryDense ? "is-very-dense" : ""
+            }`}
+            style={{ "--slot-count": slots.length }}
+        >
             <div className="week-grid" style={{ gridTemplateColumns: `72px repeat(${weekDays.length}, 1fr)` }}>
                 <div className="week-grid-corner" />
                 {weekDays.map(day => {
@@ -64,62 +76,81 @@ const WeekGrid = ({ weekDays, schedule, slots, appointments, onSelectAppointment
                     );
                 })}
 
-                {slots.map((slot, slotIndex) => (
-                    <Fragment key={slot}>
-                        <div className="week-grid-time">{slot}</div>
-                        {weekDays.map(day => {
-                            const isWorkDay = workDays.includes(day.dayName);
-                            const appointment = isWorkDay ? findAppointment(day.iso, slot) : null;
-                            const isNow = isToday(day.date) && isCurrentSlot(slot, slotIndex, slots);
+                {slots.map((slot, slotIndex) => {
+                    const isHourMark = slot.endsWith(":00");
+                    return (
+                        <Fragment key={slot}>
+                            <div className={`week-grid-time ${isHourMark ? "is-hour-mark" : ""}`}>{slot}</div>
+                            {weekDays.map(day => {
+                                const isWorkDay = workDays.includes(day.dayName);
+                                const appointment = isWorkDay ? findAppointment(day.iso, slot) : null;
+                                const isNow = isToday(day.date) && isCurrentSlot(slot, slotIndex, slots);
+                                const hourClass = isHourMark ? "is-hour-mark" : "";
 
-                            if (!isWorkDay) {
-                                return <div key={`${day.iso}-${slot}`} className="week-grid-cell is-closed" />;
-                            }
-
-                            if (!appointment) {
-                                if (isPastSlot(day.date, slot)) {
+                                if (!isWorkDay) {
                                     return (
-                                        <div key={`${day.iso}-${slot}`} className="week-grid-cell is-past">
-                                            <span className="week-grid-free-label">pasado</span>
-                                        </div>
+                                        <div
+                                            key={`${day.iso}-${slot}`}
+                                            className={`week-grid-cell is-closed ${hourClass}`}
+                                        />
                                     );
                                 }
+
+                                if (!appointment) {
+                                    if (isPastSlot(day.date, slot)) {
+                                        return (
+                                            <div
+                                                key={`${day.iso}-${slot}`}
+                                                className={`week-grid-cell is-past ${hourClass}`}
+                                            >
+                                                <span className="week-grid-free-label">pasado</span>
+                                            </div>
+                                        );
+                                    }
+
+                                    return (
+                                        <button
+                                            key={`${day.iso}-${slot}`}
+                                            type="button"
+                                            className={`week-grid-cell is-free ${hourClass} ${isNow ? "is-now" : ""}`}
+                                            onClick={() => onSelectFreeSlot(day.iso, slot)}
+                                        >
+                                            <span className="week-grid-free-label">libre</span>
+                                        </button>
+                                    );
+                                }
+
+                                const isCompleted = appointment.status === "completed";
 
                                 return (
                                     <button
                                         key={`${day.iso}-${slot}`}
                                         type="button"
-                                        className={`week-grid-cell is-free ${isNow ? "is-now" : ""}`}
-                                        onClick={() => onSelectFreeSlot(day.iso, slot)}
+                                        className={`week-grid-cell is-booked ${hourClass} ${
+                                            isCompleted ? "is-completed" : ""
+                                        } ${isNow ? "is-now" : ""}`}
+                                        onClick={() => onSelectAppointment(appointment)}
+                                        title={
+                                            isVeryDense
+                                                ? `${appointment.client_first_name} ${appointment.client_last_name} · ${appointment.client_phone}`
+                                                : undefined
+                                        }
                                     >
-                                        <span className="week-grid-free-label">libre</span>
+                                        <span className="week-grid-client">
+                                            {appointment.client_first_name} {appointment.client_last_name}
+                                        </span>
+                                        {!isVeryDense && (
+                                            <span className="week-grid-phone">{appointment.client_phone}</span>
+                                        )}
+                                        <Badge tone={isCompleted ? "sage" : "brass"}>
+                                            {isCompleted ? "Completado" : "Activo"}
+                                        </Badge>
                                     </button>
                                 );
-                            }
-
-                            const isCompleted = appointment.status === "completed";
-
-                            return (
-                                <button
-                                    key={`${day.iso}-${slot}`}
-                                    type="button"
-                                    className={`week-grid-cell is-booked ${isCompleted ? "is-completed" : ""} ${
-                                        isNow ? "is-now" : ""
-                                    }`}
-                                    onClick={() => onSelectAppointment(appointment)}
-                                >
-                                    <span className="week-grid-client">
-                                        {appointment.client_first_name} {appointment.client_last_name}
-                                    </span>
-                                    <span className="week-grid-phone">{appointment.client_phone}</span>
-                                    <Badge tone={isCompleted ? "sage" : "brass"}>
-                                        {isCompleted ? "Completado" : "Activo"}
-                                    </Badge>
-                                </button>
-                            );
-                        })}
-                    </Fragment>
-                ))}
+                            })}
+                        </Fragment>
+                    );
+                })}
             </div>
         </div>
     );
