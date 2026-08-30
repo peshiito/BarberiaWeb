@@ -17,6 +17,13 @@ export const updateBarber = async (id, payload) => {
     return data;
 };
 
+export const deleteBarber = async (id, password) => {
+    const { data } = await api.delete(`/admin/barbers/${id}`, {
+        data: password ? { password } : {},
+    });
+    return data;
+};
+
 export const getFinancialSummary = async (from, to) => {
     const { data } = await api.get("/admin/finance/summary", { params: { from, to } });
     return data;

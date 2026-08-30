@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import { useServices } from "../../hooks/useServices";
-import { IconScissors } from "../ui/icons";
 import PlateFrame from "../ui/PlateFrame";
 import Button from "../ui/Button";
 import Reveal from "../ui/Reveal";
+import serviciosPhoto from "../../assets/images/servicios.jpg";
 import "./ServicesSection.css";
 
 export default function ServicesSection() {
@@ -13,9 +13,8 @@ export default function ServicesSection() {
         <section id="servicios" className="section section-dark services-section">
             <div className="container services-grid">
                 <Reveal className="services-plate">
-                    {/* reemplazar por foto real de un corte en proceso cuando esté disponible */}
-                    <PlateFrame number="N.º 02" caption="Lo que hacemos">
-                        <IconScissors />
+                    <PlateFrame photo number="N.º 02" caption="Lo que hacemos">
+                        <img src={serviciosPhoto} alt="Detalle de afeitado a navaja en Oficio Barbería" />
                     </PlateFrame>
                 </Reveal>
 

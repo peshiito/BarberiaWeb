@@ -72,3 +72,32 @@
 .input-affix input {
     padding-left: var(--space-7);
 }
+
+.input-affix-suffix {
+    position: absolute;
+    right: var(--space-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-1-5);
+    background: none;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition:
+        color var(--duration-fast) var(--ease-out),
+        transform var(--duration-fast) var(--ease-out);
+}
+
+.input-affix-suffix:hover {
+    color: var(--text-secondary);
+}
+
+.input-affix-suffix:active {
+    transform: scale(0.9);
+}
+
+.input-affix:has(.input-affix-suffix) input {
+    padding-right: var(--space-7);
+}

@@ -10,6 +10,38 @@ export const IconMenu = props => (
     </svg>
 );
 
+export const IconEye = props => (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" {...props}>
+        <path
+            d="M1.5 10S4.5 4 10 4s8.5 6 8.5 6-3 6-8.5 6-8.5-6-8.5-6Z"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinejoin="round"
+        />
+        <circle cx="10" cy="10" r="2.4" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+);
+
+export const IconEyeOff = props => (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" {...props}>
+        <path
+            d="M2.5 2.5l15 15M8.3 5.3A8.6 8.6 0 0 1 10 4c5.5 0 8.5 6 8.5 6a15 15 0 0 1-2.8 3.6M6 6.6C3.2 8.4 1.5 10 1.5 10S4.5 16 10 16c1 0 1.9-.2 2.7-.5M11.4 11.4a2.4 2.4 0 0 1-3.3-3.3"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
+export const IconLock = props => (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" {...props}>
+        <rect x="4" y="9" width="12" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M6.5 9V6.5a3.5 3.5 0 0 1 7 0V9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="10" cy="13" r="1.1" fill="currentColor" />
+    </svg>
+);
+
 export const IconWarning = props => (
     <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" {...props}>
         <path d="M10 2.5l8 14H2l8-14z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />

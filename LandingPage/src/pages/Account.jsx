@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { sileo } from "sileo";
 import { useDocumentHead } from "../hooks/useDocumentHead";
 import { useClientAuth } from "../hooks/useClientAuth";
 import { useBarbers } from "../hooks/useBarbers";
@@ -73,6 +74,7 @@ export default function Account() {
             setCancelTarget(null);
             setCancelStatus("idle");
             load();
+            sileo.success({ title: "Turno cancelado" });
         } catch (error) {
             setCancelStatus("idle");
             setCancelError(getErrorMessage(error));
@@ -102,6 +104,7 @@ export default function Account() {
         setPhotoStatus("loading");
         try {
             await uploadPhoto(file);
+            sileo.success({ title: "Foto actualizada" });
         } catch (error) {
             setProfileError(getErrorMessage(error));
         } finally {

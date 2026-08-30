@@ -128,3 +128,7 @@ export const updateBarberByAdmin = async (
 export const updateUserPassword = async (userId: number, passwordHash: string): Promise<void> => {
     await pool.query(`UPDATE users SET password_hash = ? WHERE id = ?`, [passwordHash, userId]);
 };
+
+export const deleteUser = async (userId: number): Promise<void> => {
+    await pool.query(`DELETE FROM users WHERE id = ?`, [userId]);
+};

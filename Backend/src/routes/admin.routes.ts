@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
     createBarber,
+    deleteBarber,
     getAllUsers,
     getFinancialPeriod,
     getFinancialSeries,
@@ -11,7 +12,7 @@ import { authenticate } from "../middlewares/auth.middleware";
 import { staffActionsRateLimit } from "../middlewares/rate-limit.middleware";
 import { authorize } from "../middlewares/role.middleware";
 import { validate } from "../middlewares/validate.middleware";
-import { createBarberSchema, updateBarberSchema } from "../schemas/admin.schema";
+import { createBarberSchema, deleteBarberSchema, updateBarberSchema } from "../schemas/admin.schema";
 import { asyncHandler } from "../utils/asyncHandler";
 
 const router = Router();
@@ -31,6 +32,13 @@ router.patch(
     authorize("admin", "admin_barber"),
     validate(updateBarberSchema),
     asyncHandler(updateBarber),
+);
+router.delete(
+    "/barbers/:id",
+    authenticate,
+    authorize("admin", "admin_barber"),
+    validate(deleteBarberSchema),
+    asyncHandler(deleteBarber),
 );
 router.get("/users", authenticate, authorize("admin", "admin_barber"), asyncHandler(getAllUsers));
 router.get("/finance/summary", authenticate, authorize("admin", "admin_barber"), asyncHandler(getFinancialSummary));

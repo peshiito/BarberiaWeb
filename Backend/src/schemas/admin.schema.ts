@@ -27,6 +27,10 @@ export const createBarberSchema = z.object({
     address: addressField.optional(),
 });
 
+export const deleteBarberSchema = z.object({
+    password: z.string().min(1).max(200).optional(),
+});
+
 export const updateBarberSchema = requireAtLeastOneField(
     z.object({
         first_name: z.string().min(2).max(100).optional(),

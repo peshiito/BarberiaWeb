@@ -4,7 +4,7 @@ import { RowDataPacket } from "mysql2";
 import pool from "../config/db";
 import { AuthRequest } from "../middlewares/auth.middleware";
 import { replaceBarberServices } from "../models/service.model";
-import { createUser, findByEmail, findById, listUsersPaginated, updateBarberByAdmin } from "../models/user.model";
+import { createUser, deleteUser, findByEmail, findById, listUsersPaginated, updateBarberByAdmin } from "../models/user.model";
 import { getPagination } from "../utils/pagination";
 import { isValidCalendarDate, parsePositiveIntParam } from "../utils/validators";
 
@@ -128,6 +128,48 @@ export const updateBarber = async (req: AuthRequest, res: Response) => {
     }
 
     return res.json({ message: "Barber updated" });
+};
+
+export const deleteBarber = async (req: AuthRequest, res: Response) => {
+    const id = parsePositiveIntParam(req.params.id);
+    if (id === null) {
+        return res.status(400).json({ error: "Invalid barber id" });
+    }
+
+    if (id === req.user!.id) {
+        return res.status(400).json({ error: "You cannot delete your own account" });
+    }
+
+    const target = await findById(id);
+    if (!target) {
+        return res.status(404).json({ error: "User not found" });
+    }
+
+    if (target.role === "admin" && req.user!.role !== "admin") {
+        return res.status(403).json({ error: "Only admins can delete admin accounts" });
+    }
+
+    // Borrar un barbero es de alto impacto (se pierden turnos, fotos y horarios
+    // en cascada), así que se re-pide la contraseña de quien ejecuta el borrado
+    // como confirmación extra antes de aplicarlo.
+    if (target.role === "barber" || target.role === "admin_barber") {
+        const { password } = req.body as { password?: string };
+        if (!password) {
+            return res.status(400).json({ error: "Password confirmation required to delete a barber" });
+        }
+        const actingUser = await findById(req.user!.id);
+        const validPassword = actingUser && (await bcrypt.compare(password, actingUser.password_hash));
+        if (!validPassword) {
+            // 403, no 401: acá el token sigue siendo válido, lo que falló es
+            // la confirmación de contraseña. El dashboard trata cualquier 401
+            // como "sesión expirada" y desloguea — un 401 acá cerraría la
+            // sesión del admin en vez de solo rechazar el borrado.
+            return res.status(403).json({ error: "Incorrect password" });
+        }
+    }
+
+    await deleteUser(id);
+    return res.json({ message: "User deleted" });
 };
 
 export const getAllUsers = async (req: Request, res: Response) => {

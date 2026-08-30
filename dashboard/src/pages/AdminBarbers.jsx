@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import DeleteBarberModal from "../components/admin/DeleteBarberModal";
 import EditBarberModal from "../components/admin/EditBarberModal";
 import SpecialtiesInput from "../components/admin/SpecialtiesInput";
 import Badge from "../components/ui/Badge";
@@ -41,6 +42,7 @@ const AdminBarbers = () => {
     const [feedback, setFeedback] = useState(null);
     const [fieldErrors, setFieldErrors] = useState({});
     const [editingBarber, setEditingBarber] = useState(null);
+    const [deletingBarber, setDeletingBarber] = useState(null);
 
     const loadUsers = async () => {
         setLoading(true);
@@ -305,14 +307,25 @@ const AdminBarbers = () => {
                                         </div>
                                     )}
                                     {(user.role !== "admin" || isPureAdmin) && (
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="barber-card-edit"
-                                            onClick={() => setEditingBarber(user)}
-                                        >
-                                            Editar
-                                        </Button>
+                                        <div className="barber-card-actions">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="barber-card-edit"
+                                                onClick={() => setEditingBarber(user)}
+                                            >
+                                                Editar
+                                            </Button>
+                                            {user.id !== currentUser?.id && (
+                                                <Button
+                                                    variant="danger"
+                                                    size="sm"
+                                                    onClick={() => setDeletingBarber(user)}
+                                                >
+                                                    Eliminar
+                                                </Button>
+                                            )}
+                                        </div>
                                     )}
                                 </div>
                             ))}
@@ -328,6 +341,15 @@ const AdminBarbers = () => {
                 onClose={() => setEditingBarber(null)}
                 onSaved={() => {
                     setEditingBarber(null);
+                    loadUsers();
+                }}
+            />
+
+            <DeleteBarberModal
+                barber={deletingBarber}
+                onClose={() => setDeletingBarber(null)}
+                onDeleted={() => {
+                    setDeletingBarber(null);
                     loadUsers();
                 }}
             />

@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "sileo";
 import { ClientAuthProvider } from "./context/ClientAuthContext";
 import PublicLayout from "./components/layout/PublicLayout";
 import ClientProtectedRoute from "./components/ClientProtectedRoute";
@@ -19,6 +20,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 export default function App() {
     return (
         <ErrorBoundary>
+            <Toaster position="bottom-right" />
             <BrowserRouter>
                 <ClientAuthProvider>
                     <Suspense fallback={<RouteFallback />}>

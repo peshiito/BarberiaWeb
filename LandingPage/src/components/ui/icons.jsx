@@ -120,6 +120,33 @@ export function IconInbox(props) {
     );
 }
 
+export function IconEye(props) {
+    return (
+        <svg {...base} {...props}>
+            <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" />
+            <circle cx="12" cy="12" r="2.8" />
+        </svg>
+    );
+}
+
+export function IconEyeOff(props) {
+    return (
+        <svg {...base} {...props}>
+            <path d="M3 3l18 18M10 5.2A11 11 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-3.3 4.2M7.3 7.5C4.4 9.4 2 12 2 12s3.6 7 10 7c1.2 0 2.3-.2 3.3-.6M13.6 13.6a2.8 2.8 0 0 1-3.9-3.9" />
+        </svg>
+    );
+}
+
+export function IconLock(props) {
+    return (
+        <svg {...base} {...props}>
+            <rect x="4.5" y="10.5" width="15" height="9.5" rx="1.8" />
+            <path d="M7.5 10.5V7.5a4.5 4.5 0 0 1 9 0v3" />
+            <circle cx="12" cy="15" r="1.3" fill="currentColor" stroke="none" />
+        </svg>
+    );
+}
+
 export function IconWarning(props) {
     return (
         <svg {...base} {...props}>

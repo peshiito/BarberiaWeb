@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import { BRAND } from "../../data/brand";
-import { IconChair } from "../ui/icons";
 import PlateFrame from "../ui/PlateFrame";
 import Button from "../ui/Button";
 import Reveal from "../ui/Reveal";
+import quienesSomosPhoto from "../../assets/images/quienes-somos.jpg";
 import "./IntroSection.css";
 
 export default function IntroSection() {
@@ -11,9 +11,8 @@ export default function IntroSection() {
         <section className="section section-cream intro-section">
             <div className="container intro-grid">
                 <Reveal className="intro-image-slot">
-                    {/* reemplazar por imagen real del local cuando esté disponible */}
-                    <PlateFrame tone="light" number="N.º 01" caption="El sillón · desde 2014">
-                        <IconChair />
+                    <PlateFrame tone="light" photo number="N.º 01" caption="El sillón · desde 2014">
+                        <img src={quienesSomosPhoto} alt="Interior de Oficio Barbería, sillones y espejos" />
                     </PlateFrame>
                 </Reveal>
 

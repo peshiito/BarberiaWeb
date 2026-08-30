@@ -6,18 +6,28 @@ import Skeleton from "../ui/Skeleton";
 import EmptyState from "../ui/EmptyState";
 import Reveal from "../ui/Reveal";
 import { IconScissors } from "../ui/icons";
+import corteBarba from "../../assets/images/galeria-corte-barba.jpg";
+import corteClasico from "../../assets/images/galeria-corte-clasico.jpg";
 import "./GallerySection.css";
+
+// Fotos de arranque mientras el equipo todavía no subió trabajos propios desde
+// el dashboard — se muestran primero, antes de las reales.
+const SEED_PHOTOS = [
+    { url: corteBarba, alt: "Corte con barba prolija en Oficio Barbería" },
+    { url: corteClasico, alt: "Corte clásico a peine en Oficio Barbería" },
+];
 
 export default function GallerySection() {
     const { status, barbers, error } = useBarbers();
 
     const photos = useMemo(() => {
-        return barbers.flatMap((barber) =>
+        const realPhotos = barbers.flatMap((barber) =>
             (barber.photos || []).map((url) => ({
                 url: buildAssetUrl(url),
                 alt: `Trabajo de ${barber.first_name} ${barber.last_name}`,
             })),
         );
+        return [...SEED_PHOTOS, ...realPhotos];
     }, [barbers]);
 
     return (

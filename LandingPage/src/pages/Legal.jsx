@@ -21,7 +21,7 @@ const TERMS = {
         },
         {
             heading: "4. Identificación del cliente",
-            body: "El acceso a \"Mi cuenta\" se realiza con tu nombre y número de teléfono, sin contraseña. Por tu seguridad, no compartas tu número de teléfono en formularios de terceros ni permitas que otra persona lo use para gestionar tus turnos.",
+            body: "El acceso a \"Mi cuenta\" se realiza con tu número de teléfono y una contraseña que vos elegís al crear la cuenta. Por tu seguridad, no compartas tu contraseña ni tu número de teléfono en formularios de terceros, y no permitas que otra persona los use para gestionar tus turnos.",
         },
         {
             heading: "5. Precios",
@@ -44,7 +44,7 @@ const PRIVACY = {
     sections: [
         {
             heading: "1. Qué datos recopilamos",
-            body: "Para crear tu cuenta y reservar un turno pedimos tu nombre, apellido y número de teléfono. Al reservar, guardamos el barbero, la fecha y el horario elegidos. No pedimos ni almacenamos contraseñas, datos de tarjetas ni información de pago en este sitio.",
+            body: "Para crear tu cuenta pedimos tu nombre, apellido, número de teléfono y una contraseña. Al reservar un turno, guardamos el barbero, la fecha y el horario elegidos. No pedimos ni almacenamos datos de tarjetas ni información de pago en este sitio.",
         },
         {
             heading: "2. Para qué usamos tus datos",
@@ -56,7 +56,7 @@ const PRIVACY = {
         },
         {
             heading: "4. Cómo protegemos tus datos",
-            body: "Tus datos se almacenan en nuestra base de datos con acceso restringido al personal autorizado. La sesión de \"Mi cuenta\" se identifica por número de teléfono sin verificación adicional (sin contraseña ni código SMS) — te pedimos no compartir tu número si no querés que alguien más pueda ver tus turnos.",
+            body: "Tus datos se almacenan en nuestra base de datos con acceso restringido al personal autorizado. Tu contraseña nunca se guarda en texto plano: se almacena encriptada, y ni nuestro propio equipo puede verla. Te pedimos no compartir tu contraseña ni tu número de teléfono si no querés que alguien más pueda ver o gestionar tus turnos.",
         },
         {
             heading: "5. Cuánto tiempo guardamos tus datos",

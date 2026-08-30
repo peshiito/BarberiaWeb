@@ -47,8 +47,8 @@ h3,
 h4 {
   font-family: var(--font-display);
   font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: 0.01em;
+  line-height: 0.98;
+  letter-spacing: -0.01em;
   margin: 0;
   text-transform: uppercase;
 }

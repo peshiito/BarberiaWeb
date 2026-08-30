@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
 import FormField from "../components/ui/FormField";
 import InlineFeedback from "../components/ui/InlineFeedback";
+import { IconEye, IconEyeOff, IconLock } from "../components/ui/icons";
 import { useAuth } from "../context/AuthContext";
 import "./Login.css";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const { login } = useAuth();
@@ -56,14 +58,25 @@ const Login = () => {
                     </FormField>
 
                     <FormField label="Contraseña" htmlFor="password">
-                        <input
-                            id="password"
-                            type="password"
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                            placeholder="••••••••"
-                            required
-                        />
+                        <div className="input-affix">
+                            <input
+                                id="password"
+                                type={showPassword ? "text" : "password"}
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
+                                placeholder="••••••••"
+                                autoComplete="current-password"
+                                required
+                            />
+                            <button
+                                type="button"
+                                className="input-affix-suffix"
+                                onClick={() => setShowPassword(v => !v)}
+                                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                            >
+                                {showPassword ? <IconEyeOff width={18} height={18} /> : <IconEye width={18} height={18} />}
+                            </button>
+                        </div>
                     </FormField>
 
                     {error && <InlineFeedback tone="error">{error}</InlineFeedback>}
@@ -71,6 +84,11 @@ const Login = () => {
                     <Button type="submit" loading={loading}>
                         Ingresar
                     </Button>
+
+                    <p className="login-trust-note">
+                        <IconLock width={14} height={14} />
+                        Conexión cifrada — tu contraseña nunca se guarda en texto plano
+                    </p>
                 </form>
             </div>
 

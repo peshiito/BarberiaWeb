@@ -18,7 +18,7 @@
 }
 
 .btn:active:not(:disabled) {
-    transform: translateY(1px);
+    transform: scale(0.97);
 }
 
 .btn:disabled {

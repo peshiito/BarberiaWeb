@@ -7,7 +7,6 @@
     justify-content: center;
     padding: var(--space-4);
     z-index: 100;
-    animation: modal-fade var(--duration-base) var(--ease-out);
 }
 
 .modal-dialog {
@@ -19,7 +18,6 @@
     max-width: 420px;
     max-height: 90vh;
     overflow-y: auto;
-    animation: modal-scale-in var(--duration-base) var(--ease-out);
 }
 
 .modal-lg {
@@ -58,29 +56,3 @@
     padding: var(--space-5);
 }
 
-@keyframes modal-fade {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes modal-scale-in {
-    from {
-        opacity: 0;
-        transform: scale(0.96) translateY(8px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .modal-overlay,
-    .modal-dialog {
-        animation: none;
-    }
-}

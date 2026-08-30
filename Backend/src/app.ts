@@ -16,9 +16,27 @@ import serviceRoutes from "./routes/service.routes";
 
 const app = express();
 
+// Necesario detrás de cualquier reverse proxy/balanceador (Render, Railway,
+// nginx, etc.): sin esto, express-rate-limit cuenta todas las requests bajo
+// la IP del proxy en vez de la del cliente real (rate limit inútil), y
+// req.secure/x-forwarded-proto no reflejan el protocolo real del cliente.
+app.set("trust proxy", 1);
+
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || "").split(",").filter(Boolean);
 
 app.use(helmet());
+
+// Fuerza HTTPS solo en producción — en dev local (http://localhost) esto
+// redirigiría en loop porque no hay TLS. Depende de "trust proxy" arriba
+// para leer x-forwarded-proto correctamente detrás del hosting.
+if (process.env.NODE_ENV === "production") {
+    app.use((req, res, next) => {
+        if (req.secure || req.headers["x-forwarded-proto"] === "https") {
+            return next();
+        }
+        return res.redirect(301, `https://${req.headers.host}${req.originalUrl}`);
+    });
+}
 app.use(
     cors({
         origin: allowedOrigins.length ? allowedOrigins : "http://localhost:5173",

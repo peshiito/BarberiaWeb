@@ -6,22 +6,15 @@
     min-height: 82vh;
     display: flex;
     align-items: center;
+}
+
+/* Selector más específico que .section-ink: su "background: var(--ink)" es
+   shorthand y resetea background-image/position/size a sus valores iniciales,
+   así que estas 3 declaraciones necesitan ganarle en especificidad. */
+.hero.section-ink {
     background-image: var(--hero-image);
     background-size: cover;
     background-position: center;
-}
-
-.hero-scene {
-    position: absolute;
-    top: 50%;
-    right: -8%;
-    width: min(64vw, 820px);
-    height: auto;
-    transform: translateY(-50%);
-    color: var(--brass);
-    opacity: 0.14;
-    stroke-width: 0.5;
-    pointer-events: none;
 }
 
 .hero-texture {
@@ -58,6 +51,8 @@
 .hero-headline {
     margin-top: var(--space-4);
     font-size: var(--text-4xl);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
     color: var(--text-on-dark);
     animation: hero-rise 900ms var(--ease-soft) both;
 }

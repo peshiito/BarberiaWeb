@@ -1,14 +1,12 @@
 import { Link } from "react-router-dom";
 import { BRAND } from "../../data/brand";
 import Button from "../ui/Button";
-import { IconChair } from "../ui/icons";
+import heroPhoto from "../../assets/images/hero.jpg";
 import "./Hero.css";
 
 export default function Hero() {
     return (
-        <section className="hero section-ink">
-            {/* reemplazar por foto real de hero (barbero + cliente) cuando esté disponible */}
-            <IconChair className="hero-scene" aria-hidden="true" />
+        <section className="hero section-ink" style={{ "--hero-image": `url(${heroPhoto})` }}>
             <div className="hero-texture" aria-hidden="true" />
 
             <div className="container hero-inner">
