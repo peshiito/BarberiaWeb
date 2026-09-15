@@ -3,7 +3,7 @@ import "./FormField.css";
 
 const LABELABLE_TAGS = new Set(["input", "select", "textarea"]);
 
-const FormField = ({ label, children, hint, error, htmlFor }) => {
+const FormField = ({ label, children, hint, error, htmlFor, aside, required = false, className = "" }) => {
     const autoId = useId();
     const isLabelable = isValidElement(children) && LABELABLE_TAGS.has(children.type);
     const fieldId = htmlFor || (isLabelable ? children.props.id || autoId : undefined);
@@ -18,13 +18,26 @@ const FormField = ({ label, children, hint, error, htmlFor }) => {
         : children;
 
     return (
-        <div className={`form-field ${error ? "is-invalid" : ""}`}>
-            <label className="form-field-label" htmlFor={fieldId}>
-                {label}
-            </label>
+        <div className={`form-field ${error ? "is-invalid" : ""} ${className}`}>
+            {(label || aside) && (
+                <div className="form-field-head">
+                    {label && (
+                        <label className="form-field-label" htmlFor={fieldId}>
+                            {label}
+                            {required && (
+                                <span className="form-field-required" aria-hidden="true">
+                                    {" "}
+                                    *
+                                </span>
+                            )}
+                        </label>
+                    )}
+                    {aside && <span className="form-field-aside">{aside}</span>}
+                </div>
+            )}
             {control}
             {error ? (
-                <span className="form-field-error" id={messageId}>
+                <span className="form-field-error" id={messageId} role="alert">
                     {error}
                 </span>
             ) : (

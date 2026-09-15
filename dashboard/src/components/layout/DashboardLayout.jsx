@@ -1,40 +1,37 @@
-import { useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
-import IconButton from "../ui/IconButton";
-import { IconMenu } from "../ui/icons";
+import { useCallback, useState } from "react";
+import { Outlet } from "react-router-dom";
+import { AppointmentComposerProvider } from "../../context/AppointmentComposerContext";
+import { HomeDashboardProvider } from "../../context/HomeDashboardContext";
+import AppHeader from "./AppHeader";
+import BottomNav from "./BottomNav";
+import Sidebar from "./Sidebar";
 import "./DashboardLayout.css";
-import Sidebar, { adminItems, barberOnlyNavItems, navItems } from "./Sidebar";
-
-const allNavItems = [...navItems, ...barberOnlyNavItems, ...adminItems];
 
 const DashboardLayout = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
-    const location = useLocation();
-
-    const currentLabel =
-        allNavItems.find(item => (item.to === "/" ? location.pathname === "/" : location.pathname.startsWith(item.to)))
-            ?.label ?? "Barbería";
+    const closeDrawer = useCallback(() => setDrawerOpen(false), []);
 
     return (
-        <div className="dashboard-shell">
-            <header className="mobile-topbar">
-                <IconButton
-                    icon={<IconMenu />}
-                    label="Abrir menú"
-                    size="md"
-                    onClick={() => setDrawerOpen(true)}
-                    className="mobile-topbar-menu"
-                />
-                <span className="mobile-topbar-title">{currentLabel}</span>
-            </header>
+        <HomeDashboardProvider>
+            <AppointmentComposerProvider>
+                <div className="shell">
+                    <a href="#main-content" className="shell-skip-link">
+                        Saltar al contenido
+                    </a>
+                    <AppHeader />
+                    <Sidebar open={drawerOpen} onClose={closeDrawer} />
+                    {drawerOpen && <div className="shell-overlay" onClick={closeDrawer} aria-hidden="true" />}
 
-            <Sidebar open={drawerOpen} onClose={() => setDrawerOpen(false)} />
-            {drawerOpen && <div className="sidebar-overlay" onClick={() => setDrawerOpen(false)} />}
+                    <main id="main-content" className="shell-main" tabIndex={-1}>
+                        <div className="shell-content">
+                            <Outlet />
+                        </div>
+                    </main>
 
-            <main className="dashboard-content">
-                <Outlet />
-            </main>
-        </div>
+                    <BottomNav onOpenMenu={() => setDrawerOpen(true)} />
+                </div>
+            </AppointmentComposerProvider>
+        </HomeDashboardProvider>
     );
 };
 

@@ -1,34 +1,57 @@
 import { Link } from "react-router-dom";
 import { BRANCHES } from "../../data/branches";
-import Button from "../ui/Button";
-import EmptyState from "../ui/EmptyState";
+import { telUrl } from "../../utils/links";
+import Icon from "../ui/Icon";
 import Reveal from "../ui/Reveal";
-import { IconPin } from "../ui/icons";
 import "./BranchesTeaser.css";
 
 export default function BranchesTeaser() {
     return (
-        <section className="section section-cream">
-            <Reveal as="div" className="container branches-teaser-inner">
-                <p className="eyebrow">Sucursales</p>
-                <h2 className="section-title">Dónde encontrarnos</h2>
-
-                {BRANCHES.length === 0 ? (
-                    <div style={{ marginTop: "var(--space-6)" }}>
-                        <EmptyState
-                            icon={<IconPin />}
-                            title="Estamos cargando esta sección"
-                            text="Muy pronto vas a poder ver dirección, horarios y cómo llegar."
-                        />
+        <section className="section section-cream branches-teaser" aria-labelledby="branches-teaser-title">
+            <div className="container">
+                <Reveal className="section-head">
+                    <div>
+                        <p className="eyebrow">Sucursales</p>
+                        <h2 id="branches-teaser-title" className="section-title">
+                            Dónde estamos
+                        </h2>
                     </div>
-                ) : (
-                    <p className="section-lede">{BRANCHES.length} sucursal{BRANCHES.length > 1 ? "es" : ""} disponible{BRANCHES.length > 1 ? "s" : ""}.</p>
-                )}
+                    <Link to="/sucursales" className="text-link">
+                        Ver mapas
+                        <Icon name="arrow_forward" size={18} />
+                    </Link>
+                </Reveal>
 
-                <Button as={Link} to="/sucursales" variant="secondary" style={{ marginTop: "var(--space-6)" }}>
-                    Ver sucursales
-                </Button>
-            </Reveal>
+                <Reveal delay={80} as="ul" className="branches-teaser-grid">
+                    {BRANCHES.map((branch) => (
+                        <li key={branch.id} className="branch-mini">
+                            <h3 className="branch-mini-name">{branch.neighborhood}</h3>
+                            <p className="branch-mini-address">
+                                <Icon name="location_on" size={18} />
+                                {branch.address}, {branch.city}
+                            </p>
+                            <dl className="branch-mini-hours">
+                                {branch.hours.map((row) => (
+                                    <div key={row.days}>
+                                        <dt>{row.days}</dt>
+                                        <dd className={row.closed ? "is-closed" : undefined}>{row.time}</dd>
+                                    </div>
+                                ))}
+                            </dl>
+                            <div className="branch-mini-actions">
+                                <a href={branch.mapsUrl} target="_blank" rel="noreferrer" className="btn btn-secondary btn-sm">
+                                    <Icon name="directions" size={18} />
+                                    Cómo llegar
+                                </a>
+                                <a href={telUrl(branch.phone)} className="btn btn-ghost btn-sm">
+                                    <Icon name="call" size={18} />
+                                    <span className="mono">{branch.phone}</span>
+                                </a>
+                            </div>
+                        </li>
+                    ))}
+                </Reveal>
+            </div>
         </section>
     );
 }

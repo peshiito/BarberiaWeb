@@ -1,24 +1,51 @@
-.barbers-teaser-head {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-    justify-content: space-between;
-    margin-bottom: var(--space-7);
+.team-section {
+    border-top: 1px solid var(--border-on-dark);
+    background: #17171a;
 }
 
-.barbers-teaser-grid {
+.team-track {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
 }
 
-@media (min-width: 640px) {
-    .barbers-teaser-head {
-        flex-direction: row;
-        align-items: flex-end;
+.team-track > li {
+    display: flex;
+    min-width: 0;
+}
+
+.team-track > li > .barber-card,
+.team-track > .barber-card {
+    width: 100%;
+}
+
+@media (max-width: 900px) {
+    /* Carrusel con snap: se asoma la tarjeta siguiente */
+    .team-track {
+        display: flex;
+        margin-inline: calc(var(--space-5) * -1);
+        padding-inline: var(--space-5);
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-padding-inline: var(--space-5);
+        scrollbar-width: none;
     }
 
-    .barbers-teaser-grid {
-        grid-template-columns: repeat(3, 1fr);
+    .team-track::-webkit-scrollbar {
+        display: none;
+    }
+
+    .team-track > li,
+    .team-track > .barber-card {
+        flex: 0 0 min(84%, 420px);
+        scroll-snap-align: start;
+    }
+}
+
+@media (max-width: 480px) {
+    .team-track {
+        margin-inline: calc(var(--space-4) * -1);
+        padding-inline: var(--space-4);
+        scroll-padding-inline: var(--space-4);
     }
 }

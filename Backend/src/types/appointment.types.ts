@@ -10,6 +10,7 @@ export interface Appointment {
     time: string;
     status: AppointmentStatus;
     price: number;
+    note: string | null;
     created_at: Date;
 }
 
@@ -21,4 +22,5 @@ export interface AppointmentInput {
     date: string;
     time: string;
     price: number;
+    note?: string | null;
 }

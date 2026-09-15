@@ -45,6 +45,57 @@
     font-family: var(--font-mono);
 }
 
+.client-history-notes {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-3) var(--space-4);
+    margin-bottom: var(--space-4);
+    border-left: 3px solid var(--brass);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    background-color: rgb(var(--brass-rgb) / 0.08);
+}
+
+.client-history-notes .eyebrow {
+    color: var(--brass-bright);
+}
+
+.client-history-notes p {
+    font-size: var(--text-sm);
+    color: var(--text-primary);
+    white-space: pre-line;
+}
+
+.client-history-table-wrapper .table tbody tr.has-note td {
+    border-bottom: none;
+    padding-bottom: var(--space-1);
+}
+
+.client-history-table-wrapper .table tbody tr.client-history-note-row td {
+    padding-top: 0;
+    white-space: normal;
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+}
+
+/* La tabla scrollea en horizontal en mobile: sin sticky + ancho acotado,
+   la nota se estira a todo el ancho de la tabla y queda cortada fuera de
+   la vista. Así queda pegada al borde visible y se ajusta a la pantalla. */
+.client-history-note-text {
+    position: sticky;
+    left: var(--space-5);
+    max-width: min(56ch, calc(100vw - 96px));
+}
+
+.client-history-note-label {
+    margin-right: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--brass-bright);
+}
+
 @media (max-width: 560px) {
     .client-history-summary {
         grid-template-columns: repeat(2, 1fr);

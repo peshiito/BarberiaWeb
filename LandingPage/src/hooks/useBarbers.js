@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { fetchPublicBarbers } from "../services/barbers";
 import { getErrorMessage } from "../utils/apiError";
 
 export function useBarbers() {
+    const [attempt, setAttempt] = useState(0);
     const [state, setState] = useState({ status: "loading", barbers: [], error: null });
 
     useEffect(() => {
@@ -19,7 +20,12 @@ export function useBarbers() {
         return () => {
             mounted = false;
         };
+    }, [attempt]);
+
+    const reload = useCallback(() => {
+        setState({ status: "loading", barbers: [], error: null });
+        setAttempt((n) => n + 1);
     }, []);
 
-    return state;
+    return { ...state, reload };
 }

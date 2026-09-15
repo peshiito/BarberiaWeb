@@ -1,0 +1,69 @@
+.svc-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+}
+
+.svc-chip {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 14px 0 10px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-lowest);
+    box-shadow: inset 0 0 0 1px var(--hairline);
+    color: var(--on-surface-variant);
+    font-size: 13px;
+    cursor: pointer;
+    transition:
+        background-color var(--duration-fast) var(--ease-out),
+        box-shadow var(--duration-fast) var(--ease-out),
+        color var(--duration-fast) var(--ease-out),
+        transform var(--duration-fast) var(--ease-out);
+}
+
+.svc-chip .material-symbols-outlined {
+    color: var(--outline);
+}
+
+.svc-chip:hover {
+    color: var(--on-surface);
+    background-color: var(--surface-container);
+}
+
+.svc-chip:active {
+    transform: scale(0.97);
+}
+
+.svc-chip:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.svc-chip.is-selected {
+    background-color: rgb(var(--primary-container-rgb) / 0.18);
+    box-shadow: inset 0 0 0 1px rgb(var(--primary-container-rgb) / 0.6);
+    color: var(--primary);
+}
+
+.svc-chip.is-selected .material-symbols-outlined {
+    color: var(--primary);
+}
+
+.svc-chip-muted {
+    padding: 1px 6px;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-high);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--outline);
+}
+
+.svc-empty {
+    margin: 0;
+    font-size: 13px;
+    color: var(--outline);
+}

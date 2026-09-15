@@ -1,33 +1,41 @@
 .badge {
     display: inline-flex;
     align-items: center;
-    padding: var(--space-0-5) var(--space-2-5);
-    border-radius: var(--radius-full);
-    font-size: var(--text-2xs);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    gap: var(--space-xs);
+    height: 20px;
+    padding: 0 var(--space-1-5);
+    border-radius: var(--radius-sm);
     font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .badge-brass {
-    background-color: rgb(var(--brass-rgb) / 0.15);
-    color: var(--brass-bright);
+    background-color: var(--primary-container);
+    color: var(--on-primary);
+    font-weight: 600;
+}
+
+.badge-brass-soft {
+    background-color: rgb(var(--primary-container-rgb) / 0.2);
+    color: var(--primary);
 }
 
 .badge-sage {
-    background-color: rgb(var(--sage-rgb) / 0.18);
-    color: var(--sage-bright);
+    background-color: var(--secondary-container);
+    color: var(--secondary);
 }
 
 .badge-burgundy {
-    background-color: rgb(var(--burgundy-rgb) / 0.18);
-    /* burgundy-bright no pasa AA en texto de este tamaño ni siquiera sobre
-       este fondo tintado — el fondo burgundy ya identifica el badge. */
-    color: var(--text-primary);
+    background-color: rgb(var(--tertiary-container-rgb) / 0.18);
+    color: var(--tertiary);
 }
 
 .badge-neutral {
-    background-color: var(--bg-elevated);
-    color: var(--text-secondary);
+    background-color: var(--surface-highest);
+    color: var(--on-surface-variant);
 }

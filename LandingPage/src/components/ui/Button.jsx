@@ -6,19 +6,22 @@ export default function Button({
     size = "md",
     loading = false,
     disabled = false,
+    block = false,
     className = "",
     children,
     ...rest
 }) {
+    const isButton = Component === "button";
     return (
         <Component
-            className={`btn btn-${variant} btn-${size} ${className}`.trim()}
-            disabled={Component === "button" ? disabled || loading : undefined}
+            className={`btn btn-${variant} btn-${size} ${block ? "btn-block" : ""} ${className}`.trim()}
+            disabled={isButton ? disabled || loading : undefined}
+            type={isButton ? rest.type || "button" : undefined}
             aria-busy={loading || undefined}
             {...rest}
         >
             {loading && <span className="btn-spinner" aria-hidden="true" />}
-            <span className="btn-label">{children}</span>
+            {children}
         </Component>
     );
 }

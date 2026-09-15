@@ -8,6 +8,7 @@ import adminRoutes from "./routes/admin.routes";
 import appointmentRoutes from "./routes/appointment.routes";
 import authRoutes from "./routes/auth.routes";
 import clientRoutes from "./routes/client.routes";
+import financeRoutes from "./routes/finance.routes";
 import photoRoutes from "./routes/photo.routes";
 import profileRoutes from "./routes/profile.routes";
 import publicRoutes from "./routes/public.routes";
@@ -68,6 +69,7 @@ app.use("/api/appointments", appointmentRoutes);
 app.use("/api/photos", photoRoutes);
 app.use("/api/public", publicRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/finance", financeRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/services", serviceRoutes);
 

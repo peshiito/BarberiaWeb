@@ -1,0 +1,183 @@
+.photo-tile {
+    position: relative;
+    display: block;
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    background-color: var(--surface-container);
+}
+
+.photo-tile.is-main {
+    aspect-ratio: 4 / 5;
+}
+
+.photo-tile.is-secondary {
+    aspect-ratio: 1 / 1;
+}
+
+.photo-tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    animation: photo-tile-in 360ms var(--ease-out) both;
+}
+
+.photo-tile-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    background-color: var(--primary-container);
+    color: var(--on-primary);
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.photo-tile-remove {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: var(--radius-sm);
+    background-color: rgb(14 14 17 / 0.78);
+    color: var(--on-surface);
+    cursor: pointer;
+    transition:
+        background-color var(--duration-fast) var(--ease-out),
+        color var(--duration-fast) var(--ease-out),
+        opacity var(--duration-fast) var(--ease-out),
+        transform var(--duration-fast) var(--ease-out);
+}
+
+.photo-tile-remove:hover {
+    background-color: var(--error-container);
+    color: var(--error);
+}
+
+.photo-tile-remove:active {
+    transform: scale(0.92);
+}
+
+.photo-tile-remove:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .photo-tile-remove {
+        opacity: 0;
+    }
+
+    .photo-tile:hover .photo-tile-remove {
+        opacity: 1;
+    }
+}
+
+.photo-tile.is-empty {
+    cursor: pointer;
+    background-color: var(--surface-lowest);
+    box-shadow: inset 0 0 0 1px var(--hairline-strong);
+    background-image: repeating-linear-gradient(
+        135deg,
+        rgb(var(--outline-variant-rgb) / 0.1) 0 2px,
+        transparent 2px 12px
+    );
+    transition:
+        box-shadow var(--duration-fast) var(--ease-out),
+        background-color var(--duration-fast) var(--ease-out);
+}
+
+.photo-tile.is-empty:hover,
+.photo-tile.is-drag {
+    background-color: rgb(var(--primary-container-rgb) / 0.08);
+    box-shadow: inset 0 0 0 1px rgb(var(--primary-container-rgb) / 0.7);
+}
+
+.photo-tile.is-empty:focus-within {
+    box-shadow:
+        inset 0 0 0 1px var(--primary-container),
+        0 0 0 2px rgb(var(--primary-rgb) / 0.35);
+}
+
+.photo-tile.is-busy {
+    cursor: progress;
+}
+
+.photo-tile-empty {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: var(--space-sm);
+    color: var(--primary);
+    text-align: center;
+}
+
+.photo-tile-title {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--on-surface);
+}
+
+.photo-tile-hint {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--outline);
+}
+
+@media (max-width: 560px) {
+    .photo-tile.is-secondary .photo-tile-hint {
+        display: none;
+    }
+
+    .photo-tile.is-secondary .photo-tile-title {
+        font-size: 11px;
+    }
+}
+
+.photo-tile-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.is-spinning {
+    animation: photo-tile-spin 900ms linear infinite;
+}
+
+@keyframes photo-tile-in {
+    from {
+        opacity: 0;
+        transform: scale(1.03);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes photo-tile-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

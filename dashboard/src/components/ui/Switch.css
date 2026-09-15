@@ -1,0 +1,53 @@
+.switch {
+    position: relative;
+    width: 48px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-full);
+    background-color: var(--surface-highest);
+    flex-shrink: 0;
+    transition: background-color var(--duration-base) var(--ease-out);
+}
+
+.switch::after {
+    /* Área táctil de 44px sin agrandar el control visible */
+    content: "";
+    position: absolute;
+    inset: -8px;
+}
+
+.switch-thumb {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: var(--radius-full);
+    background-color: var(--outline);
+    transition:
+        transform var(--duration-base) var(--ease-out),
+        background-color var(--duration-base) var(--ease-out);
+}
+
+.switch.is-on {
+    background-color: var(--primary);
+}
+
+.switch.is-on .switch-thumb {
+    transform: translateX(20px);
+    background-color: var(--on-primary);
+}
+
+.switch:active:not(:disabled) .switch-thumb {
+    width: 24px;
+}
+
+.switch.is-on:active:not(:disabled) .switch-thumb {
+    transform: translateX(16px);
+}
+
+.switch:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}

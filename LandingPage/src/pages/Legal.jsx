@@ -13,23 +13,23 @@ const TERMS = {
         },
         {
             heading: "2. Reserva de turnos",
-            body: "Cada turno se reserva para un barbero, fecha y horario específicos. Solo podés tener un turno activo por día. Al confirmar la reserva, el horario queda bloqueado exclusivamente para vos; si otra persona lo reservó primero, te lo informamos al momento de confirmar para que elijas otro horario disponible.",
+            body: "Cada turno se reserva para un servicio, un barbero, una fecha y un horario. No hace falta crear una cuenta ni pagar una seña: alcanza con tu nombre, apellido y teléfono. Solo podés tener un turno activo por día. Si otra persona reservó el mismo horario justo antes, te lo avisamos al confirmar para que elijas otro.",
         },
         {
             heading: "3. Cancelaciones",
-            body: "Podés cancelar tu turno en cualquier momento desde \"Mi cuenta\", antes de la hora reservada. Te pedimos avisar con la mayor anticipación posible para que el horario quede disponible para otro cliente. Actualmente no ofrecemos reprogramación automática: para cambiar de horario, cancelá el turno y reservá uno nuevo.",
+            body: "Si no podés venir, avisanos por WhatsApp con la mayor anticipación posible para liberar el horario para otro cliente. Por ahora las cancelaciones y los cambios de horario se gestionan por WhatsApp.",
         },
         {
-            heading: "4. Identificación del cliente",
-            body: "El acceso a \"Mi cuenta\" se realiza con tu número de teléfono y una contraseña que vos elegís al crear la cuenta. Por tu seguridad, no compartas tu contraseña ni tu número de teléfono en formularios de terceros, y no permitas que otra persona los use para gestionar tus turnos.",
+            heading: "4. Datos de contacto",
+            body: "Usamos el teléfono que dejás al reservar para identificarte cuando llegás y, si hace falta, para avisarte por un cambio en tu turno. Te pedimos cargar un número propio y vigente.",
         },
         {
             heading: "5. Precios",
-            body: "El precio final de cada servicio lo confirma el barbero al momento de la atención. Los precios de referencia que ves en la sección Servicios son orientativos y pueden variar.",
+            body: "El precio que ves al reservar es el del servicio en ese momento. Se paga en el local, en efectivo o transferencia.",
         },
         {
             heading: "6. Uso del sitio",
-            body: "Te pedimos usar el sitio de buena fe: no reservar turnos que no pensás honrar, no intentar acceder a cuentas que no son tuyas y no utilizar el sitio con fines distintos a reservar o gestionar tus propios turnos.",
+            body: "Te pedimos usar el sitio de buena fe: no reservar turnos que no pensás honrar, no reservar a nombre de otra persona sin su consentimiento y no utilizar el sitio con fines distintos a reservar tus propios turnos.",
         },
         {
             heading: "7. Modificaciones",
@@ -44,7 +44,7 @@ const PRIVACY = {
     sections: [
         {
             heading: "1. Qué datos recopilamos",
-            body: "Para crear tu cuenta pedimos tu nombre, apellido, número de teléfono y una contraseña. Al reservar un turno, guardamos el barbero, la fecha y el horario elegidos. No pedimos ni almacenamos datos de tarjetas ni información de pago en este sitio.",
+            body: "Al reservar un turno pedimos tu nombre, apellido, número de teléfono y, si querés, una referencia para el barbero. También guardamos el servicio, el barbero, la fecha y el horario elegidos. No pedimos ni almacenamos datos de tarjetas ni información de pago en este sitio.",
         },
         {
             heading: "2. Para qué usamos tus datos",
@@ -56,7 +56,7 @@ const PRIVACY = {
         },
         {
             heading: "4. Cómo protegemos tus datos",
-            body: "Tus datos se almacenan en nuestra base de datos con acceso restringido al personal autorizado. Tu contraseña nunca se guarda en texto plano: se almacena encriptada, y ni nuestro propio equipo puede verla. Te pedimos no compartir tu contraseña ni tu número de teléfono si no querés que alguien más pueda ver o gestionar tus turnos.",
+            body: "Tus datos se almacenan en nuestra base de datos con acceso restringido al personal autorizado de la barbería.",
         },
         {
             heading: "5. Cuánto tiempo guardamos tus datos",
@@ -88,7 +88,7 @@ export default function Legal() {
         <section className="section section-dark legal-page">
             <div className="container legal-container">
                 <p className="eyebrow">Legal</p>
-                <h1 className="booking-step-title">{content.title}</h1>
+                <h1 className="section-title">{content.title}</h1>
                 <p className="legal-updated">{content.updated}</p>
 
                 <div className="legal-body">

@@ -1,0 +1,573 @@
+.cash-tab {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    min-width: 0;
+}
+
+
+/* Saldo */
+.cash-balance-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--hairline);
+}
+
+.cash-balance-total {
+    margin: 4px 0 0;
+    font-family: var(--font-mono);
+    font-size: 44px;
+    line-height: 52px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--on-surface);
+    font-variant-numeric: tabular-nums;
+}
+
+.cash-balance-total.is-negative {
+    color: var(--tertiary);
+}
+
+.cash-balance-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+}
+
+.cash-method-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    background-color: var(--surface-container);
+    box-shadow: inset 0 0 0 1px var(--hairline);
+}
+
+.cash-method-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+}
+
+.cash-method-label {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--on-surface);
+}
+
+.cash-method-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+}
+
+.cash-method-card.is-sage .cash-method-icon {
+    background-color: rgb(var(--secondary-container-rgb) / 0.6);
+    color: var(--secondary);
+}
+
+.cash-method-card.is-brass .cash-method-icon {
+    background-color: rgb(var(--primary-container-rgb) / 0.25);
+    color: var(--primary);
+}
+
+.cash-method-card.is-muted .cash-method-icon {
+    background-color: var(--surface-highest);
+    color: var(--outline);
+}
+
+.cash-method-value {
+    font-family: var(--font-mono);
+    font-size: 24px;
+    line-height: 30px;
+    font-weight: 500;
+    color: var(--on-surface);
+    font-variant-numeric: tabular-nums;
+}
+
+.cash-method-card.is-muted .cash-method-value {
+    color: var(--on-surface-variant);
+}
+
+.cash-method-value.is-negative {
+    color: var(--tertiary);
+}
+
+.cash-method-hint {
+    font-size: 13px;
+    color: var(--outline);
+}
+
+/* Resumen del período */
+.cash-period-range {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--outline);
+}
+
+.cash-period-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-md);
+    align-items: stretch;
+}
+
+.cash-flow {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-low);
+    box-shadow: var(--shadow-sm);
+    animation: fin-card-in 320ms var(--ease-out) both;
+}
+
+.cash-flow.is-out {
+    animation-delay: 60ms;
+}
+
+.cash-flow-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    margin: var(--space-md) var(--space-md) 0;
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--hairline);
+}
+
+.cash-flow-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--on-surface);
+}
+
+.cash-flow-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-full);
+}
+
+.cash-flow.is-in .cash-flow-dot {
+    background-color: var(--secondary);
+}
+
+.cash-flow.is-out .cash-flow-dot {
+    background-color: var(--tertiary);
+}
+
+.cash-flow-list {
+    flex: 1;
+    list-style: none;
+    margin: 0;
+    padding: var(--space-sm) var(--space-md) var(--space-md);
+}
+
+.cash-flow-item {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--hairline);
+}
+
+.cash-flow-item:last-child {
+    border-bottom: none;
+}
+
+.cash-flow-item.has-breakdown {
+    padding: var(--space-sm);
+    border-radius: var(--radius-md);
+    border-bottom: none;
+    background-color: var(--surface-container);
+    box-shadow: inset 0 0 0 1px var(--hairline);
+    margin-bottom: 6px;
+}
+
+.cash-flow-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+}
+
+.cash-flow-name {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    font-size: 14px;
+    color: var(--on-surface);
+}
+
+.cash-flow-meta {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--outline);
+}
+
+.cash-flow-hint {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--outline);
+}
+
+.cash-flow-amount {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: 15px;
+    color: var(--on-surface);
+    font-variant-numeric: tabular-nums;
+}
+
+.cash-flow.is-out .cash-flow-item.is-team .cash-flow-amount {
+    color: var(--tertiary);
+}
+
+.cash-flow-item.is-zero .cash-flow-name,
+.cash-flow-item.is-zero .cash-flow-amount {
+    color: var(--outline);
+}
+
+.cash-flow-breakdown {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px var(--space-md);
+    margin-top: 8px;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-lowest);
+}
+
+.cash-flow-breakdown > span {
+    display: inline-flex;
+    gap: 6px;
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--outline);
+}
+
+.cash-flow-breakdown > span > span:last-child {
+    color: var(--on-surface-variant);
+}
+
+.cash-flow-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.cash-flow-total > span:last-child {
+    font-family: var(--font-mono);
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    font-variant-numeric: tabular-nums;
+}
+
+.cash-flow.is-in .cash-flow-total {
+    background-color: rgb(var(--secondary-container-rgb) / 0.35);
+    color: var(--secondary);
+}
+
+.cash-flow.is-out .cash-flow-total {
+    background-color: rgb(var(--tertiary-container-rgb) / 0.14);
+    color: var(--tertiary);
+}
+
+.cash-result {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm) var(--space-md);
+    margin-top: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-low);
+    box-shadow: var(--shadow-sm);
+}
+
+.cash-result-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    background-color: var(--surface-container);
+}
+
+.cash-result.is-positive .cash-result-icon {
+    color: var(--secondary);
+}
+
+.cash-result.is-negative .cash-result-icon {
+    color: var(--tertiary);
+}
+
+.cash-result-text {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+}
+
+.cash-result-formula {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--on-surface-variant);
+}
+
+.cash-result-amount {
+    font-family: var(--font-mono);
+    font-size: 30px;
+    line-height: 36px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.cash-result.is-positive .cash-result-amount {
+    color: var(--secondary);
+}
+
+.cash-result.is-negative .cash-result-amount {
+    color: var(--tertiary);
+}
+
+/* Libro de caja */
+.cash-ledger-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.cash-method-filter {
+    min-width: 200px;
+}
+
+.cash-ledger-body {
+    transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.cash-ledger-body.is-refreshing {
+    opacity: 0.6;
+}
+
+.cash-table tbody tr.is-out {
+    background-color: rgb(var(--tertiary-container-rgb) / 0.03);
+}
+
+.cash-date {
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: 13px;
+}
+
+.cash-date > span + span {
+    margin-left: 8px;
+}
+
+.cash-concept {
+    min-width: 180px;
+    font-weight: 500;
+}
+
+.cash-detail {
+    min-width: 180px;
+    font-size: 13px;
+    color: var(--on-surface-variant);
+}
+
+.cash-amount {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.cash-cards {
+    display: none;
+}
+
+.cash-day + .cash-day {
+    margin-top: var(--space-md);
+}
+
+.cash-day-head {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding: 4px 4px 8px;
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--on-surface-variant);
+}
+
+.cash-day-head .fin-muted {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.cash-day-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.cash-entry {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    gap: var(--space-sm);
+    align-items: start;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    background-color: var(--surface-container);
+}
+
+.cash-entry-icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-lowest);
+}
+
+.cash-entry.is-in .cash-entry-icon {
+    color: var(--secondary);
+}
+
+.cash-entry.is-out .cash-entry-icon {
+    background-color: rgb(var(--tertiary-container-rgb) / 0.16);
+    color: var(--tertiary);
+}
+
+.cash-entry-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    min-width: 0;
+}
+
+.cash-entry-concept {
+    max-width: 100%;
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--on-surface);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cash-entry-detail {
+    font-size: 13px;
+    color: var(--on-surface-variant);
+}
+
+.cash-entry-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.cash-entry-amount {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 1100px) {
+    .cash-period-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 860px) {
+    .cash-balance-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .cash-table-wrap {
+        display: none;
+    }
+
+    .cash-cards {
+        display: block;
+    }
+
+    .cash-ledger-filters {
+        width: 100%;
+    }
+
+    .cash-ledger-filters > * {
+        flex: 1;
+    }
+}
+
+@media (max-width: 640px) {
+    .cash-ledger-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .cash-balance-total {
+        font-size: 36px;
+        line-height: 44px;
+    }
+
+    .cash-result {
+        padding: var(--space-md);
+    }
+
+    .cash-result-amount {
+        width: 100%;
+        font-size: 26px;
+    }
+
+    .cash-method-filter {
+        min-width: 0;
+    }
+}

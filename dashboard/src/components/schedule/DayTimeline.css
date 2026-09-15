@@ -1,0 +1,523 @@
+.day-timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.day-timeline-row {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: var(--space-sm);
+    align-items: start;
+    animation: day-row-in 320ms var(--ease-out) both;
+}
+
+.day-timeline-time {
+    padding-top: 6px;
+    text-align: right;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--outline);
+    font-variant-numeric: tabular-nums;
+}
+
+.day-timeline-time.is-next,
+.day-timeline-time.is-now {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.day-timeline-row.is-now {
+    align-items: center;
+}
+
+.day-timeline-row.is-now .day-timeline-time {
+    padding-top: 0;
+}
+
+.day-timeline-now-track {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 22px;
+}
+
+.day-timeline-now-dot {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+    border-radius: var(--radius-full);
+    background-color: var(--primary);
+    box-shadow: 0 0 8px rgb(var(--primary-rgb) / 0.6);
+}
+
+.day-timeline-now-line {
+    flex: 1;
+    height: 2px;
+    background-color: var(--primary);
+    opacity: 0.8;
+}
+
+.day-timeline-now-tag {
+    position: absolute;
+    right: 0;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    background-color: var(--primary);
+    color: var(--on-primary);
+    font-family: var(--font-display);
+    font-size: 10px;
+    line-height: 14px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+/* Tarjeta de turno */
+.day-card {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-md) var(--space-md) 20px;
+    border: none;
+    border-radius: var(--radius-md);
+    background-color: var(--surface-container);
+    color: var(--on-surface);
+    text-align: left;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition:
+        background-color var(--duration-fast) var(--ease-out),
+        transform var(--duration-fast) var(--ease-out);
+}
+
+.day-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: var(--primary-container);
+}
+
+.day-card.is-completed::before {
+    background-color: var(--secondary-container);
+}
+
+button.day-card {
+    cursor: pointer;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    button.day-card:hover {
+        background-color: var(--surface-high);
+    }
+}
+
+button.day-card:active {
+    transform: scale(0.98);
+}
+
+button.day-card:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.day-card.is-next {
+    gap: var(--space-md);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-high);
+    box-shadow: var(--shadow-md);
+}
+
+.day-card.is-next::before {
+    width: 6px;
+    background-color: var(--primary);
+}
+
+.day-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-sm);
+}
+
+.day-card-titles {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.day-card-name {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--on-surface);
+}
+
+.day-card-name.is-lg {
+    font-size: 26px;
+    line-height: 32px;
+    font-weight: 600;
+}
+
+.day-card-name-text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.day-card-note {
+    flex-shrink: 0;
+    color: var(--primary);
+}
+
+.day-card-service {
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--on-surface-variant);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.day-card-status {
+    flex-shrink: 0;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    background-color: var(--primary-container);
+    color: var(--on-primary);
+    font-family: var(--font-display);
+    font-size: 11px;
+    line-height: 14px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.day-card.is-completed .day-card-status {
+    border-radius: var(--radius-full);
+    background-color: var(--secondary-container);
+    color: var(--on-secondary-container);
+}
+
+.day-card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+}
+
+.day-card-when {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+    overflow: hidden;
+    font-size: 12px;
+    color: var(--outline);
+    white-space: nowrap;
+}
+
+.day-card-range {
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--on-surface);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.day-card-sep {
+    color: var(--outline-variant);
+}
+
+.day-card-price {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--primary);
+    white-space: nowrap;
+}
+
+.day-card-kicker {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-display);
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--primary);
+}
+
+.day-card-pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-full);
+    background-color: var(--primary);
+    animation: day-pulse 2s var(--ease-in-out) infinite;
+}
+
+.day-card-phone {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    width: fit-content;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--on-surface-variant);
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-out);
+}
+
+.day-card-phone:hover {
+    color: var(--primary);
+}
+
+.day-card-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-container);
+}
+
+.day-card-detail-service {
+    font-size: 14px;
+    color: var(--on-surface);
+}
+
+.day-card-detail-note {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--on-surface-variant);
+}
+
+.day-card-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    grid-auto-flow: column;
+    gap: var(--space-sm);
+}
+
+.day-card-action {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: none;
+    border-radius: var(--radius-md);
+    background-color: var(--surface-container);
+    color: var(--on-surface);
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+        background-color var(--duration-fast) var(--ease-out),
+        transform var(--duration-fast) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .day-card-action:hover {
+        background-color: var(--surface-highest);
+    }
+}
+
+.day-card-action:active {
+    transform: scale(0.97);
+}
+
+.day-card-action:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Hueco libre */
+.day-gap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 56px;
+    padding: var(--space-sm) var(--space-sm) var(--space-sm) 14px;
+    border-radius: var(--radius-md);
+    background-color: rgb(var(--secondary-container-rgb) / 0.2);
+}
+
+.day-gap-dot {
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+    border-radius: var(--radius-full);
+    background-color: var(--secondary);
+}
+
+.day-gap-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.day-gap-title {
+    font-family: var(--font-display);
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--secondary);
+}
+
+.day-gap-range {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--outline);
+    font-variant-numeric: tabular-nums;
+}
+
+.day-gap-action {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 12px;
+    border: none;
+    border-radius: var(--radius-md);
+    background-color: var(--secondary-container);
+    color: var(--on-secondary-container);
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+        filter var(--duration-fast) var(--ease-out),
+        transform var(--duration-fast) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .day-gap-action:hover {
+        filter: brightness(1.2);
+    }
+}
+
+.day-gap-action:active {
+    transform: scale(0.97);
+}
+
+.day-gap-action:focus-visible {
+    outline: 2px solid var(--secondary);
+    outline-offset: 2px;
+}
+
+/* Día cerrado / sin pendientes */
+.day-closed {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 48px var(--space-md);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-low);
+    background-image: repeating-linear-gradient(
+        45deg,
+        rgb(var(--outline-variant-rgb) / 0.12) 0,
+        rgb(var(--outline-variant-rgb) / 0.12) 8px,
+        transparent 8px,
+        transparent 16px
+    );
+    color: var(--outline);
+    text-align: center;
+}
+
+.day-closed.is-soft {
+    background-image: none;
+}
+
+.day-closed-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--on-surface-variant);
+}
+
+.day-closed-text {
+    font-size: 13px;
+}
+
+@keyframes day-row-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 640px) {
+    .day-timeline-row {
+        grid-template-columns: 40px minmax(0, 1fr);
+        gap: 6px;
+    }
+
+    .day-card {
+        padding: 12px 12px 12px 16px;
+    }
+
+    .day-card-name.is-lg .day-card-name-text {
+        white-space: normal;
+        text-wrap: balance;
+    }
+
+    .day-card-price {
+        font-size: 13px;
+    }
+
+    .day-card-action {
+        gap: 4px;
+        font-size: 12px;
+    }
+}
+
+@keyframes day-pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.35;
+    }
+}

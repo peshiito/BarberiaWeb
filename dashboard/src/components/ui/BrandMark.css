@@ -1,0 +1,42 @@
+.brand-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-md);
+    min-width: 0;
+}
+
+.brand-glyph {
+    color: var(--primary-container);
+    flex-shrink: 0;
+}
+
+.brand-mark-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.brand-mark-name {
+    font-family: var(--font-display);
+    font-size: 18px;
+    line-height: 20px;
+    letter-spacing: 0.12em;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--on-surface);
+}
+
+.brand-mark-subtitle {
+    font-family: var(--font-display);
+    font-size: 11px;
+    line-height: 14px;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--outline);
+    white-space: nowrap;
+}
+
+.brand-mark.is-compact .brand-mark-name {
+    font-size: 16px;
+}

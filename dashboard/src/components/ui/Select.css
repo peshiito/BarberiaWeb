@@ -1,0 +1,207 @@
+.select {
+    position: relative;
+    min-width: 0;
+}
+
+.select-trigger {
+    width: 100%;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 0 var(--space-sm) 0 var(--space-md);
+    background-color: var(--field-bg);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    color: var(--on-surface);
+    text-align: left;
+    transition:
+        background-color var(--duration-fast) var(--ease-out),
+        border-color var(--duration-fast) var(--ease-out),
+        box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.select-trigger:hover:not(:disabled) {
+    background-color: var(--surface-container);
+}
+
+.select-trigger:focus-visible,
+.select.is-open .select-trigger {
+    outline: none;
+    border-color: rgb(var(--primary-container-rgb) / 0.7);
+    box-shadow: var(--field-ring);
+}
+
+.select-trigger:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.select-leading {
+    color: var(--primary);
+}
+
+.select-value {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.select-value-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.select-value-label {
+    font-size: 14px;
+    line-height: 18px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.select-value-description {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 14px;
+    color: var(--outline);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.select-placeholder {
+    color: rgb(155 143 129 / 0.8);
+    font-size: 14px;
+}
+
+.select-trailing {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--primary);
+    white-space: nowrap;
+}
+
+.select-chevron {
+    color: var(--outline);
+}
+
+.select-listbox {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 30;
+    max-height: 280px;
+    overflow-y: auto;
+    list-style: none;
+    padding: var(--space-sm);
+    background-color: var(--surface-container);
+    border-radius: var(--radius-md);
+    box-shadow: 0 8px 20px rgb(0 0 0 / 0.5);
+    transform-origin: top center;
+    animation: select-in 160ms var(--ease-out);
+}
+
+.select-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    color: var(--on-surface);
+}
+
+.select-option.is-active {
+    background-color: var(--surface-highest);
+}
+
+.select-option.is-selected {
+    background-color: rgb(var(--primary-container-rgb) / 0.15);
+}
+
+.select-option[aria-disabled="true"] {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.select-option-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.select-option-label {
+    font-size: 14px;
+    line-height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.select-option-description {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--outline);
+}
+
+.select-option-trailing {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--primary);
+    white-space: nowrap;
+}
+
+.select-option-check {
+    color: var(--primary);
+}
+
+.select-empty {
+    padding: var(--space-md);
+    font-size: 13px;
+    color: var(--outline);
+}
+
+.select-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-full);
+    background-color: var(--primary-container);
+    color: var(--on-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.select-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@keyframes select-in {
+    from {
+        opacity: 0;
+        transform: translateY(-4px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}

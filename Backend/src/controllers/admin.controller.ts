@@ -3,23 +3,14 @@ import { Request, Response } from "express";
 import { RowDataPacket } from "mysql2";
 import pool from "../config/db";
 import { AuthRequest } from "../middlewares/auth.middleware";
-import { replaceBarberServices } from "../models/service.model";
+import { findAllBarberServiceLinks, replaceBarberServices } from "../models/service.model";
 import { createUser, deleteUser, findByEmail, findById, listUsersPaginated, updateBarberByAdmin } from "../models/user.model";
+import { parseDateRange } from "../utils/dateRange";
 import { getPagination } from "../utils/pagination";
-import { isValidCalendarDate, parsePositiveIntParam } from "../utils/validators";
+import { parsePositiveIntParam } from "../utils/validators";
 
-const parseDateRange = (from: unknown, to: unknown): { error: string } | { from: string; to: string } => {
-    if (!from || !to) {
-        return { error: "Missing from/to date range" };
-    }
-    if (typeof from !== "string" || typeof to !== "string" || !isValidCalendarDate(from) || !isValidCalendarDate(to)) {
-        return { error: "Invalid date format. Expected YYYY-MM-DD" };
-    }
-    if (from > to) {
-        return { error: "'from' date must not be after 'to' date" };
-    }
-    return { from, to };
-};
+// Porcentaje congelado al completar el turno; los turnos viejos usan el actual.
+const SPLIT = "COALESCE(a.barber_split_percentage, u.earnings_split_percentage)";
 
 const FINANCE_BUCKETS = ["day", "week", "month"] as const;
 type FinanceBucket = (typeof FINANCE_BUCKETS)[number];
@@ -36,17 +27,16 @@ export const createBarber = async (req: AuthRequest, res: Response) => {
         role,
         bio,
         earnings_split_percentage,
+        service_ids,
         phone,
-        specialties,
         social_media,
         birth_date,
         address,
     } = req.body;
 
-    if (role !== "barber" && req.user!.role !== "admin") {
-        return res.status(403).json({ error: "Only admins can create admin or admin_barber accounts" });
-    }
-
+    // La ruta ya exige rol admin o admin_barber: los dos administran el equipo
+    // por igual (antes solo "admin" podía crear administradores y, como la
+    // cuenta principal es admin_barber, nadie podía hacerlo).
     const existing = await findByEmail(email);
     if (existing) {
         return res.status(409).json({ error: "Email already registered" });
@@ -63,11 +53,16 @@ export const createBarber = async (req: AuthRequest, res: Response) => {
         bio,
         earnings_split_percentage,
         phone,
-        specialties,
         social_media,
         birth_date,
         address,
     });
+
+    // Sin servicios asignados un barbero no puede recibir turnos (ni desde la
+    // reserva pública ni desde el dashboard), así que se asignan en el alta.
+    if (role !== "admin" && Array.isArray(service_ids) && service_ids.length > 0) {
+        await replaceBarberServices(id, service_ids);
+    }
 
     return res.status(201).json({ id });
 };
@@ -83,15 +78,6 @@ export const updateBarber = async (req: AuthRequest, res: Response) => {
         return res.status(404).json({ error: "User not found" });
     }
 
-    const isAdmin = req.user!.role === "admin";
-
-    // Un admin_barber puede editar barberos/otros admin_barber (ya podía
-    // crearlos), pero no tocar una cuenta admin ni ascender a nadie a
-    // admin/admin_barber — misma restricción que ya existe en createBarber.
-    if (target.role === "admin" && !isAdmin) {
-        return res.status(403).json({ error: "Only admins can edit admin accounts" });
-    }
-
     const {
         first_name,
         last_name,
@@ -100,14 +86,15 @@ export const updateBarber = async (req: AuthRequest, res: Response) => {
         earnings_split_percentage,
         service_ids,
         phone,
-        specialties,
         social_media,
         birth_date,
         address,
     } = req.body;
 
-    if (role !== undefined && role !== "barber" && !isAdmin) {
-        return res.status(403).json({ error: "Only admins can assign admin or admin_barber roles" });
+    // Nadie cambia su propio rol: evita que el último administrador se quite
+    // el acceso al panel por error.
+    if (id === req.user!.id && role !== undefined && role !== target.role) {
+        return res.status(403).json({ error: "You cannot change your own role" });
     }
 
     await updateBarberByAdmin(id, {
@@ -117,7 +104,6 @@ export const updateBarber = async (req: AuthRequest, res: Response) => {
         role,
         earnings_split_percentage,
         phone,
-        specialties,
         social_media,
         birth_date,
         address,
@@ -145,14 +131,10 @@ export const deleteBarber = async (req: AuthRequest, res: Response) => {
         return res.status(404).json({ error: "User not found" });
     }
 
-    if (target.role === "admin" && req.user!.role !== "admin") {
-        return res.status(403).json({ error: "Only admins can delete admin accounts" });
-    }
-
-    // Borrar un barbero es de alto impacto (se pierden turnos, fotos y horarios
-    // en cascada), así que se re-pide la contraseña de quien ejecuta el borrado
-    // como confirmación extra antes de aplicarlo.
-    if (target.role === "barber" || target.role === "admin_barber") {
+    // Borrar a alguien del equipo es de alto impacto (se pierden turnos, fotos y
+    // horarios en cascada, o el acceso de un administrador), así que siempre se
+    // re-pide la contraseña de quien ejecuta el borrado.
+    {
         const { password } = req.body as { password?: string };
         if (!password) {
             return res.status(400).json({ error: "Password confirmation required to delete a barber" });
@@ -174,8 +156,20 @@ export const deleteBarber = async (req: AuthRequest, res: Response) => {
 
 export const getAllUsers = async (req: Request, res: Response) => {
     const { page, limit, offset } = getPagination(req);
-    const { users, total } = await listUsersPaginated(limit, offset);
-    const sanitized = users.map(({ password_hash, ...rest }) => rest);
+    const [{ users, total }, serviceLinks] = await Promise.all([
+        listUsersPaginated(limit, offset),
+        findAllBarberServiceLinks(),
+    ]);
+    const serviceIdsByBarber = new Map<number, number[]>();
+    for (const { barber_id, service_id } of serviceLinks) {
+        const list = serviceIdsByBarber.get(barber_id) || [];
+        list.push(service_id);
+        serviceIdsByBarber.set(barber_id, list);
+    }
+    const sanitized = users.map(({ password_hash, ...rest }) => ({
+        ...rest,
+        service_ids: serviceIdsByBarber.get(rest.id) || [],
+    }));
 
     return res.json({
         data: sanitized,
@@ -202,7 +196,8 @@ export const getFinancialSummary = async (req: Request, res: Response) => {
       u.last_name,
       u.earnings_split_percentage,
       COUNT(a.id) as total_appointments,
-      COALESCE(SUM(a.price), 0) as total_revenue
+      COALESCE(SUM(a.price), 0) as total_revenue,
+      COALESCE(SUM(a.price * ${SPLIT} / 100), 0) as barber_earnings
      FROM users u
      LEFT JOIN appointments a
        ON a.barber_id = u.id
@@ -214,7 +209,7 @@ export const getFinancialSummary = async (req: Request, res: Response) => {
     );
 
     const summary = rows.map((r: any) => {
-        const barberEarnings = (r.total_revenue * r.earnings_split_percentage) / 100;
+        const barberEarnings = Number(r.barber_earnings);
         const shopEarnings = r.total_revenue - barberEarnings;
         return {
             barber_id: r.barber_id,
@@ -243,8 +238,8 @@ export const getFinancialPeriod = async (req: Request, res: Response) => {
         u.earnings_split_percentage,
         COUNT(a.id) as total_appointments,
         COALESCE(SUM(a.price), 0) as total_revenue,
-        COALESCE(SUM(a.price), 0) * u.earnings_split_percentage / 100 as barber_earnings,
-        COALESCE(SUM(a.price), 0) - (COALESCE(SUM(a.price), 0) * u.earnings_split_percentage / 100) as shop_earnings
+        COALESCE(SUM(a.price * ${SPLIT} / 100), 0) as barber_earnings,
+        COALESCE(SUM(a.price), 0) - COALESCE(SUM(a.price * ${SPLIT} / 100), 0) as shop_earnings
       FROM users u
       LEFT JOIN appointments a
         ON a.barber_id = u.id
@@ -307,7 +302,7 @@ export const getFinancialSeries = async (req: Request, res: Response) => {
      FROM (
        SELECT
          a.price as revenue,
-         (a.price * u.earnings_split_percentage / 100) as barber_earnings,
+         (a.price * ${SPLIT} / 100) as barber_earnings,
          CASE
            WHEN ? = 'day' THEN DATE(a.date)
            WHEN ? = 'week' THEN DATE_SUB(a.date, INTERVAL WEEKDAY(a.date) DAY)

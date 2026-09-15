@@ -2,20 +2,16 @@ export const BRAND = {
     name: "Oficio Barbería",
     shortName: "OFICIO",
     tagline: "Oficio clásico, filo moderno",
-    heroHeadline: "El corte que te representa, con la tradición de siempre",
-    heroSubtext:
-        "Barbería de barrio con más de una década de oficio. Cortes a tijera y navaja, atención sin apuro y un ambiente que se siente como en casa.",
-    aboutEyebrow: "Quiénes somos",
+    since: 2014,
+    heroTitleLines: ["Tijera, navaja", "y el tiempo", "que el corte necesita"],
+    heroSubtext: "Cortes a tijera y navaja, atención sin apuro, con el mismo barbero cada vez.",
+    aboutEyebrow: "El oficio",
     aboutTitle: "Una barbería, no un local de paso",
     aboutText:
-        "Empezamos en 2014 como una barbería de esquina, con dos sillones y un cliente fijo por día. Hoy seguimos siendo eso mismo, solo que más grandes: un lugar donde el oficio se respeta y cada corte se hace con el tiempo que necesita, no con el que sobra.",
+        "Empezamos en 2014 como una barbería de esquina. Hoy seguimos siendo eso mismo, solo que más grandes: un lugar donde cada corte se hace con el tiempo que necesita, no con el que sobra.",
     aboutTextExtra:
-        "Formamos a cada barbero en las técnicas clásicas —navaja, tijera, toalla caliente— antes de dejarlo tomar su primer turno. Después, cada uno construye su propio estilo. Por eso cuando volvés a reservar con el mismo barbero, no tenés que explicar de nuevo cómo te gusta el corte.",
-    aboutHighlights: [
-        { value: "2014", label: "Primer local" },
-        { value: "9", label: "Barberos en el equipo" },
-        { value: "0", label: "Cortes apurados" },
-    ],
+        "Cada barbero aprende navaja, tijera y toalla caliente antes de tomar su primer turno. Por eso, si volvés con el mismo barbero, no tenés que explicar de nuevo cómo te gusta el corte.",
+    paymentNote: "Pagás en el local, en efectivo o transferencia.",
     contactPhoneLabel: "Reservá por WhatsApp",
     whatsappNumber: "5491123456789",
     whatsappDisplay: "+54 9 11 2345-6789",

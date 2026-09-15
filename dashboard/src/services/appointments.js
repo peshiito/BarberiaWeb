@@ -7,8 +7,8 @@ export const getBarberWeekAppointments = async (weekStart, page = 1, limit = 50)
     return data;
 };
 
-export const completeAppointment = async id => {
-    const { data } = await api.patch(`/appointments/${id}/complete`);
+export const completeAppointment = async (id, paymentMethod) => {
+    const { data } = await api.patch(`/appointments/${id}/complete`, paymentMethod ? { payment_method: paymentMethod } : {});
     return data;
 };
 

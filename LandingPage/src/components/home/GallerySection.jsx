@@ -1,74 +1,63 @@
 import { useMemo } from "react";
 import { useBarbers } from "../../hooks/useBarbers";
 import { buildAssetUrl } from "../../services/api";
-import AsyncImage from "../ui/AsyncImage";
-import Skeleton from "../ui/Skeleton";
-import EmptyState from "../ui/EmptyState";
-import Reveal from "../ui/Reveal";
-import { IconScissors } from "../ui/icons";
+import { fullName } from "../../utils/format";
 import corteBarba from "../../assets/images/galeria-corte-barba.jpg";
 import corteClasico from "../../assets/images/galeria-corte-clasico.jpg";
+import AsyncImage from "../ui/AsyncImage";
+import Reveal from "../ui/Reveal";
+import Skeleton from "../ui/Skeleton";
 import "./GallerySection.css";
 
-// Fotos de arranque mientras el equipo todavía no subió trabajos propios desde
-// el dashboard — se muestran primero, antes de las reales.
-const SEED_PHOTOS = [
-    { url: corteBarba, alt: "Corte con barba prolija en Oficio Barbería" },
-    { url: corteClasico, alt: "Corte clásico a peine en Oficio Barbería" },
+// 1 grande + 4 chicas arman dos filas completas sin huecos.
+const MAX_PHOTOS = 5;
+
+// Fotos propias del local, mientras el equipo sube sus trabajos desde el dashboard.
+const HOUSE_PHOTOS = [
+    { url: corteBarba, alt: "Corte con barba prolija en Oficio Barbería", caption: null },
+    { url: corteClasico, alt: "Corte clásico a peine en Oficio Barbería", caption: null },
 ];
 
 export default function GallerySection() {
-    const { status, barbers, error } = useBarbers();
+    const { status, barbers } = useBarbers();
 
     const photos = useMemo(() => {
-        const realPhotos = barbers.flatMap((barber) =>
+        const teamPhotos = barbers.flatMap((barber) =>
             (barber.photos || []).map((url) => ({
                 url: buildAssetUrl(url),
-                alt: `Trabajo de ${barber.first_name} ${barber.last_name}`,
+                alt: `Trabajo de ${fullName(barber)}`,
+                caption: fullName(barber),
             })),
         );
-        return [...SEED_PHOTOS, ...realPhotos];
+        return [...teamPhotos, ...HOUSE_PHOTOS].slice(0, MAX_PHOTOS);
     }, [barbers]);
 
     return (
-        <section className="section section-ink">
+        <section className="section section-ink gallery-section" aria-labelledby="gallery-title">
             <div className="container">
                 <Reveal>
-                    <p className="eyebrow">Galería</p>
-                    <h2 className="section-title">Trabajo real, barberos reales</h2>
-                    <p className="section-lede">
-                        Fotos subidas por nuestro propio equipo — nada de bancos de imágenes.
-                    </p>
+                    <p className="eyebrow">Trabajos</p>
+                    <h2 id="gallery-title" className="section-title">
+                        Trabajo real, barberos reales
+                    </h2>
+                    <p className="section-lede">Fotos de nuestro equipo, no de un banco de imágenes.</p>
                 </Reveal>
 
-                {status === "loading" && (
-                    <div className="gallery-grid">
-                        {Array.from({ length: 6 }).map((_, i) => (
-                            <Skeleton key={i} height="100%" style={{ aspectRatio: "1 / 1" }} />
+                {status === "loading" ? (
+                    <div className="gallery-grid" data-count="4" aria-hidden="true">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <Skeleton key={i} className="gallery-item" height="100%" />
                         ))}
                     </div>
-                )}
-
-                {status === "error" && (
-                    <EmptyState
-                        icon={<IconScissors />}
-                        title="No pudimos cargar la galería"
-                        text={error}
-                    />
-                )}
-
-                {status === "success" && photos.length === 0 && (
-                    <EmptyState
-                        icon={<IconScissors />}
-                        title="Todavía no hay fotos cargadas"
-                        text="Nuestro equipo está subiendo su trabajo. Muy pronto vas a ver los cortes acá."
-                    />
-                )}
-
-                {status === "success" && photos.length > 0 && (
-                    <Reveal delay={100} className="gallery-grid">
-                        {photos.slice(0, 8).map((photo, i) => (
-                            <AsyncImage key={photo.url + i} src={photo.url} alt={photo.alt} aspectRatio="1 / 1" />
+                ) : (
+                    <Reveal delay={80} as="ul" className="gallery-grid" data-count={Math.min(photos.length, 5)}>
+                        {photos.map((photo, i) => (
+                            <li key={photo.url + i} className="gallery-item">
+                                <figure>
+                                    <AsyncImage src={photo.url} alt={photo.alt} aspectRatio="auto" />
+                                    {photo.caption && <figcaption>{photo.caption}</figcaption>}
+                                </figure>
+                            </li>
                         ))}
                     </Reveal>
                 )}

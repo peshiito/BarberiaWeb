@@ -10,7 +10,6 @@ export interface User {
     bio: string | null;
     earnings_split_percentage: number;
     phone: string | null;
-    specialties: string | null;
     social_media: string | null;
     birth_date: string | null;
     address: string | null;
@@ -26,7 +25,6 @@ export interface UserInput {
     bio?: string;
     earnings_split_percentage?: number;
     phone?: string;
-    specialties?: string[];
     social_media?: string;
     birth_date?: string;
     address?: string;

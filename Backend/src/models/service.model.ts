@@ -75,6 +75,11 @@ export const findActiveServicesByBarber = async (barberId: number): Promise<Serv
     return rows as Service[];
 };
 
+export const findAllBarberServiceLinks = async (): Promise<{ barber_id: number; service_id: number }[]> => {
+    const [rows] = await pool.query<RowDataPacket[]>(`SELECT barber_id, service_id FROM barber_services`);
+    return rows as { barber_id: number; service_id: number }[];
+};
+
 export const barberOffersService = async (barberId: number, serviceId: number): Promise<boolean> => {
     const [rows] = await pool.query<RowDataPacket[]>(
         `SELECT 1 FROM barber_services WHERE barber_id = ? AND service_id = ? LIMIT 1`,

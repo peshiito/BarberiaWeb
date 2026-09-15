@@ -1,6 +1,7 @@
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 import pool from "../config/db";
 import { Appointment, AppointmentInput } from "../types/appointment.types";
+import { PaymentMethod } from "../types/finance.types";
 
 export interface AppointmentWithClient extends Appointment {
     client_first_name: string;
@@ -28,15 +29,27 @@ const APPOINTMENT_COLUMN_LIST = [
     "status",
     "created_at",
     "price",
+    "note",
+    "payment_method",
+    "completed_at",
 ];
 const APPOINTMENT_COLUMNS = APPOINTMENT_COLUMN_LIST.join(", ");
 const APPOINTMENT_COLUMNS_PREFIXED = APPOINTMENT_COLUMN_LIST.map(c => `a.${c}`).join(", ");
 
 export const createAppointment = async (data: AppointmentInput): Promise<number> => {
     const [result] = await pool.query<ResultSetHeader>(
-        `INSERT INTO appointments (client_id, barber_id, schedule_id, service_id, date, time, price)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [data.client_id, data.barber_id, data.schedule_id, data.service_id, data.date, data.time, data.price],
+        `INSERT INTO appointments (client_id, barber_id, schedule_id, service_id, date, time, price, note)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+            data.client_id,
+            data.barber_id,
+            data.schedule_id,
+            data.service_id,
+            data.date,
+            data.time,
+            data.price,
+            data.note ?? null,
+        ],
     );
     return result.insertId;
 };
@@ -75,8 +88,16 @@ export const cancelAppointmentById = async (id: number): Promise<void> => {
     await pool.query(`UPDATE appointments SET status = 'cancelled' WHERE id = ?`, [id]);
 };
 
-export const completeAppointmentById = async (id: number): Promise<void> => {
-    await pool.query(`UPDATE appointments SET status = 'completed' WHERE id = ?`, [id]);
+// Congela el porcentaje del barbero al completar: la liquidación usa este valor
+// aunque después se le cambie la comisión.
+export const completeAppointmentById = async (id: number, paymentMethod: PaymentMethod | null): Promise<void> => {
+    await pool.query(
+        `UPDATE appointments a JOIN users u ON u.id = a.barber_id
+     SET a.status = 'completed', a.completed_at = NOW(),
+       a.barber_split_percentage = u.earnings_split_percentage, a.payment_method = ?
+     WHERE a.id = ?`,
+        [paymentMethod, id],
+    );
 };
 
 export const findAppointmentsByClient = async (clientId: number): Promise<AppointmentWithService[]> => {
@@ -161,4 +182,20 @@ export const updateAppointmentByAdmin = async (
         `UPDATE appointments SET barber_id = ?, schedule_id = ?, service_id = ?, date = ?, time = ?, price = ? WHERE id = ?`,
         [data.barber_id, data.schedule_id, data.service_id, data.date, data.time, data.price, id],
     );
+};
+
+// Horarios ya tomados de un barbero en un rango de fechas (para mostrar
+// disponibilidad real en la reserva pública). Solo fecha y hora: sin datos del cliente.
+export const findTakenSlotsByBarberBetween = async (
+    barberId: number,
+    from: string,
+    to: string,
+): Promise<{ date: string; time: string }[]> => {
+    const [rows] = await pool.query<RowDataPacket[]>(
+        `SELECT DATE_FORMAT(date, '%Y-%m-%d') AS date, TIME_FORMAT(time, '%H:%i') AS time
+     FROM appointments
+     WHERE barber_id = ? AND date BETWEEN ? AND ? AND status = 'active'`,
+        [barberId, from, to],
+    );
+    return rows as { date: string; time: string }[];
 };

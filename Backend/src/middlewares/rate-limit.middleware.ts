@@ -1,7 +1,11 @@
 import rateLimit from "express-rate-limit";
 
+// Único límite de la reserva pública, que no requiere cuenta ni JWT: con
+// una ventana de 1 minuto permitía hasta 300 reservas falsas por hora desde
+// una misma IP. Un cliente real reserva una vez; 5 cada 15 minutos le deja
+// margen para reintentar si le ganaron el horario.
 export const appointmentsRateLimit = rateLimit({
-    windowMs: 60 * 1000,
+    windowMs: 15 * 60 * 1000,
     limit: 5,
     message: { error: "Too many requests, slow down" },
     standardHeaders: true,
@@ -16,32 +20,13 @@ export const authRateLimit = rateLimit({
     legacyHeaders: false,
 });
 
-// Separate instance (own counter) from authRateLimit so that staff login
-// attempts and client self-registration/login don't share the same bucket
-// and lock each other out.
-export const clientRegisterRateLimit = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    limit: 10,
-    message: { error: "Too many attempts, try again later" },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-
-// Propio contador, separado de clientRegisterRateLimit y de authRateLimit:
-// login/claim de cliente ahora comparan contraseña (bcrypt), así que
-// necesitan su propio backstop contra fuerza bruta sin compartir cupo con el
-// registro ni con el login de staff.
-export const clientLoginRateLimit = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    limit: 10,
-    message: { error: "Too many attempts, try again later" },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-
+// Va por IP y todo el personal de una barbería suele salir a internet por la
+// misma (mismo WiFi): con 60/min, una sola carga de la agenda (varias semanas
+// + horarios + servicios) y dos barberos a la vez ya devolvían 429 y el
+// dashboard fallaba al crear turnos. Estas rutas exigen login igual.
 export const staffActionsRateLimit = rateLimit({
     windowMs: 60 * 1000,
-    limit: 60,
+    limit: 300,
     message: { error: "Too many requests, slow down" },
     standardHeaders: true,
     legacyHeaders: false,

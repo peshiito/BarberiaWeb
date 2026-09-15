@@ -1,0 +1,124 @@
+.client-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.client-form-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-md);
+}
+
+.client-form-required {
+    font-family: var(--font-display);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--primary);
+}
+
+.client-form-channel {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--secondary);
+}
+
+.client-form-channel-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background-color: var(--secondary);
+}
+
+.client-form-prefix {
+    font-family: var(--font-mono);
+    color: var(--primary);
+    white-space: nowrap;
+}
+
+.client-form-valid {
+    color: var(--secondary);
+}
+
+.client-form-status {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin: calc(var(--space-sm) * -1) 0 0;
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--outline);
+    transition: color var(--duration-base) var(--ease-out);
+}
+
+.client-form-status .material-symbols-outlined {
+    margin-top: 1px;
+    flex-shrink: 0;
+}
+
+.client-form-status.is-ok {
+    color: var(--secondary);
+}
+
+.client-form-notes {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-md);
+    background-color: var(--field-bg);
+    transition: box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.client-form-notes:focus-within {
+    box-shadow: 0 0 0 2px rgb(var(--primary-rgb) / 0.4);
+}
+
+.client-form-notes textarea {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    resize: vertical;
+}
+
+.client-form-notes textarea:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.client-form-notes-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding: 0 12px 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--outline);
+}
+
+.client-form-notes-foot > span:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.client-form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-sm);
+    width: 100%;
+}
+
+@media (max-width: 560px) {
+    .client-form-row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .client-form-footer > * {
+        flex: 1;
+    }
+}

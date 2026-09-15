@@ -1,0 +1,83 @@
+.workdays {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: var(--space-sm);
+}
+
+.workday {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) 6px;
+    border-radius: var(--radius-md);
+    background-color: var(--surface-lowest);
+    text-align: center;
+    transition: background-color var(--duration-base) var(--ease-out);
+}
+
+.workday.is-on {
+    background-color: var(--surface-container);
+}
+
+.workday.is-today {
+    background-color: var(--surface-high);
+    box-shadow: inset 0 0 0 1px rgb(var(--primary-container-rgb) / 0.35);
+}
+
+.workday-name {
+    font-family: var(--font-display);
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--outline);
+}
+
+.workday.is-on .workday-name {
+    color: var(--on-surface);
+}
+
+.workday.is-today .workday-name {
+    color: var(--primary);
+}
+
+.workday-hours {
+    min-height: 16px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 16px;
+    color: var(--primary);
+    white-space: nowrap;
+}
+
+.workday:not(.is-on) .workday-hours {
+    color: var(--outline);
+    text-decoration: line-through;
+}
+
+.workday-state {
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--outline);
+}
+
+.workday.is-on .workday-state {
+    color: var(--primary);
+}
+
+@media (max-width: 720px) {
+    .workdays {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 420px) {
+    .workdays {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}

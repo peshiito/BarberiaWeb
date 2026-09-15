@@ -1,6 +1,5 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { AuthRequest } from "../middlewares/auth.middleware";
-import { ClientAuthRequest } from "../middlewares/client-auth.middleware";
 import {
     cancelAppointmentById,
     completeAppointmentById,
@@ -11,10 +10,9 @@ import {
     findActiveAppointmentBySlot,
     findAppointmentById,
     findAppointmentsByBarberAndWeekPaginated,
-    findAppointmentsByClient,
     updateAppointmentByAdmin,
 } from "../models/appointment.model";
-import { findClientById } from "../models/client.model";
+import { findClientById, findOrCreateClient } from "../models/client.model";
 import { findScheduleByBarberAndWeek } from "../models/schedule.model";
 import { barberOffersService, findServiceById } from "../models/service.model";
 import { Appointment } from "../types/appointment.types";
@@ -121,40 +119,47 @@ const findActionableAppointment = async (
     return { appointment };
 };
 
-export const createAppointmentHandler = async (req: ClientAuthRequest, res: Response) => {
-    const clientId = req.client!.clientId;
-    const { barber_id, service_id, date, time } = req.body as {
+export const createAppointmentHandler = async (req: Request, res: Response) => {
+    const { first_name, last_name, phone, barber_id, service_id, date, time, note } = req.body as {
+        first_name: string;
+        last_name: string;
+        phone: string;
         barber_id: number;
         service_id: number;
         date: string;
         time: string;
+        note?: string;
     };
 
-    const result = await validateAndBuildAppointment(clientId, barber_id, service_id, date, time);
+    const { client } = await findOrCreateClient({ first_name, last_name, phone });
+
+    const result = await validateAndBuildAppointment(client.id, barber_id, service_id, date, time);
     if ("error" in result) {
         return res.status(result.status).json({ error: result.error });
     }
 
     const id = await createAppointment({
-        client_id: clientId,
+        client_id: client.id,
         barber_id,
         schedule_id: result.schedule_id,
         service_id: result.service_id,
         date,
         time,
         price: result.price,
+        note: note?.trim() || null,
     });
 
     return res.status(201).json({ id });
 };
 
 export const createAppointmentByAdminHandler = async (req: AuthRequest, res: Response) => {
-    const { client_id, barber_id, service_id, date, time } = req.body as {
+    const { client_id, barber_id, service_id, date, time, note } = req.body as {
         client_id: number;
         barber_id: number;
         service_id: number;
         date: string;
         time: string;
+        note?: string;
     };
 
     const result = await validateAndBuildAppointment(client_id, barber_id, service_id, date, time);
@@ -170,6 +175,7 @@ export const createAppointmentByAdminHandler = async (req: AuthRequest, res: Res
         date,
         time,
         price: result.price,
+        note: note?.trim() || null,
     });
 
     return res.status(201).json({ id });
@@ -177,11 +183,12 @@ export const createAppointmentByAdminHandler = async (req: AuthRequest, res: Res
 
 export const createAppointmentByBarberHandler = async (req: AuthRequest, res: Response) => {
     const barberId = req.user!.id;
-    const { client_id, service_id, date, time } = req.body as {
+    const { client_id, service_id, date, time, note } = req.body as {
         client_id: number;
         service_id: number;
         date: string;
         time: string;
+        note?: string;
     };
 
     const result = await validateAndBuildAppointment(client_id, barberId, service_id, date, time);
@@ -197,6 +204,7 @@ export const createAppointmentByBarberHandler = async (req: AuthRequest, res: Re
         date,
         time,
         price: result.price,
+        note: note?.trim() || null,
     });
 
     return res.status(201).json({ id });
@@ -294,22 +302,6 @@ export const getBarberWeekAppointmentsForAdmin = async (req: AuthRequest, res: R
     });
 };
 
-export const cancelAppointmentHandler = async (req: ClientAuthRequest, res: Response) => {
-    const clientId = req.client!.clientId;
-    const appointmentId = parsePositiveIntParam(req.params.id);
-    if (appointmentId === null) {
-        return res.status(400).json({ error: "Invalid appointment id" });
-    }
-
-    const gate = await findActionableAppointment(appointmentId, a => a.client_id === clientId);
-    if ("error" in gate) {
-        return res.status(gate.status).json({ error: gate.error });
-    }
-
-    await cancelAppointmentById(appointmentId);
-    return res.json({ message: "Appointment cancelled" });
-};
-
 export const completeAppointmentHandler = async (req: AuthRequest, res: Response) => {
     const barberId = req.user!.id;
     const appointmentId = parsePositiveIntParam(req.params.id);
@@ -322,14 +314,8 @@ export const completeAppointmentHandler = async (req: AuthRequest, res: Response
         return res.status(gate.status).json({ error: gate.error });
     }
 
-    await completeAppointmentById(appointmentId);
+    await completeAppointmentById(appointmentId, req.body?.payment_method ?? null);
     return res.json({ message: "Appointment completed" });
-};
-
-export const getMyAppointments = async (req: ClientAuthRequest, res: Response) => {
-    const clientId = req.client!.clientId;
-    const appointments = await findAppointmentsByClient(clientId);
-    return res.json(appointments);
 };
 
 export const getBarberWeekAppointments = async (req: AuthRequest, res: Response) => {

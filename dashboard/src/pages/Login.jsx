@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import BrandMark from "../components/ui/BrandMark";
 import Button from "../components/ui/Button";
 import FormField from "../components/ui/FormField";
+import Icon from "../components/ui/Icon";
 import InlineFeedback from "../components/ui/InlineFeedback";
-import { IconEye, IconEyeOff, IconLock } from "../components/ui/icons";
 import { useAuth } from "../context/AuthContext";
 import "./Login.css";
 
@@ -25,80 +26,91 @@ const Login = () => {
             await login(email, password);
             navigate("/");
         } catch (err) {
-            const message = err.response?.data?.error || "No se pudo iniciar sesión";
-            setError(message);
+            const status = err.response?.status;
+            setError(
+                status === 401
+                    ? "El correo o la contraseña no coinciden."
+                    : err.response?.data?.error || "No se pudo iniciar sesión. Probá de nuevo.",
+            );
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="login-screen">
-            <div className="login-panel">
-                <div className="login-mark">
-                    <span className="login-mark-line" />
-                    <span className="login-mark-label">BARBERÍA</span>
-                    <span className="login-mark-line" />
-                </div>
+        <main className="login-screen">
+            <div className="login-card">
+                <header className="login-head">
+                    <BrandMark subtitle="Barbería artesanal" className="login-brand" />
+                    <span className="login-eyebrow">Área operativa</span>
+                    <h1 className="login-title">Acceso al panel</h1>
+                    <p className="login-lede">Ingresá con tu cuenta de barbero para gestionar la agenda y los turnos.</p>
+                </header>
 
-                <h1 className="login-title">Panel de barberos</h1>
-                <p className="login-subtitle">Ingresá con tu cuenta para ver tu agenda</p>
-
-                <form className="login-form" onSubmit={handleSubmit}>
-                    <FormField label="Email" htmlFor="email">
-                        <input
-                            id="email"
-                            type="email"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            placeholder="tu@barberia.com"
-                            required
-                            autoFocus
-                        />
+                <form className="login-form" onSubmit={handleSubmit} noValidate>
+                    <FormField label="Correo electrónico" htmlFor="login-email">
+                        <div className="field-affix">
+                            <span className="field-affix-icon">
+                                <Icon name="mail" size={20} />
+                            </span>
+                            <input
+                                id="login-email"
+                                type="email"
+                                value={email}
+                                onChange={e => setEmail(e.target.value)}
+                                placeholder="tu.nombre@oficiobarberia.com"
+                                autoComplete="username"
+                                spellCheck={false}
+                                required
+                                autoFocus
+                            />
+                        </div>
                     </FormField>
 
-                    <FormField label="Contraseña" htmlFor="password">
-                        <div className="input-affix">
+                    <FormField label="Contraseña" htmlFor="login-password">
+                        <div className="field-affix">
+                            <span className="field-affix-icon">
+                                <Icon name="lock" size={20} />
+                            </span>
                             <input
-                                id="password"
+                                id="login-password"
+                                className="login-password-input"
                                 type={showPassword ? "text" : "password"}
                                 value={password}
                                 onChange={e => setPassword(e.target.value)}
-                                placeholder="••••••••"
                                 autoComplete="current-password"
                                 required
                             />
                             <button
                                 type="button"
-                                className="input-affix-suffix"
+                                className="field-affix-action"
                                 onClick={() => setShowPassword(v => !v)}
                                 aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                aria-pressed={showPassword}
                             >
-                                {showPassword ? <IconEyeOff width={18} height={18} /> : <IconEye width={18} height={18} />}
+                                <Icon name={showPassword ? "visibility_off" : "visibility"} size={20} />
                             </button>
                         </div>
                     </FormField>
 
                     {error && <InlineFeedback tone="error">{error}</InlineFeedback>}
 
-                    <Button type="submit" loading={loading}>
-                        Ingresar
+                    <Button
+                        type="submit"
+                        size="lg"
+                        block
+                        loading={loading}
+                        iconRight="arrow_forward"
+                        className="login-submit"
+                        disabled={!email || !password}
+                    >
+                        Ingresar al panel
                     </Button>
-
-                    <p className="login-trust-note">
-                        <IconLock width={14} height={14} />
-                        Conexión cifrada — tu contraseña nunca se guarda en texto plano
-                    </p>
                 </form>
-            </div>
 
-            <div className="login-side">
-                <div className="login-side-content">
-                    <span className="login-side-eyebrow">Libro de turnos digital</span>
-                    <p className="login-side-quote">Cada corte, cada horario, cada barbero — todo en un mismo lugar.</p>
-                </div>
+                <p className="login-footnote">Acceso exclusivo para el personal de Oficio Barbería.</p>
             </div>
-        </div>
+        </main>
     );
 };
 

@@ -12,6 +12,12 @@ export const calendarDateField = z
 // validation error, confirmed live during the 2026-08-10 audit.
 export const timeField = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Invalid time format");
 
+export const phoneField = z
+    .string()
+    .min(8)
+    .max(30)
+    .regex(/^[0-9+\-\s]+$/, "Invalid phone format");
+
 export const requireAtLeastOneField = <T extends z.ZodRawShape>(schema: z.ZodObject<T>) =>
     schema.refine(data => Object.keys(data).length > 0, { message: "At least one field is required" });
 

@@ -1,53 +1,74 @@
-import Badge from "../ui/Badge";
+import { useState } from "react";
 import { API_ORIGIN } from "../../services/api";
-import "./PhotoSlot.css";
+import Icon from "../ui/Icon";
+import "./PhotoSlotTile.css";
 
-const PhotoSlot = ({ photo, isMain, onUpload, onRemove, uploading }) => {
-    const handleFileChange = e => {
-        const file = e.target.files?.[0];
-        if (file) {
-            onUpload(file);
-        }
-        e.target.value = "";
-    };
+const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
 
-    const ratioClass = isMain ? "photo-slot-main" : "photo-slot-secondary";
+const PhotoSlot = ({ photo, isMain, index, onUpload, onRemove, uploading, removing }) => {
+    const [dragOver, setDragOver] = useState(false);
+    const shape = isMain ? "is-main" : "is-secondary";
 
     if (photo) {
         return (
-            <div className={`photo-slot ${ratioClass} has-photo`}>
-                {isMain && (
-                    <span className="photo-slot-badge">
-                        <Badge tone="brass">Principal</Badge>
-                    </span>
-                )}
-                <img src={`${API_ORIGIN}${photo.url}`} alt="Foto del barbero" />
-                <button className="photo-slot-remove" onClick={() => onRemove(photo.id)}>
-                    Quitar
+            <figure className={`photo-tile ${shape} has-photo`}>
+                <img src={`${API_ORIGIN}${photo.url}`} alt={isMain ? "Tu foto principal" : `Foto ${index + 1}`} />
+                {isMain && <span className="photo-tile-badge">Principal</span>}
+                <button
+                    type="button"
+                    className="photo-tile-remove"
+                    onClick={() => onRemove(photo.id)}
+                    disabled={removing}
+                    aria-label={isMain ? "Quitar la foto principal" : `Quitar la foto ${index + 1}`}
+                >
+                    <Icon name={removing ? "progress_activity" : "delete"} size={18} className={removing ? "is-spinning" : ""} />
                 </button>
-            </div>
+            </figure>
         );
     }
 
+    const handleFiles = files => {
+        const file = files?.[0];
+        if (file) onUpload(file);
+    };
+
     return (
-        <label className={`photo-slot ${ratioClass} is-empty`}>
-            {uploading ? (
-                <span className="photo-slot-status">Subiendo...</span>
-            ) : (
-                <>
-                    <svg viewBox="0 0 24 24" fill="none" className="photo-slot-icon" aria-hidden="true">
-                        <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                    </svg>
-                    <span className="photo-slot-status">{isMain ? "Foto principal" : "Agregar foto"}</span>
-                </>
-            )}
+        <label
+            className={`photo-tile ${shape} is-empty ${dragOver ? "is-drag" : ""} ${uploading ? "is-busy" : ""}`}
+            onDragOver={e => {
+                e.preventDefault();
+                if (!uploading) setDragOver(true);
+            }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={e => {
+                e.preventDefault();
+                setDragOver(false);
+                if (uploading) return;
+                const file = [...e.dataTransfer.files].find(f => ACCEPTED.includes(f.type));
+                if (file) onUpload(file);
+            }}
+        >
+            <span className="photo-tile-empty">
+                <Icon
+                    name={uploading ? "progress_activity" : isMain ? "add_a_photo" : "add_photo_alternate"}
+                    size={isMain ? 32 : 26}
+                    className={uploading ? "is-spinning" : ""}
+                />
+                <span className="photo-tile-title">
+                    {uploading ? "Subiendo…" : isMain ? "Foto principal" : "Agregar foto"}
+                </span>
+                {!uploading && <span className="photo-tile-hint">{isMain ? "Vertical, 4:5" : "Tocá o arrastrá"}</span>}
+            </span>
             <input
                 type="file"
-                accept="image/jpeg,image/png,image/webp"
-                onChange={handleFileChange}
+                accept={ACCEPTED.join(",")}
+                onChange={e => {
+                    handleFiles(e.target.files);
+                    e.target.value = "";
+                }}
                 disabled={uploading}
-                aria-label={isMain ? "Agregar foto principal" : "Agregar foto"}
-                className="photo-slot-input"
+                aria-label={isMain ? "Subir foto principal" : "Subir foto"}
+                className="photo-tile-input"
             />
         </label>
     );

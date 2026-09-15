@@ -1,12 +1,73 @@
-.branches-teaser-inner {
-    text-align: center;
-    max-width: 560px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.branches-teaser-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+    gap: var(--space-5);
 }
 
-.branches-teaser-inner .eyebrow {
-    justify-content: center;
+.branch-mini {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    background: var(--paper);
+    border: 1px solid var(--border-on-light);
+    border-left: 3px solid var(--brass);
+    border-radius: var(--radius-sm);
+}
+
+.branch-mini-name {
+    font-size: clamp(30px, 3.4vw, 40px);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--text-on-light);
+}
+
+.branch-mini-address {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-on-light-secondary);
+}
+
+.branch-mini-address .material-symbols-outlined {
+    color: var(--brass-ink);
+}
+
+.branch-mini-hours {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+}
+
+.branch-mini-hours > div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: 6px;
+    border-bottom: 1px dashed var(--border-on-light);
+}
+
+.branch-mini-hours dt {
+    color: var(--text-on-light-secondary);
+}
+
+.branch-mini-hours dd {
+    margin: 0;
+    color: var(--text-on-light);
+}
+
+.branch-mini-hours dd.is-closed {
+    color: var(--text-on-light-muted);
+}
+
+.branch-mini-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+}
+
+.branch-mini-actions .btn-ghost {
+    min-height: 36px;
+    letter-spacing: 0;
 }

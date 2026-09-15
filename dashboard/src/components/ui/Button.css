@@ -1,18 +1,25 @@
 .btn {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--space-2);
-    border: none;
+    gap: var(--space-xs);
+    border: 1px solid transparent;
     border-radius: var(--radius-md);
-    font-weight: 600;
-    font-family: var(--font-body);
-    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
     transition:
         background-color var(--duration-fast) var(--ease-out),
         border-color var(--duration-fast) var(--ease-out),
         color var(--duration-fast) var(--ease-out),
+        box-shadow var(--duration-fast) var(--ease-out),
         opacity var(--duration-fast) var(--ease-out),
         transform var(--duration-fast) var(--ease-out);
 }
@@ -22,63 +29,94 @@
 }
 
 .btn:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
 }
 
-.btn-md {
-    padding: var(--space-3) var(--space-5);
-    font-size: var(--text-md);
+.btn-block {
+    width: 100%;
 }
 
 .btn-sm {
-    padding: var(--space-2) var(--space-3-5);
-    font-size: var(--text-sm);
+    height: 32px;
+    padding: 0 var(--space-md);
+    font-size: 12px;
 }
 
+.btn-md {
+    height: 40px;
+    padding: 0 var(--space-lg);
+}
+
+.btn-lg {
+    height: 44px;
+    padding: 0 var(--space-xl);
+}
+
+.btn-icon {
+    margin-inline: -2px;
+}
+
+/* Primario: latón claro sobre texto tostado, como el "Nuevo turno" de Stitch */
 .btn-primary {
-    background-color: var(--brass);
-    color: var(--bg-base);
+    background-color: var(--primary);
+    color: var(--on-primary);
+    font-weight: 600;
 }
 
 .btn-primary:hover:not(:disabled) {
-    background-color: var(--brass-bright);
+    background-color: var(--primary-fixed);
+}
+
+/* Secundario: superficie elevada neutra */
+.btn-secondary {
+    background-color: var(--surface-container);
+    color: var(--on-surface);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: var(--surface-highest);
 }
 
 .btn-ghost {
     background-color: transparent;
-    color: var(--text-secondary);
-    border: 1px solid var(--border-subtle);
+    color: var(--on-surface-variant);
+    border-color: var(--hairline-strong);
 }
 
 .btn-ghost:hover:not(:disabled) {
-    border-color: var(--brass);
-    color: var(--brass-bright);
+    color: var(--on-surface);
+    border-color: rgb(var(--primary-container-rgb) / 0.6);
+    background-color: rgb(var(--primary-container-rgb) / 0.08);
 }
 
 .btn-danger {
-    background-color: transparent;
-    /* --burgundy-bright no llega a 4.5:1 en texto de este tamaño (WCAG AA) y
-       la paleta no tiene un tono de burgundy más claro sin inventar uno
-       nuevo — se resuelve con tokens existentes: el borde/acento sigue
-       comunicando "peligro" en burgundy, el texto pasa a text-primary. */
-    color: var(--text-primary);
-    border: 1px solid var(--burgundy);
+    background-color: rgb(var(--tertiary-container-rgb) / 0.12);
+    color: var(--tertiary);
+    border-color: rgb(var(--tertiary-container-rgb) / 0.35);
 }
 
 .btn-danger:hover:not(:disabled) {
-    background-color: rgb(var(--burgundy-rgb) / 0.15);
+    background-color: rgb(var(--tertiary-container-rgb) / 0.2);
+}
+
+.btn-danger-solid {
+    background-color: var(--tertiary);
+    color: var(--on-tertiary-container);
+    font-weight: 600;
+}
+
+.btn-danger-solid:hover:not(:disabled) {
+    background-color: #ffc9c6;
 }
 
 .btn-success {
-    background-color: var(--sage);
-    color: var(--bg-base);
-    border: 1px solid var(--sage);
+    background-color: var(--secondary-container);
+    color: var(--secondary);
 }
 
 .btn-success:hover:not(:disabled) {
-    background-color: var(--sage-bright);
-    border-color: var(--sage-bright);
+    background-color: #2a6143;
 }
 
 .btn-spinner {
@@ -87,7 +125,7 @@
     border-radius: 50%;
     border: 2px solid currentColor;
     border-top-color: transparent;
-    opacity: 0.7;
+    opacity: 0.8;
     animation: btn-spin 0.6s linear infinite;
 }
 

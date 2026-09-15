@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { AuthRequest } from "../middlewares/auth.middleware";
 import { createSchedule, findScheduleByBarberAndWeek, findSchedulesByBarber } from "../models/schedule.model";
+import { findTakenSlotsByBarberBetween } from "../models/appointment.model";
 import { findById } from "../models/user.model";
 import { ScheduleInput } from "../types/schedule.types";
 import { generateSlots } from "../utils/slots";
@@ -55,10 +56,18 @@ export const getScheduleSlots = async (req: AuthRequest, res: Response) => {
 
     const schedule = await findScheduleByBarberAndWeek(barberIdNum, weekStart);
     if (!schedule) {
-        return res.json({ has_schedule: false, work_days: null, slots: [] });
+        return res.json({ has_schedule: false, work_days: null, slots: [], taken: {} });
     }
 
     const slots = generateSlots(schedule.start_time, schedule.end_time, schedule.slot_duration_minutes);
 
-    return res.json({ has_schedule: true, work_days: schedule.work_days, slots });
+    const weekEndDate = new Date(`${weekStart}T00:00:00Z`);
+    weekEndDate.setUTCDate(weekEndDate.getUTCDate() + 6);
+    const takenRows = await findTakenSlotsByBarberBetween(barberIdNum, weekStart, weekEndDate.toISOString().slice(0, 10));
+    const taken: Record<string, string[]> = {};
+    for (const row of takenRows) {
+        (taken[row.date] ??= []).push(row.time);
+    }
+
+    return res.json({ has_schedule: true, work_days: schedule.work_days, slots, taken });
 };

@@ -13,7 +13,7 @@ const DeleteBarberModal = ({ barber, onClose, onDeleted }) => {
     const [deleting, setDeleting] = useState(false);
     const [error, setError] = useState("");
 
-    const requiresPassword = barber?.role === "barber" || barber?.role === "admin_barber";
+    const requiresPassword = Boolean(barber);
 
     useEffect(() => {
         setPassword("");
@@ -44,7 +44,7 @@ const DeleteBarberModal = ({ barber, onClose, onDeleted }) => {
                     </p>
 
                     {requiresPassword && (
-                        <FormField label="Tu contraseña de administrador" hint="Confirmá tu identidad para eliminar un barbero">
+                        <FormField label="Tu contraseña de administrador" hint="Confirmá tu identidad para eliminar a esta persona del equipo">
                             <input
                                 type="password"
                                 value={password}

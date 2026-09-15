@@ -1,0 +1,198 @@
+.week-picker {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.week-picker-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding: var(--space-sm);
+    border-radius: var(--radius-md);
+    background-color: var(--surface-container);
+}
+
+.week-picker-step {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--outline);
+    cursor: pointer;
+    transition:
+        background-color var(--duration-fast) var(--ease-out),
+        color var(--duration-fast) var(--ease-out);
+}
+
+.week-picker-step:hover {
+    background-color: var(--surface-high);
+    color: var(--on-surface);
+}
+
+.week-picker-step:focus-visible,
+.week-picker-row:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.week-picker-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 4px var(--space-sm);
+    min-width: 0;
+    text-align: center;
+}
+
+.week-picker-month {
+    font-family: var(--font-display);
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--on-surface);
+}
+
+.week-picker-selected {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--outline);
+}
+
+.week-picker-selected-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background-color: var(--primary);
+}
+
+.week-picker-weekdays,
+.week-picker-row {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.week-picker-weekdays span {
+    padding: 6px 0;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--outline);
+}
+
+.week-picker-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.week-picker-row {
+    position: relative;
+    min-height: 40px;
+    padding: 4px;
+    border: none;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--on-surface);
+    cursor: pointer;
+    transition:
+        background-color var(--duration-fast) var(--ease-out),
+        transform var(--duration-base) var(--ease-out);
+}
+
+.week-picker-row:hover:not(:disabled):not(.is-selected) {
+    background-color: var(--surface-container);
+}
+
+.week-picker-row:active:not(:disabled) {
+    transform: scale(0.99);
+}
+
+.week-picker-row:disabled {
+    cursor: not-allowed;
+    color: var(--outline-variant);
+}
+
+.week-picker-day {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+}
+
+.week-picker-day.is-outside {
+    color: var(--outline);
+}
+
+.week-picker-row:disabled .week-picker-day {
+    color: var(--outline-variant);
+}
+
+.week-picker-day.is-today::after {
+    content: "";
+    position: absolute;
+    bottom: -3px;
+    width: 4px;
+    height: 4px;
+    border-radius: var(--radius-full);
+    background-color: var(--primary);
+}
+
+.week-picker-row.is-opened:not(.is-selected) {
+    background-color: rgb(var(--secondary-container-rgb) / 0.22);
+    color: var(--secondary);
+}
+
+.week-picker-opened {
+    position: absolute;
+    top: 50%;
+    right: -6px;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    background-color: var(--secondary-container);
+    color: var(--secondary);
+    transform: translateY(-50%);
+}
+
+.week-picker-row.is-selected {
+    background-color: var(--primary-container);
+    color: var(--on-primary);
+    font-weight: 600;
+    box-shadow:
+        inset 0 0 0 4px var(--surface-highest),
+        var(--shadow-md);
+}
+
+.week-picker-row.is-selected .week-picker-day:last-child {
+    border-radius: var(--radius-sm);
+}
+
+.week-picker-row.is-selected .week-picker-day.is-outside {
+    color: rgb(68 43 0 / 0.65);
+}
+
+.week-picker-row.is-selected .week-picker-day.is-today::after {
+    background-color: var(--on-primary);
+}

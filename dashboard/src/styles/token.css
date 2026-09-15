@@ -1,41 +1,96 @@
 :root {
-    /* Color */
-    --bg-base: #18181b;
-    --bg-surface: #242320;
-    --bg-surface-hover: #2c2a26;
-    --bg-elevated: #2e2c28;
-    --border-subtle: #3a3733;
-    --border-strong: #4a4640;
+    color-scheme: dark;
 
-    --brass: #b8925a;
-    --brass-bright: #d4ab73;
-    --burgundy: #8b3a3a;
-    --burgundy-bright: #a84747;
-    --sage: #4a7a5c;
-    --sage-bright: #5c9470;
+    /* ---------------------------------------------------------------
+       Paleta Stitch "Oficio Barbería Clásica" (tema oscuro Material).
+       Primitivos: son los valores exactos del diseño aprobado.
+       --------------------------------------------------------------- */
+    --surface-lowest: #0e0e11;
+    --surface: #131316;
+    --surface-low: #1b1b1e;
+    --surface-container: #1f1f22;
+    --surface-high: #2a2a2d;
+    --surface-highest: #353438;
+    --surface-bright: #39393c;
 
-    --text-primary: #ede9e3;
-    --text-secondary: #a39d94;
-    --text-muted: #6b6660;
+    --on-surface: #e4e1e6;
+    --on-surface-variant: #d2c4b5;
+    --outline: #9b8f81;
+    --outline-variant: #4e453a;
 
-    /* Color — RGB triplets for alpha tints (rgb(var(--x-rgb) / alpha)) */
-    --brass-rgb: 184, 146, 90;
-    --burgundy-rgb: 139, 58, 58;
-    --sage-rgb: 74, 122, 92;
-    --bg-base-rgb: 24, 24, 27;
+    --primary: #eac083;
+    --primary-fixed: #ffddb0;
+    --on-primary: #442b00;
+    --primary-container: #b8925a;
+    --on-primary-container: #442c00;
 
-    /* Color — semantic aliases (map onto the palette above, never invent new hues) */
-    --color-accent: var(--brass);
-    --color-success: var(--sage);
-    --color-danger: var(--burgundy);
-    --color-neutral: var(--text-muted);
+    --secondary: #9fd2af;
+    --secondary-container: #205035;
+    --on-secondary-container: #8ec19e;
 
-    /* Type */
+    --tertiary: #ffb3b0;
+    --tertiary-container: #df7c7a;
+    --on-tertiary-container: #5d171a;
+
+    --error: #ffb4ab;
+    --error-container: #93000a;
+
+    --primary-rgb: 234 192 131;
+    --primary-container-rgb: 184 146 90;
+    --secondary-rgb: 159 210 175;
+    --secondary-container-rgb: 32 80 53;
+    --tertiary-rgb: 255 179 176;
+    --tertiary-container-rgb: 223 124 122;
+    --surface-lowest-rgb: 14 14 17;
+    --outline-variant-rgb: 78 69 58;
+
+    /* Controles de formulario: fondo hundido respecto de la tarjeta. */
+    --field-bg: var(--surface-lowest);
+    --field-bg-hover: #141417;
+    --field-ring: 0 0 0 3px rgb(var(--primary-container-rgb) / 0.35);
+
+    --hairline: rgb(var(--outline-variant-rgb) / 0.3);
+    --hairline-strong: rgb(var(--outline-variant-rgb) / 0.6);
+
+    /* ---------------------------------------------------------------
+       Alias de compatibilidad: el resto del panel ya usa estos nombres.
+       Apuntan a la paleta Stitch para que todo herede el diseño nuevo.
+       --------------------------------------------------------------- */
+    --bg-base: var(--surface);
+    --bg-surface: var(--surface-container);
+    --bg-surface-hover: var(--surface-high);
+    --bg-elevated: var(--surface-high);
+    --border-subtle: var(--hairline);
+    --border-strong: var(--hairline-strong);
+
+    --brass: var(--primary-container);
+    --brass-bright: var(--primary);
+    --burgundy: #7a2d2e;
+    --burgundy-bright: var(--tertiary);
+    --sage: var(--secondary-container);
+    --sage-bright: var(--secondary);
+
+    --text-primary: var(--on-surface);
+    --text-secondary: var(--on-surface-variant);
+    --text-muted: var(--outline);
+
+    --brass-rgb: var(--primary-container-rgb);
+    --burgundy-rgb: var(--tertiary-container-rgb);
+    --sage-rgb: var(--secondary-rgb);
+    --bg-base-rgb: 19 19 22;
+
+    --color-accent: var(--primary);
+    --color-success: var(--secondary);
+    --color-danger: var(--tertiary);
+    --color-neutral: var(--outline);
+
+    /* ---------------------------------------------------------------
+       Tipografía
+       --------------------------------------------------------------- */
     --font-display: "Oswald", "Arial Narrow", sans-serif;
     --font-body: "Inter", -apple-system, sans-serif;
     --font-mono: "JetBrains Mono", "Courier New", monospace;
 
-    /* Type scale */
     --text-2xs: 11px;
     --text-xs: 12px;
     --text-sm: 13px;
@@ -44,10 +99,19 @@
     --text-lg: 16px;
     --text-xl: 18px;
     --text-2xl: 20px;
-    --text-3xl: 28px;
-    --text-4xl: 34px;
+    --text-3xl: 24px;
+    --text-4xl: 32px;
 
-    /* Spacing scale */
+    /* ---------------------------------------------------------------
+       Espaciado (grilla de 4px) — nombres Stitch + escala existente
+       --------------------------------------------------------------- */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --space-lg: 16px;
+    --space-xl: 24px;
+    --space-2xl: 32px;
+
     --space-0-5: 2px;
     --space-1: 4px;
     --space-1-5: 6px;
@@ -61,32 +125,33 @@
     --space-7: 48px;
     --space-8: 64px;
 
-    /* Radius */
+    /* Radios: Stitch usa 4px por defecto, 8px en controles y 12px en tarjetas */
     --radius-sm: 4px;
     --radius-md: 8px;
     --radius-lg: 12px;
     --radius-full: 999px;
 
-    /* Shadow */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+    /* Profundidad: tonal + sombra contenida solo para capas flotantes */
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
+    --shadow-md: 0 8px 20px rgb(0 0 0 / 0.45);
+    --shadow-lg: 0 16px 40px rgb(0 0 0 / 0.65);
 
     /* Layout */
-    --sidebar-width: 264px;
-    --topbar-height: 56px;
+    --header-height: 64px;
+    --sidebar-width: 256px;
+    --bottom-nav-height: 64px;
+    --topbar-height: var(--header-height);
 
-    /* Icon buttons — dos tamaños: sm para acciones secundarias/densas
-       (cerrar, logout, stepper de semana), md para triggers primarios que
-       necesitan mejor target táctil en mobile (abrir el menú). */
-    --icon-btn-sm: 28px;
-    --icon-btn-sm-icon: 16px;
-    --icon-btn-md: 36px;
-    --icon-btn-md-icon: 18px;
+    --icon-btn-sm: 32px;
+    --icon-btn-sm-icon: 18px;
+    --icon-btn-md: 44px;
+    --icon-btn-md-icon: 22px;
 
     /* Motion */
-    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-    --duration-fast: 120ms;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+    --duration-fast: 140ms;
     --duration-base: 200ms;
     --duration-slow: 320ms;
     --duration-shimmer: 1400ms;

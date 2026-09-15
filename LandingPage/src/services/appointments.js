@@ -1,24 +1,16 @@
 import api from "./api";
 
-// POST /api/appointments (requiere JWT de cliente) { barber_id, service_id, date, time } -> 201 { id }
-export async function createAppointment({ barberId, serviceId, date, time }) {
+// POST /api/appointments (público, sin cuenta) { first_name, last_name, phone, barber_id, service_id, date, time, note? } -> 201 { id }
+export async function createAppointment({ firstName, lastName, phone, barberId, serviceId, date, time, note }) {
     const { data } = await api.post("/appointments", {
+        first_name: firstName,
+        last_name: lastName,
+        phone,
         barber_id: barberId,
         service_id: serviceId,
         date,
         time,
+        note: note?.trim() || undefined,
     });
-    return data;
-}
-
-// GET /api/appointments/mine (requiere JWT de cliente) -> array plano, sin datos de barbero
-export async function fetchMyAppointments(signal) {
-    const { data } = await api.get("/appointments/mine", { signal });
-    return data;
-}
-
-// PATCH /api/appointments/:id/cancel (requiere JWT de cliente)
-export async function cancelAppointment(id) {
-    const { data } = await api.patch(`/appointments/${id}/cancel`);
     return data;
 }

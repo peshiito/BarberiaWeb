@@ -2,22 +2,20 @@ import { Router } from "express";
 import {
     cancelAppointmentByAdminHandler,
     cancelAppointmentByBarberHandler,
-    cancelAppointmentHandler,
     completeAppointmentHandler,
     createAppointmentByAdminHandler,
     createAppointmentByBarberHandler,
     createAppointmentHandler,
     getBarberWeekAppointments,
     getBarberWeekAppointmentsForAdmin,
-    getMyAppointments,
     updateAppointmentByAdminHandler,
 } from "../controllers/appointment.controller";
 import { authenticate } from "../middlewares/auth.middleware";
-import { authenticateClient } from "../middlewares/client-auth.middleware";
 import { appointmentsRateLimit, staffActionsRateLimit } from "../middlewares/rate-limit.middleware";
 import { authorize } from "../middlewares/role.middleware";
 import { validate } from "../middlewares/validate.middleware";
 import {
+    completeAppointmentSchema,
     createAppointmentByAdminSchema,
     createAppointmentByBarberSchema,
     createAppointmentSchema,
@@ -30,12 +28,9 @@ const router = Router();
 router.post(
     "/",
     appointmentsRateLimit,
-    authenticateClient,
     validate(createAppointmentSchema),
     asyncHandler(createAppointmentHandler),
 );
-router.patch("/:id/cancel", appointmentsRateLimit, authenticateClient, asyncHandler(cancelAppointmentHandler));
-router.get("/mine", authenticateClient, asyncHandler(getMyAppointments));
 
 router.get(
     "/barber/week/:weekStart",
@@ -50,6 +45,7 @@ router.patch(
     staffActionsRateLimit,
     authenticate,
     authorize("barber", "admin_barber"),
+    validate(completeAppointmentSchema),
     asyncHandler(completeAppointmentHandler),
 );
 

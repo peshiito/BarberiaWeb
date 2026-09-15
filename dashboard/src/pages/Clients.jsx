@@ -1,22 +1,25 @@
 import { useCallback, useEffect, useState } from "react";
+import ClientFormModal from "../components/clients/ClientFormModal";
+import ClientHistoryModal from "../components/clients/ClientHistoryModal";
 import Button from "../components/ui/Button";
-import Card from "../components/ui/Card";
-import FormField from "../components/ui/FormField";
+import Icon from "../components/ui/Icon";
 import InlineFeedback from "../components/ui/InlineFeedback";
 import PageHeader from "../components/ui/PageHeader";
 import Skeleton from "../components/ui/Skeleton";
-import ClientFormModal from "../components/clients/ClientFormModal";
-import ClientHistoryModal from "../components/clients/ClientHistoryModal";
-import AppointmentFormModal from "../components/schedule/AppointmentFormModal";
+import { useAppointmentComposer } from "../context/AppointmentComposerContext";
 import { getClients, searchClients } from "../services/clients";
-import "./Clients.css";
+import { parseDateOnly } from "../utils/date";
+import { formatMoney, formatPhone, getInitials, whatsappLink } from "../utils/format";
+import "./ClientsDirectory.css";
 
 const PAGE_SIZE = 10;
 
-const formatDate = isoString =>
-    new Date(isoString).toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "numeric" });
+const formatShortDate = iso =>
+    parseDateOnly(iso).toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" });
 
 const Clients = () => {
+    const { openComposer, version } = useAppointmentComposer();
+
     const [searchInput, setSearchInput] = useState("");
     const [query, setQuery] = useState("");
     const [page, setPage] = useState(1);
@@ -28,7 +31,6 @@ const Clients = () => {
     const [formModalOpen, setFormModalOpen] = useState(false);
     const [editingClient, setEditingClient] = useState(null);
     const [historyClientId, setHistoryClientId] = useState(null);
-    const [appointmentClient, setAppointmentClient] = useState(null);
 
     const load = useCallback(async () => {
         setLoading(true);
@@ -38,15 +40,17 @@ const Clients = () => {
             setClients(result.data);
             setPagination(result.pagination);
         } catch {
-            setError("No se pudieron cargar los clientes.");
+            setError("No se pudieron cargar los clientes. Intentá de nuevo.");
         } finally {
             setLoading(false);
         }
     }, [query, page]);
 
+    // `version` sube cuando se guarda un turno desde el modal global: las
+    // visitas y el último servicio de la lista cambian.
     useEffect(() => {
         load();
-    }, [load]);
+    }, [load, version]);
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -66,153 +70,241 @@ const Clients = () => {
         setFormModalOpen(true);
     };
 
-    const handleSaved = () => {
-        setFormModalOpen(false);
-        load();
-    };
+    const total = pagination?.total ?? clients.length;
 
     return (
         <div>
             <PageHeader
-                eyebrow="Clientes"
+                eyebrow="Base de clientes"
                 title="Clientes"
-                description="Buscá, creá y administrá los clientes de la barbería."
+                titleAccent="Directorio"
+                description="Buscá una ficha, mirá su historial o agendale un turno."
                 action={
-                    <Button variant="primary" onClick={openCreate}>
+                    <Button icon="person_add" onClick={openCreate}>
                         Nuevo cliente
                     </Button>
                 }
             />
 
-            <Card className="clients-search-card is-elevated">
-                <FormField label="Buscar" hint="Por nombre, apellido o teléfono">
+            <div className="dir-toolbar">
+                <label className="dir-search">
+                    <Icon name="search" size={20} className="dir-search-icon" />
+                    <span className="visually-hidden">Buscar clientes</span>
                     <input
                         type="search"
+                        autoComplete="off"
                         value={searchInput}
                         onChange={e => setSearchInput(e.target.value)}
-                        placeholder="Ej: Carlos, Gomez, 1122334455"
+                        placeholder="Buscar por nombre, apellido o teléfono…"
                     />
-                </FormField>
-            </Card>
+                    {searchInput && (
+                        <button
+                            type="button"
+                            className="dir-search-clear"
+                            aria-label="Limpiar búsqueda"
+                            onClick={() => setSearchInput("")}
+                        >
+                            <Icon name="cancel" size={18} />
+                        </button>
+                    )}
+                </label>
+                <div className="dir-count" aria-live="polite">
+                    {loading ? (
+                        "Buscando…"
+                    ) : (
+                        <>
+                            <span className="dir-count-value">{total}</span>
+                            {query
+                                ? ` ${total === 1 ? "resultado" : "resultados"} para “${query}”`
+                                : ` ${total === 1 ? "cliente registrado" : "clientes registrados"}`}
+                        </>
+                    )}
+                </div>
+            </div>
 
-            {error && <InlineFeedback tone="error">{error}</InlineFeedback>}
+            {error && (
+                <div className="dir-error">
+                    <InlineFeedback tone="error">{error}</InlineFeedback>
+                    <Button variant="secondary" icon="refresh" onClick={load}>
+                        Reintentar
+                    </Button>
+                </div>
+            )}
 
-            <Card className="clients-table-card">
+            <section className="dir-panel" aria-label="Listado de clientes">
+                <div className="dir-head" aria-hidden="true">
+                    <span>Cliente y notas</span>
+                    <span>Contacto</span>
+                    <span>Última visita</span>
+                    <span className="is-numeric">Visitas</span>
+                    <span className="is-numeric">Gastado</span>
+                    <span className="is-numeric">Acciones</span>
+                </div>
+
                 {loading ? (
-                    <div className="clients-table-skeleton">
+                    <div className="dir-skeleton">
                         {Array.from({ length: 5 }).map((_, i) => (
-                            <Skeleton key={i} height="52px" />
+                            <Skeleton key={i} height="64px" />
                         ))}
                     </div>
                 ) : clients.length === 0 ? (
-                    <div className="state-box">
-                        <span className="state-box-title">
-                            {query ? "Sin resultados" : "Todavía no hay clientes registrados"}
-                        </span>
-                        <p className="state-box-text">
-                            {query ? "Probá con otro nombre, apellido o teléfono." : "Creá el primero con el botón de arriba."}
+                    <div className="dir-empty">
+                        <Icon name={query ? "search_off" : "group_add"} size={36} />
+                        <span className="dir-empty-title">{query ? "Sin resultados" : "Todavía no hay clientes"}</span>
+                        <p>
+                            {query
+                                ? "Probá con otro nombre, apellido o teléfono."
+                                : "Creá la primera ficha o se van a sumar solos con las reservas online."}
                         </p>
+                        {!query && (
+                            <Button icon="person_add" onClick={openCreate}>
+                                Nuevo cliente
+                            </Button>
+                        )}
                     </div>
                 ) : (
-                    <>
-                        <div className="clients-table-wrapper scroll-shadow-x">
-                            <table className="table">
-                                <thead>
-                                    <tr>
-                                        <th className="table-sticky-col">Nombre</th>
-                                        <th>Teléfono</th>
-                                        <th>Alta</th>
-                                        <th className="is-numeric">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {clients.map(client => (
-                                        <tr key={client.id}>
-                                            <td className="table-sticky-col">
-                                                <div className="clients-table-identity">
-                                                    <span className="avatar-monogram">
-                                                        {client.first_name[0]}
-                                                        {client.last_name[0]}
-                                                    </span>
-                                                    <span className="clients-table-name">
-                                                        {client.first_name} {client.last_name}
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td className="clients-table-phone">{client.phone}</td>
-                                            <td>{formatDate(client.created_at)}</td>
-                                            <td className="is-numeric">
-                                                <div className="clients-table-actions">
-                                                    <Button variant="ghost" size="sm" onClick={() => openEdit(client)}>
-                                                        Editar
-                                                    </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={() => setHistoryClientId(client.id)}
-                                                    >
-                                                        Historial
-                                                    </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={() => setAppointmentClient(client)}
-                                                    >
-                                                        Nuevo turno
-                                                    </Button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                    <ul className="dir-list">
+                        {clients.map((client, index) => {
+                            const name = [client.first_name, client.last_name].filter(Boolean).join(" ");
+                            const visits = client.completed_visits;
+                            return (
+                                <li
+                                    key={client.id}
+                                    className="dir-row"
+                                    style={{ animationDelay: `${Math.min(index, 9) * 30}ms` }}
+                                >
+                                    <div className="dir-cell dir-identity">
+                                        <span className="dir-avatar" aria-hidden="true">
+                                            {getInitials(client.first_name, client.last_name)}
+                                        </span>
+                                        <span className="dir-identity-text">
+                                            <span className="dir-name">{name}</span>
+                                            <span className={`dir-notes ${client.notes ? "" : "is-empty"}`}>
+                                                {client.notes || "Sin notas"}
+                                            </span>
+                                        </span>
+                                    </div>
 
-                        {pagination && pagination.totalPages > 1 && (
-                            <div className="clients-pagination">
-                                <span className="clients-pagination-label">
-                                    Página {pagination.page} de {pagination.totalPages} · {pagination.total} clientes
-                                </span>
-                                <div className="clients-pagination-actions">
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        disabled={page <= 1}
-                                        onClick={() => setPage(p => Math.max(1, p - 1))}
-                                    >
-                                        Anterior
-                                    </Button>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        disabled={page >= pagination.totalPages}
-                                        onClick={() => setPage(p => Math.min(pagination.totalPages, p + 1))}
-                                    >
-                                        Siguiente
-                                    </Button>
-                                </div>
-                            </div>
-                        )}
-                    </>
+                                    <div className="dir-cell dir-contact">
+                                        <span className="dir-label">Contacto</span>
+                                        {client.phone ? (
+                                            <span className="dir-phone">
+                                                {formatPhone(client.phone)}
+                                                <a
+                                                    className="dir-wa"
+                                                    href={whatsappLink(client.phone, `Hola ${client.first_name}!`)}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    aria-label={`Escribirle a ${name} por WhatsApp`}
+                                                >
+                                                    <Icon name="chat" size={16} />
+                                                </a>
+                                            </span>
+                                        ) : (
+                                            <span className="dir-muted">—</span>
+                                        )}
+                                    </div>
+
+                                    <div className="dir-cell dir-last">
+                                        <span className="dir-label">Última visita</span>
+                                        {client.last_visit ? (
+                                            <span className="dir-last-text">
+                                                <span className="dir-last-service">{client.last_service_name || "Servicio"}</span>
+                                                <span className="dir-last-date">{formatShortDate(client.last_visit)}</span>
+                                            </span>
+                                        ) : (
+                                            <span className="dir-muted">Sin visitas</span>
+                                        )}
+                                    </div>
+
+                                    <div className="dir-cell is-numeric">
+                                        <span className="dir-label">Visitas</span>
+                                        <span className="dir-number">{visits ?? "—"}</span>
+                                    </div>
+
+                                    <div className="dir-cell is-numeric">
+                                        <span className="dir-label">Gastado</span>
+                                        <span className="dir-money">
+                                            {client.total_spent != null ? formatMoney(client.total_spent) : "—"}
+                                        </span>
+                                    </div>
+
+                                    <div className="dir-cell dir-actions">
+                                        <button
+                                            type="button"
+                                            className="dir-action"
+                                            onClick={() => setHistoryClientId(client.id)}
+                                            aria-label={`Ver historial de ${name}`}
+                                            title="Historial"
+                                        >
+                                            <Icon name="history" size={20} />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="dir-action"
+                                            onClick={() => openEdit(client)}
+                                            aria-label={`Editar a ${name}`}
+                                            title="Editar"
+                                        >
+                                            <Icon name="edit" size={20} />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="dir-action is-primary"
+                                            onClick={() => openComposer({ initialClient: client })}
+                                            aria-label={`Agendar un turno para ${name}`}
+                                            title="Nuevo turno"
+                                        >
+                                            <Icon name="event_available" size={20} />
+                                            <span className="dir-action-text">Turno</span>
+                                        </button>
+                                    </div>
+                                </li>
+                            );
+                        })}
+                    </ul>
                 )}
-            </Card>
+
+                {pagination && pagination.totalPages > 1 && (
+                    <div className="dir-pagination">
+                        <span className="dir-pagination-label">
+                            Página {pagination.page} de {pagination.totalPages}
+                        </span>
+                        <div className="dir-pagination-actions">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                icon="chevron_left"
+                                disabled={page <= 1 || loading}
+                                onClick={() => setPage(p => Math.max(1, p - 1))}
+                            >
+                                Anterior
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                iconRight="chevron_right"
+                                disabled={page >= pagination.totalPages || loading}
+                                onClick={() => setPage(p => Math.min(pagination.totalPages, p + 1))}
+                            >
+                                Siguiente
+                            </Button>
+                        </div>
+                    </div>
+                )}
+            </section>
 
             <ClientFormModal
                 open={formModalOpen}
                 client={editingClient}
                 onClose={() => setFormModalOpen(false)}
-                onSaved={handleSaved}
+                onSaved={() => {
+                    setFormModalOpen(false);
+                    load();
+                }}
             />
 
             <ClientHistoryModal clientId={historyClientId} onClose={() => setHistoryClientId(null)} />
-
-            <AppointmentFormModal
-                open={Boolean(appointmentClient)}
-                mode="create"
-                initialClient={appointmentClient}
-                onClose={() => setAppointmentClient(null)}
-                onSaved={() => setAppointmentClient(null)}
-            />
         </div>
     );
 };

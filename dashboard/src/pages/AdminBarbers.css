@@ -1,114 +1,255 @@
-.admin-barbers-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 420px) 1fr;
-    gap: var(--space-6);
-    align-items: start;
-}
-
-@media (max-width: 900px) {
-    .admin-barbers-layout {
-        grid-template-columns: minmax(0, 1fr);
-    }
-}
-
-.barber-form {
+.team-error {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    align-items: flex-start;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
 }
 
-.barber-form-row {
+.team-summary {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-4);
-}
-
-/* Debe ir después de la regla base: misma especificidad, y en el mismo
-   nivel de cascada gana la que aparece último en el archivo — antes estaba
-   arriba y nunca tenía efecto en mobile. */
-@media (max-width: 480px) {
-    .barber-form-row {
-        grid-template-columns: 1fr;
-    }
-}
-
-.barbers-grid {
-    display: grid;
-    /* min(280px, 100%) evita que el track fuerce 280px cuando el contenedor
-       (tras el padding del Card) dispone de menos que eso, que es lo que
-       causaba overflow horizontal en viewports angostos (~320px). */
-    grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
-    gap: var(--space-4);
-}
-
-.barber-card {
-    background-color: var(--bg-elevated);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+    padding: var(--space-sm);
     border-radius: var(--radius-lg);
-    padding: var(--space-4);
-    border: 1px solid var(--border-subtle);
+    background-color: var(--surface-low);
+}
+
+.team-metric {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+    padding: 12px var(--space-md);
+    border-radius: var(--radius-md);
+    background-color: var(--surface-container);
+}
+
+.team-metric-value {
+    font-family: var(--font-display);
+    font-size: 28px;
+    line-height: 32px;
+    font-weight: 600;
+    color: var(--on-surface);
+    font-variant-numeric: tabular-nums;
+}
+
+.team-metric-label {
+    font-size: 13px;
+    color: var(--outline);
+}
+
+.team-metric.is-warning .team-metric-value {
+    color: var(--tertiary);
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+    gap: var(--space-md);
+}
+
+.team-card {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-3);
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-low);
+    box-shadow: var(--shadow-sm);
+    min-width: 0;
+    animation: team-card-in 320ms var(--ease-out) both;
     transition:
-        border-color var(--duration-fast) var(--ease-out),
-        transform var(--duration-fast) var(--ease-out);
+        background-color var(--duration-fast) var(--ease-out),
+        box-shadow var(--duration-fast) var(--ease-out);
 }
 
-.barber-card:hover {
-    border-color: var(--brass);
-    transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) {
+    .team-card:hover {
+        background-color: var(--surface-container);
+        box-shadow: var(--shadow-md);
+    }
 }
 
-.barber-card-head {
+.team-card-head {
     display: flex;
     align-items: flex-start;
-    gap: var(--space-3);
-    min-width: 0;
-    width: 100%;
-}
-
-.barber-avatar {
-    width: 40px;
-    height: 40px;
-    font-size: var(--text-sm);
-}
-
-.barber-info {
+    gap: var(--space-sm);
     min-width: 0;
 }
 
-.barber-info h4 {
-    font-family: var(--font-display);
-    font-size: var(--text-base);
-    font-weight: 600;
-    margin-bottom: var(--space-1);
-    color: var(--text-primary);
-}
-
-.barber-email {
-    font-size: var(--text-sm);
-    color: var(--text-secondary);
-    overflow-wrap: break-word;
-}
-
-.barber-meta {
+.team-avatar {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
     display: flex;
-    gap: var(--space-2);
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    background-color: var(--primary-container);
+    color: var(--on-primary);
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.team-card-id {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.team-name {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--on-surface);
+}
+
+.team-you {
+    padding: 1px 6px;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-highest);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--on-surface-variant);
+}
+
+.team-email {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--outline);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.team-role {
+    flex-shrink: 0;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    background-color: rgb(var(--secondary-container-rgb) / 0.5);
+    color: var(--secondary);
+}
+
+.team-role.is-admin,
+.team-role.is-admin_barber {
+    background-color: rgb(var(--primary-container-rgb) / 0.2);
+    color: var(--primary);
+}
+
+.team-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-sm);
+    margin: 0;
+}
+
+.team-stats > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-lowest);
+}
+
+.team-stats dt {
+    font-size: 12px;
+    color: var(--outline);
+}
+
+.team-stats dd {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 15px;
+    color: var(--primary);
+}
+
+.team-tags {
+    display: flex;
     flex-wrap: wrap;
+    gap: 6px;
 }
 
-.barber-card-specialties {
-    margin-top: calc(var(--space-2) * -1);
+.service-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-high);
+    font-size: 12px;
+    color: var(--on-surface-variant);
 }
 
-.barber-card-actions {
+.service-tag.is-warning {
+    background-color: rgb(var(--tertiary-container-rgb) / 0.18);
+    color: var(--tertiary);
+}
+
+.team-note {
+    margin: 0;
+    font-size: 13px;
+    color: var(--outline);
+}
+
+.team-actions {
     display: flex;
     justify-content: flex-end;
-    gap: var(--space-2);
-    margin-top: var(--space-1);
+    gap: var(--space-sm);
+    margin-top: auto;
 }
 
-.barber-card-edit {
-    align-self: flex-end;
+.team-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 64px var(--space-lg);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-low);
+    color: var(--outline);
+    text-align: center;
+}
+
+.team-empty p {
+    margin: 0;
+    color: var(--on-surface-variant);
+}
+
+@keyframes team-card-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 640px) {
+    .team-summary {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .team-card {
+        padding: var(--space-md);
+    }
 }

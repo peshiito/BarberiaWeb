@@ -6,8 +6,8 @@ export const createUser = async (data: UserInput): Promise<number> => {
     const [result] = await pool.query<ResultSetHeader>(
         `INSERT INTO users
       (first_name, last_name, email, password_hash, role, bio, earnings_split_percentage,
-       phone, specialties, social_media, birth_date, address)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       phone, social_media, birth_date, address)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
             data.first_name,
             data.last_name,
@@ -15,9 +15,8 @@ export const createUser = async (data: UserInput): Promise<number> => {
             data.password_hash,
             data.role,
             data.bio || null,
-            data.earnings_split_percentage || 50,
+            data.earnings_split_percentage ?? 50,
             data.phone || null,
-            data.specialties?.length ? data.specialties.join(",") : null,
             data.social_media || null,
             data.birth_date || null,
             data.address || null,
@@ -69,7 +68,6 @@ export const updateBarberByAdmin = async (
         role?: Role;
         earnings_split_percentage?: number;
         phone?: string;
-        specialties?: string[];
         social_media?: string;
         birth_date?: string;
         address?: string;
@@ -101,10 +99,6 @@ export const updateBarberByAdmin = async (
     if (data.phone !== undefined) {
         fields.push("phone = ?");
         values.push(data.phone || null);
-    }
-    if (data.specialties !== undefined) {
-        fields.push("specialties = ?");
-        values.push(data.specialties.length ? data.specialties.join(",") : null);
     }
     if (data.social_media !== undefined) {
         fields.push("social_media = ?");

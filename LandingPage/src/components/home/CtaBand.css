@@ -1,23 +1,31 @@
-.cta-band {
-    padding-block: var(--space-8);
-    text-align: center;
-    background:
-        radial-gradient(circle at 50% 0%, rgba(var(--brass-rgb), 0.12), transparent 60%),
-        var(--ink);
-}
-
 .cta-band-inner {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-3);
+    text-align: center;
 }
 
 .cta-band-title {
-    font-size: var(--text-3xl);
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: #f3efe8;
 }
 
 .cta-band-text {
+    margin-top: var(--space-3);
+    font-size: var(--text-lg);
     color: var(--text-on-dark-secondary);
-    margin-bottom: var(--space-3);
+}
+
+.cta-band-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+}
+
+.cta-band-actions .whatsapp-link {
+    min-height: 44px;
 }

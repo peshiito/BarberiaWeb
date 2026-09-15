@@ -1,47 +1,67 @@
 import { Link } from "react-router-dom";
 import { useBarbers } from "../../hooks/useBarbers";
-import BarberCard from "../BarberCard";
-import BarberCardSkeleton from "../ui/BarberCardSkeleton";
-import EmptyState from "../ui/EmptyState";
+import { useServices } from "../../hooks/useServices";
+import BarberCard, { BarberCardSkeleton } from "../BarberCard";
 import Button from "../ui/Button";
+import EmptyState from "../ui/EmptyState";
+import Icon from "../ui/Icon";
 import Reveal from "../ui/Reveal";
-import { IconUser } from "../ui/icons";
 import "./BarbersTeaser.css";
 
 export default function BarbersTeaser() {
-    const { status, barbers, error } = useBarbers();
+    const { status, barbers, reload } = useBarbers();
+    const { services } = useServices();
 
     return (
-        <section className="section section-dark">
+        <section className="section section-dark team-section" aria-labelledby="team-title">
             <div className="container">
-                <Reveal className="barbers-teaser-head">
+                <Reveal className="section-head">
                     <div>
-                        <p className="eyebrow">Equipo</p>
-                        <h2 className="section-title">Conocé a los barberos</h2>
+                        <p className="eyebrow">El equipo</p>
+                        <h2 id="team-title" className="section-title">
+                            Elegí con quién te cortás
+                        </h2>
                     </div>
-                    <Button as={Link} to="/barberos" variant="secondary">
-                        Ver a todos
-                    </Button>
+                    <Link to="/barberos" className="text-link">
+                        Ver todo el equipo
+                        <Icon name="arrow_forward" size={18} />
+                    </Link>
                 </Reveal>
 
                 {status === "loading" && (
-                    <div className="barbers-teaser-grid">
-                        {Array.from({ length: 3 }).map((_, i) => (
-                            <BarberCardSkeleton key={i} />
-                        ))}
+                    <div className="team-track">
+                        <BarberCardSkeleton layout="row" />
+                        <BarberCardSkeleton layout="row" />
                     </div>
                 )}
 
-                {status === "error" && <EmptyState icon={<IconUser />} title="No pudimos cargar el equipo" text={error} />}
+                {status === "error" && (
+                    <EmptyState
+                        icon={<Icon name="wifi_off" size={24} />}
+                        title="No pudimos cargar el equipo"
+                        text="Revisá tu conexión e intentá de nuevo."
+                        action={
+                            <Button variant="secondary" size="sm" onClick={reload}>
+                                Reintentar
+                            </Button>
+                        }
+                    />
+                )}
 
                 {status === "success" && barbers.length === 0 && (
-                    <EmptyState icon={<IconUser />} title="Todavía no hay barberos publicados" />
+                    <EmptyState
+                        icon={<Icon name="content_cut" size={24} />}
+                        title="Todavía no hay barberos publicados"
+                        text="Mientras tanto, podés escribirnos por WhatsApp."
+                    />
                 )}
 
                 {status === "success" && barbers.length > 0 && (
-                    <Reveal delay={100} className="barbers-teaser-grid">
-                        {barbers.slice(0, 3).map((barber) => (
-                            <BarberCard key={barber.id} barber={barber} />
+                    <Reveal delay={80} as="ul" className="team-track">
+                        {barbers.slice(0, 4).map((barber) => (
+                            <li key={barber.id}>
+                                <BarberCard barber={barber} services={services} layout="row" />
+                            </li>
                         ))}
                     </Reveal>
                 )}

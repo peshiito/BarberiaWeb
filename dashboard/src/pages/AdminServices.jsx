@@ -1,34 +1,34 @@
-import { useEffect, useState } from "react";
-import ServiceEditModal from "../components/admin/ServiceEditModal";
-import Badge from "../components/ui/Badge";
+import { useEffect, useMemo, useState } from "react";
+import ServiceForm from "../components/admin/ServiceForm";
 import Button from "../components/ui/Button";
-import Card from "../components/ui/Card";
-import FormField from "../components/ui/FormField";
+import Icon from "../components/ui/Icon";
 import InlineFeedback from "../components/ui/InlineFeedback";
 import PageHeader from "../components/ui/PageHeader";
 import Skeleton from "../components/ui/Skeleton";
-import { IconScissors } from "../components/ui/icons";
-import { createService, getServices, updateService } from "../services/services";
-import "./AdminServices.css";
-
-const EMPTY_FORM = { name: "", description: "", price: 0, duration_minutes: 30 };
+import { useToast } from "../components/ui/Toast";
+import { getAllUsers } from "../services/admin";
+import { getServices, updateService } from "../services/services";
+import { formatMoney } from "../utils/format";
+import "./ServiceCatalog.css";
 
 const AdminServices = () => {
+    const { showToast } = useToast();
     const [services, setServices] = useState([]);
+    const [users, setUsers] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [creating, setCreating] = useState(false);
-    const [formData, setFormData] = useState(EMPTY_FORM);
-    const [feedback, setFeedback] = useState(null);
-    const [fieldErrors, setFieldErrors] = useState({});
-    const [editingService, setEditingService] = useState(null);
+    const [error, setError] = useState("");
+    // null = catálogo; { service: null } = alta; { service } = edición.
+    const [editor, setEditor] = useState(null);
+    const [togglingId, setTogglingId] = useState(null);
 
     const loadServices = async () => {
         setLoading(true);
+        setError("");
         try {
             const data = await getServices();
-            setServices(data);
+            setServices(Array.isArray(data) ? data : []);
         } catch {
-            setFeedback({ type: "error", message: "No se pudieron cargar los servicios" });
+            setError("No se pudo cargar el catálogo. Intentá de nuevo.");
         } finally {
             setLoading(false);
         }
@@ -36,180 +36,177 @@ const AdminServices = () => {
 
     useEffect(() => {
         loadServices();
+        getAllUsers(1, 50)
+            .then(res => setUsers(res.data))
+            .catch(() => setUsers(null));
     }, []);
 
-    const handleInputChange = e => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: name === "price" || name === "duration_minutes" ? Number(value) : value,
-        }));
-    };
-
-    const handleSubmit = async e => {
-        e.preventDefault();
-        setFeedback(null);
-        setFieldErrors({});
-        setCreating(true);
-
-        try {
-            await createService(formData);
-            setFeedback({ type: "success", message: "Servicio creado correctamente" });
-            setFormData(EMPTY_FORM);
-            loadServices();
-        } catch (err) {
-            const details = err.response?.data?.details;
-            if (Array.isArray(details) && details.length > 0) {
-                setFieldErrors(Object.fromEntries(details.map(d => [d.field, d.message])));
-                setFeedback({ type: "error", message: "Revisá los campos marcados." });
-            } else {
-                const message = err.response?.data?.error || "No se pudo crear el servicio";
-                setFeedback({ type: "error", message });
-            }
-        } finally {
-            setCreating(false);
-        }
-    };
+    // Cuántos barberos ofrecen cada servicio (null si no se pudo consultar).
+    const barbersByService = useMemo(() => {
+        if (!users) return null;
+        const counts = new Map();
+        users.forEach(u => (u.service_ids || []).forEach(id => counts.set(id, (counts.get(id) || 0) + 1)));
+        return counts;
+    }, [users]);
 
     const handleToggleActive = async service => {
+        setTogglingId(service.id);
         try {
             await updateService(service.id, { active: !service.active });
-            loadServices();
+            showToast(service.active ? `“${service.name}” quedó oculto en la reserva.` : `“${service.name}” volvió a la reserva.`);
+            await loadServices();
         } catch {
-            setFeedback({ type: "error", message: "No se pudo actualizar el servicio" });
+            showToast("No se pudo actualizar el servicio.", "error");
+        } finally {
+            setTogglingId(null);
         }
     };
+
+    if (editor) {
+        return (
+            <ServiceForm
+                key={editor.service?.id ?? "new"}
+                service={editor.service}
+                barbersOffering={
+                    editor.service && barbersByService ? barbersByService.get(editor.service.id) || 0 : null
+                }
+                onCancel={() => setEditor(null)}
+                onSaved={() => {
+                    setEditor(null);
+                    loadServices();
+                }}
+            />
+        );
+    }
+
+    const activeServices = services.filter(s => s.active);
+    const average = (list, pick) => (list.length ? list.reduce((sum, s) => sum + Number(pick(s)), 0) / list.length : null);
+    const avgPrice = average(activeServices, s => s.price);
+    const avgDuration = average(activeServices, s => s.duration_minutes);
 
     return (
         <div>
             <PageHeader
                 eyebrow="Administración"
                 title="Servicios"
-                description="Cargá el catálogo de cortes y precios: se refleja tal cual en la reserva de turnos de la landing."
+                titleAccent="Tarifas"
+                description="El catálogo de cortes y precios: se refleja tal cual en la reserva online."
+                action={
+                    <Button icon="add" onClick={() => setEditor({ service: null })}>
+                        Nuevo servicio
+                    </Button>
+                }
             />
 
-            <div className="admin-services-layout">
-                <Card>
-                    <h3 className="card-section-title">Nuevo servicio</h3>
-                    <form onSubmit={handleSubmit} className="service-form">
-                        <FormField label="Nombre" error={fieldErrors.name}>
-                            <input
-                                type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleInputChange}
-                                minLength={2}
-                                maxLength={100}
-                                required
-                            />
-                        </FormField>
+            {error && (
+                <div className="catalog-error">
+                    <InlineFeedback tone="error">{error}</InlineFeedback>
+                    <Button variant="secondary" icon="refresh" onClick={loadServices}>
+                        Reintentar
+                    </Button>
+                </div>
+            )}
 
-                        <FormField label="Descripción" error={fieldErrors.description} hint="Opcional">
-                            <textarea
-                                name="description"
-                                value={formData.description}
-                                onChange={handleInputChange}
-                                maxLength={255}
-                                rows="2"
-                            />
-                        </FormField>
+            {!loading && !error && services.length > 0 && (
+                <div className="catalog-summary">
+                    <div className="catalog-metric">
+                        <span className="catalog-metric-label">Activos en la reserva</span>
+                        <span className="catalog-metric-value">
+                            {activeServices.length}
+                            <span className="catalog-metric-unit">de {services.length}</span>
+                        </span>
+                    </div>
+                    <div className="catalog-metric">
+                        <span className="catalog-metric-label">Precio promedio</span>
+                        <span className="catalog-metric-value is-accent">
+                            {avgPrice === null ? "—" : formatMoney(Math.round(avgPrice))}
+                        </span>
+                    </div>
+                    <div className="catalog-metric">
+                        <span className="catalog-metric-label">Duración promedio</span>
+                        <span className="catalog-metric-value">
+                            {avgDuration === null ? "—" : Math.round(avgDuration)}
+                            <span className="catalog-metric-unit">min</span>
+                        </span>
+                    </div>
+                </div>
+            )}
 
-                        <div className="service-form-row">
-                            <FormField label="Precio" error={fieldErrors.price}>
-                                <div className="input-affix">
-                                    <span className="input-affix-symbol">$</span>
-                                    <input
-                                        type="number"
-                                        name="price"
-                                        value={formData.price}
-                                        onChange={handleInputChange}
-                                        min="0"
-                                        step="0.01"
-                                        required
-                                    />
-                                </div>
-                            </FormField>
-                            <FormField label="Duración" error={fieldErrors.duration_minutes} hint="En minutos">
-                                <input
-                                    type="number"
-                                    name="duration_minutes"
-                                    value={formData.duration_minutes}
-                                    onChange={handleInputChange}
-                                    min="1"
-                                    max="600"
-                                    required
-                                />
-                            </FormField>
-                        </div>
-
-                        {feedback && (
-                            <InlineFeedback tone={feedback.type === "error" ? "error" : "success"}>
-                                {feedback.message}
-                            </InlineFeedback>
-                        )}
-
-                        <Button type="submit" loading={creating}>
-                            Crear servicio
-                        </Button>
-                    </form>
-                </Card>
-
-                <Card>
-                    <h3 className="card-section-title">Catálogo ({services.length})</h3>
-                    {loading ? (
-                        <div className="services-grid">
-                            <Skeleton height="120px" />
-                            <Skeleton height="120px" />
-                        </div>
-                    ) : services.length === 0 ? (
-                        <div className="state-box">Todavía no cargaste ningún servicio.</div>
-                    ) : (
-                        <div className="services-grid">
-                            {services.map(service => (
-                                <div key={service.id} className={`service-card ${!service.active ? "is-inactive" : ""}`}>
-                                    <span className="service-card-icon">
-                                        <IconScissors />
+            {loading ? (
+                <div className="catalog-grid">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                        <Skeleton key={i} height="200px" />
+                    ))}
+                </div>
+            ) : services.length === 0 && !error ? (
+                <div className="catalog-empty">
+                    <Icon name="content_cut" size={36} />
+                    <p>Todavía no cargaste ningún servicio.</p>
+                    <Button icon="add" onClick={() => setEditor({ service: null })}>
+                        Crear el primero
+                    </Button>
+                </div>
+            ) : (
+                <div className="catalog-grid">
+                    {services.map((service, index) => {
+                        const barbers = barbersByService ? barbersByService.get(service.id) || 0 : null;
+                        return (
+                            <article
+                                key={service.id}
+                                className={`catalog-card ${service.active ? "" : "is-inactive"}`}
+                                style={{ animationDelay: `${Math.min(index, 8) * 40}ms` }}
+                            >
+                                <div className="catalog-card-head">
+                                    <span className="catalog-card-icon" aria-hidden="true">
+                                        <Icon name="content_cut" size={20} />
                                     </span>
-                                    <div className="service-card-header">
-                                        <h4>{service.name}</h4>
-                                        <Badge tone={service.active ? "sage" : "neutral"}>
-                                            {service.active ? "Activo" : "Inactivo"}
-                                        </Badge>
-                                    </div>
-                                    {service.description && <p className="service-card-desc">{service.description}</p>}
-                                    <div className="service-card-meta">
-                                        <span className="service-card-price">
-                                            ${Number(service.price).toLocaleString("es-AR")}
-                                        </span>
-                                        <span className="service-card-duration">{service.duration_minutes} min</span>
-                                    </div>
-                                    <div className="service-card-actions">
-                                        <Button variant="ghost" size="sm" onClick={() => setEditingService(service)}>
-                                            Editar
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => handleToggleActive(service)}
-                                        >
-                                            {service.active ? "Desactivar" : "Activar"}
-                                        </Button>
-                                    </div>
+                                    <h2 className="catalog-card-name">{service.name}</h2>
+                                    <span className={`catalog-status ${service.active ? "is-on" : ""}`}>
+                                        {service.active ? "Activo" : "Oculto"}
+                                    </span>
                                 </div>
-                            ))}
-                        </div>
-                    )}
-                </Card>
-            </div>
 
-            <ServiceEditModal
-                service={editingService}
-                onClose={() => setEditingService(null)}
-                onSaved={() => {
-                    setEditingService(null);
-                    loadServices();
-                }}
-            />
+                                <p className="catalog-card-desc">{service.description || "Sin descripción."}</p>
+
+                                <div className="catalog-card-meta">
+                                    <span className="catalog-card-price">{formatMoney(service.price)}</span>
+                                    <span className="catalog-card-chip">
+                                        <Icon name="schedule" size={14} />
+                                        {service.duration_minutes} min
+                                    </span>
+                                    {barbers !== null && (
+                                        <span className={`catalog-card-chip ${barbers === 0 ? "is-warning" : ""}`}>
+                                            <Icon name="group" size={14} />
+                                            {barbers === 0 ? "Sin barberos" : `${barbers} ${barbers === 1 ? "barbero" : "barberos"}`}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className="catalog-card-actions">
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        icon={service.active ? "visibility_off" : "visibility"}
+                                        loading={togglingId === service.id}
+                                        onClick={() => handleToggleActive(service)}
+                                    >
+                                        {service.active ? "Ocultar" : "Activar"}
+                                    </Button>
+                                    <Button
+                                        variant="secondary"
+                                        size="sm"
+                                        icon="edit"
+                                        onClick={() => setEditor({ service })}
+                                        aria-label={`Editar ${service.name}`}
+                                    >
+                                        Editar
+                                    </Button>
+                                </div>
+                            </article>
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 };

@@ -1,0 +1,53 @@
+.photo-tips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm) var(--space-md);
+    padding: 12px var(--space-md);
+    border-radius: var(--radius-md);
+    background-color: var(--surface-container);
+}
+
+.photo-tips-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px var(--space-md);
+}
+
+.photo-tips-list li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--on-surface-variant);
+}
+
+.photo-tips-list .material-symbols-outlined {
+    color: var(--primary);
+}
+
+.photo-tips-formats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 0;
+}
+
+.photo-tips-formats span {
+    white-space: nowrap;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-high);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--on-surface-variant);
+}
+
+.photo-tips-formats span.is-accent {
+    background-color: rgb(var(--primary-container-rgb) / 0.2);
+    color: var(--primary);
+}

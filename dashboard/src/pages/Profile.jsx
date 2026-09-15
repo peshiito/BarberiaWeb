@@ -1,98 +1,118 @@
 import { useEffect, useState } from "react";
-import Badge from "../components/ui/Badge";
+import { useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
-import Card from "../components/ui/Card";
 import FormField from "../components/ui/FormField";
+import Icon from "../components/ui/Icon";
 import InlineFeedback from "../components/ui/InlineFeedback";
 import PageHeader from "../components/ui/PageHeader";
 import Skeleton from "../components/ui/Skeleton";
+import { useToast } from "../components/ui/Toast";
 import { useAuth } from "../context/AuthContext";
 import { changeMyPassword, getMyProfile, updateMyProfileDetails } from "../services/profile";
-import "./Profile.css";
+import { getInitials } from "../utils/format";
+import { PASSWORD_RULES, isStrongPassword } from "../utils/passwordRules";
+import "./ProfilePage.css";
 
 const ROLE_LABEL = { admin: "Administrador", admin_barber: "Barbero admin", barber: "Barbero" };
-const ROLE_TONE = { admin: "brass", admin_barber: "brass", barber: "sage" };
+const EMPTY_PASSWORDS = { current_password: "", new_password: "", confirm_password: "" };
+
+const PasswordInput = ({ id, value, onChange, autoComplete, visible, onToggle }) => (
+    <div className="field-affix">
+        <input
+            id={id}
+            type={visible ? "text" : "password"}
+            autoComplete={autoComplete}
+            maxLength={100}
+            className="is-mono"
+            value={value}
+            onChange={onChange}
+        />
+        <button
+            type="button"
+            className="field-affix-action"
+            aria-label={visible ? "Ocultar contraseña" : "Mostrar contraseña"}
+            onClick={onToggle}
+        >
+            <Icon name={visible ? "visibility_off" : "visibility"} size={20} />
+        </button>
+    </div>
+);
 
 const Profile = () => {
     const { user, updateUser } = useAuth();
+    const navigate = useNavigate();
+    const { showToast } = useToast();
+    const hasAgenda = user?.role === "barber" || user?.role === "admin_barber";
 
     const [loading, setLoading] = useState(true);
     const [details, setDetails] = useState({ first_name: "", last_name: "" });
+    const [savedDetails, setSavedDetails] = useState({ first_name: "", last_name: "" });
     const [savingDetails, setSavingDetails] = useState(false);
-    const [detailsFeedback, setDetailsFeedback] = useState(null);
+    const [detailsError, setDetailsError] = useState("");
 
-    const [passwordForm, setPasswordForm] = useState({
-        current_password: "",
-        new_password: "",
-        confirm_password: "",
-    });
+    const [passwords, setPasswords] = useState(EMPTY_PASSWORDS);
+    const [showPasswords, setShowPasswords] = useState(false);
     const [savingPassword, setSavingPassword] = useState(false);
-    const [passwordFeedback, setPasswordFeedback] = useState(null);
+    const [passwordError, setPasswordError] = useState("");
 
     useEffect(() => {
-        const loadProfile = async () => {
-            setLoading(true);
-            try {
-                const profile = await getMyProfile();
-                setDetails({
-                    first_name: profile.first_name || "",
-                    last_name: profile.last_name || "",
-                });
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadProfile();
+        getMyProfile()
+            .then(profile => {
+                const next = { first_name: profile.first_name || "", last_name: profile.last_name || "" };
+                setDetails(next);
+                setSavedDetails(next);
+            })
+            .catch(() => setDetailsError("No se pudieron cargar tus datos."))
+            .finally(() => setLoading(false));
     }, []);
 
-    const handleDetailsChange = e => {
-        const { name, value } = e.target;
-        setDetails(prev => ({ ...prev, [name]: value }));
-    };
+    const detailsDirty =
+        details.first_name !== savedDetails.first_name || details.last_name !== savedDetails.last_name;
+    const detailsValid = details.first_name.trim().length >= 2 && details.last_name.trim().length >= 2;
 
     const handleDetailsSubmit = async e => {
         e.preventDefault();
-        setDetailsFeedback(null);
+        setDetailsError("");
+        if (!detailsValid) {
+            setDetailsError("Nombre y apellido necesitan al menos 2 letras.");
+            return;
+        }
         setSavingDetails(true);
         try {
-            const updated = await updateMyProfileDetails(details);
+            const payload = { first_name: details.first_name.trim(), last_name: details.last_name.trim() };
+            const updated = await updateMyProfileDetails(payload);
             updateUser({ first_name: updated.first_name, last_name: updated.last_name });
-            setDetailsFeedback({ type: "success", message: "Datos actualizados correctamente" });
+            setDetails(payload);
+            setSavedDetails(payload);
+            showToast("Datos actualizados.");
         } catch (err) {
-            const message = err.response?.data?.error || "No se pudieron guardar los datos";
-            setDetailsFeedback({ type: "error", message });
+            setDetailsError(err.response?.data?.error || "No se pudieron guardar los datos.");
         } finally {
             setSavingDetails(false);
         }
     };
 
-    const handlePasswordChange = e => {
-        const { name, value } = e.target;
-        setPasswordForm(prev => ({ ...prev, [name]: value }));
-    };
+    const setPassword = (name, value) => setPasswords(prev => ({ ...prev, [name]: value }));
+    const strong = isStrongPassword(passwords.new_password);
+    const matches = passwords.confirm_password.length > 0 && passwords.new_password === passwords.confirm_password;
+    const canChangePassword = passwords.current_password.length > 0 && strong && matches && !savingPassword;
 
     const handlePasswordSubmit = async e => {
         e.preventDefault();
-        setPasswordFeedback(null);
-
-        if (passwordForm.new_password !== passwordForm.confirm_password) {
-            setPasswordFeedback({ type: "error", message: "Las contraseñas nuevas no coinciden" });
-            return;
-        }
-
-        if (passwordForm.new_password.length < 6) {
-            setPasswordFeedback({ type: "error", message: "La contraseña nueva debe tener al menos 6 caracteres" });
-            return;
-        }
-
+        setPasswordError("");
+        if (!canChangePassword) return;
         setSavingPassword(true);
         try {
-            await changeMyPassword(passwordForm.current_password, passwordForm.new_password);
-            setPasswordFeedback({ type: "success", message: "Contraseña actualizada correctamente" });
-            setPasswordForm({ current_password: "", new_password: "", confirm_password: "" });
+            await changeMyPassword(passwords.current_password, passwords.new_password);
+            setPasswords(EMPTY_PASSWORDS);
+            showToast("Contraseña actualizada.");
         } catch (err) {
-            const message = err.response?.data?.error || "No se pudo cambiar la contraseña";
-            setPasswordFeedback({ type: "error", message });
+            const status = err.response?.status;
+            setPasswordError(
+                status === 401 || status === 403
+                    ? "La contraseña actual no es correcta."
+                    : err.response?.data?.error || "No se pudo cambiar la contraseña.",
+            );
         } finally {
             setSavingPassword(false);
         }
@@ -101,121 +121,175 @@ const Profile = () => {
     return (
         <div>
             <PageHeader
-                eyebrow="Perfil"
-                title="Mis datos"
-                description="Actualizá tu información personal y tu contraseña."
+                eyebrow="Tu cuenta"
+                title="Mi perfil"
+                titleAccent="Acceso"
+                description="Tus datos personales y la contraseña con la que entrás al panel."
             />
 
-            {!loading && (
-                <Card className="profile-identity-card">
-                    <span className="avatar-monogram profile-identity-avatar">
-                        {user?.first_name?.[0]}
-                        {user?.last_name?.[0]}
+            <section className="profile-hero">
+                <span className="profile-hero-avatar" aria-hidden="true">
+                    {getInitials(user?.first_name, user?.last_name)}
+                </span>
+                <div className="profile-hero-id">
+                    <span className="profile-hero-role">
+                        <span className="profile-hero-dot" aria-hidden="true" />
+                        {ROLE_LABEL[user?.role] || user?.role}
                     </span>
-                    <div className="profile-identity-info">
-                        <span className="profile-identity-name">
-                            {user?.first_name} {user?.last_name}
-                        </span>
-                        <span className="profile-identity-email">{user?.email}</span>
-                    </div>
-                    <Badge tone={ROLE_TONE[user?.role] || "neutral"}>{ROLE_LABEL[user?.role] || user?.role}</Badge>
-                </Card>
-            )}
-
-            {loading ? (
-                <div className="profile-layout">
-                    <Skeleton height="280px" />
-                    <Skeleton height="280px" />
+                    <h2 className="profile-hero-name">
+                        {user?.first_name} {user?.last_name}
+                    </h2>
+                    <span className="profile-hero-email">{user?.email}</span>
                 </div>
-            ) : (
-                <div className="profile-layout">
-                    <Card>
-                        <h3 className="card-section-title">Datos personales</h3>
-                        <form onSubmit={handleDetailsSubmit} className="profile-form">
+                {hasAgenda && (
+                    <div className="profile-hero-links">
+                        <Button variant="secondary" icon="photo_camera" onClick={() => navigate("/photos")}>
+                            Fotos y bio
+                        </Button>
+                        <Button variant="secondary" icon="schedule" onClick={() => navigate("/schedule")}>
+                            Mis horarios
+                        </Button>
+                    </div>
+                )}
+            </section>
+
+            <div className="profile-grid">
+                <section className="profile-card" aria-labelledby="profile-details-title">
+                    <header className="profile-card-head">
+                        <h2 id="profile-details-title" className="profile-card-title">
+                            <Icon name="badge" size={22} />
+                            Datos personales
+                        </h2>
+                        {detailsDirty && <span className="profile-card-aside">Sin guardar</span>}
+                    </header>
+
+                    {loading ? (
+                        <Skeleton height="160px" />
+                    ) : (
+                        <form className="profile-form" onSubmit={handleDetailsSubmit} noValidate>
                             <div className="profile-form-row">
-                                <FormField label="Nombre">
+                                <FormField label="Nombre" htmlFor="profile-first">
                                     <input
+                                        id="profile-first"
                                         type="text"
-                                        name="first_name"
+                                        autoComplete="given-name"
+                                        maxLength={100}
                                         value={details.first_name}
-                                        onChange={handleDetailsChange}
-                                        required
-                                        minLength={2}
+                                        onChange={e => setDetails(prev => ({ ...prev, first_name: e.target.value }))}
                                     />
                                 </FormField>
-                                <FormField label="Apellido">
+                                <FormField label="Apellido" htmlFor="profile-last">
                                     <input
+                                        id="profile-last"
                                         type="text"
-                                        name="last_name"
+                                        autoComplete="family-name"
+                                        maxLength={100}
                                         value={details.last_name}
-                                        onChange={handleDetailsChange}
-                                        required
-                                        minLength={2}
+                                        onChange={e => setDetails(prev => ({ ...prev, last_name: e.target.value }))}
                                     />
                                 </FormField>
                             </div>
+                            <FormField label="Email de acceso" htmlFor="profile-email" hint="Para cambiarlo, pedíselo a un administrador.">
+                                <div className="field-affix">
+                                    <input id="profile-email" type="email" value={user?.email || ""} readOnly />
+                                    <span className="field-affix-suffix" aria-hidden="true">
+                                        <Icon name="lock" size={18} />
+                                    </span>
+                                </div>
+                            </FormField>
 
-                            {detailsFeedback && (
-                                <InlineFeedback tone={detailsFeedback.type === "error" ? "error" : "success"}>
-                                    {detailsFeedback.message}
-                                </InlineFeedback>
-                            )}
+                            {detailsError && <InlineFeedback tone="error">{detailsError}</InlineFeedback>}
 
-                            <Button type="submit" loading={savingDetails}>
-                                Guardar cambios
-                            </Button>
+                            <div className="profile-actions">
+                                <Button
+                                    variant="ghost"
+                                    disabled={!detailsDirty || savingDetails}
+                                    onClick={() => {
+                                        setDetails(savedDetails);
+                                        setDetailsError("");
+                                    }}
+                                >
+                                    Descartar
+                                </Button>
+                                <Button type="submit" icon="save" loading={savingDetails} disabled={!detailsDirty}>
+                                    Guardar cambios
+                                </Button>
+                            </div>
                         </form>
-                    </Card>
+                    )}
+                </section>
 
-                    <Card>
-                        <h3 className="card-section-title">Cambiar contraseña</h3>
-                        <form onSubmit={handlePasswordSubmit} className="profile-form">
-                            <FormField label="Contraseña actual">
-                                <input
-                                    type="password"
-                                    name="current_password"
-                                    value={passwordForm.current_password}
-                                    onChange={handlePasswordChange}
-                                    required
-                                    minLength={6}
+                <section className="profile-card" aria-labelledby="profile-password-title">
+                    <header className="profile-card-head">
+                        <h2 id="profile-password-title" className="profile-card-title">
+                            <Icon name="key" size={22} />
+                            Cambiar contraseña
+                        </h2>
+                    </header>
+
+                    <form className="profile-form" onSubmit={handlePasswordSubmit} noValidate>
+                        <FormField label="Contraseña actual" htmlFor="profile-current">
+                            <PasswordInput
+                                id="profile-current"
+                                autoComplete="current-password"
+                                value={passwords.current_password}
+                                onChange={e => setPassword("current_password", e.target.value)}
+                                visible={showPasswords}
+                                onToggle={() => setShowPasswords(v => !v)}
+                            />
+                        </FormField>
+
+                        <div className="profile-new-password">
+                            <FormField label="Contraseña nueva" htmlFor="profile-new">
+                                <PasswordInput
+                                    id="profile-new"
+                                    autoComplete="new-password"
+                                    value={passwords.new_password}
+                                    onChange={e => setPassword("new_password", e.target.value)}
+                                    visible={showPasswords}
+                                    onToggle={() => setShowPasswords(v => !v)}
                                 />
                             </FormField>
+                            <ul className="profile-rules" aria-label="Requisitos de la contraseña">
+                                {PASSWORD_RULES.map(rule => {
+                                    const ok = rule.test(passwords.new_password);
+                                    return (
+                                        <li key={rule.key} className={ok ? "is-ok" : ""}>
+                                            <Icon name={ok ? "check_circle" : "radio_button_unchecked"} size={16} />
+                                            {rule.label}
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </div>
 
-                            <FormField label="Contraseña nueva">
-                                <input
-                                    type="password"
-                                    name="new_password"
-                                    value={passwordForm.new_password}
-                                    onChange={handlePasswordChange}
-                                    required
-                                    minLength={6}
-                                />
-                            </FormField>
+                        <FormField
+                            label="Repetir contraseña nueva"
+                            htmlFor="profile-confirm"
+                            error={
+                                passwords.confirm_password && !matches ? "Las contraseñas nuevas no coinciden." : undefined
+                            }
+                        >
+                            <PasswordInput
+                                id="profile-confirm"
+                                autoComplete="new-password"
+                                value={passwords.confirm_password}
+                                onChange={e => setPassword("confirm_password", e.target.value)}
+                                visible={showPasswords}
+                                onToggle={() => setShowPasswords(v => !v)}
+                            />
+                        </FormField>
 
-                            <FormField label="Confirmar contraseña nueva">
-                                <input
-                                    type="password"
-                                    name="confirm_password"
-                                    value={passwordForm.confirm_password}
-                                    onChange={handlePasswordChange}
-                                    required
-                                    minLength={6}
-                                />
-                            </FormField>
+                        {passwordError && <InlineFeedback tone="error">{passwordError}</InlineFeedback>}
 
-                            {passwordFeedback && (
-                                <InlineFeedback tone={passwordFeedback.type === "error" ? "error" : "success"}>
-                                    {passwordFeedback.message}
-                                </InlineFeedback>
-                            )}
-
-                            <Button type="submit" loading={savingPassword}>
+                        <div className="profile-actions">
+                            <Button type="submit" icon="lock_reset" loading={savingPassword} disabled={!canChangePassword}>
                                 Cambiar contraseña
                             </Button>
-                        </form>
-                    </Card>
-                </div>
-            )}
+                        </div>
+                    </form>
+                </section>
+            </div>
         </div>
     );
 };

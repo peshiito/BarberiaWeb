@@ -1,0 +1,595 @@
+.barber-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.barber-crumbs {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--outline);
+}
+
+.barber-crumb-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 6px 4px 0;
+    border: none;
+    background: none;
+    color: var(--on-surface-variant);
+    font: inherit;
+    cursor: pointer;
+}
+
+.barber-crumb-back:hover {
+    color: var(--on-surface);
+}
+
+.barber-crumb-back:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.barber-crumb-current {
+    color: var(--primary);
+}
+
+.barber-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+    gap: var(--space-lg);
+    align-items: start;
+}
+
+.barber-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+    padding: var(--space-xl);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-low);
+    box-shadow: var(--shadow-sm);
+    min-width: 0;
+    animation: barber-in 320ms var(--ease-out) both;
+}
+
+.barber-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    border-radius: var(--radius-md);
+    background-color: var(--surface-container);
+}
+
+.barber-head-text {
+    min-width: 0;
+}
+
+.barber-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--primary);
+}
+
+.barber-title {
+    margin: 4px 0;
+    font-family: var(--font-display);
+    font-size: 36px;
+    line-height: 44px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--on-surface);
+    text-wrap: balance;
+}
+
+.barber-title:focus {
+    outline: none;
+}
+
+.barber-lede {
+    max-width: 56ch;
+    margin: 0;
+    font-size: 13px;
+    line-height: 19px;
+    color: var(--on-surface-variant);
+}
+
+.barber-chip {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-highest);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--on-surface-variant);
+}
+
+.barber-chip-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: var(--radius-full);
+    background-color: var(--secondary);
+}
+
+.barber-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.barber-section-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--primary);
+}
+
+.barber-section-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background-color: var(--hairline-strong);
+}
+
+.barber-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-md);
+}
+
+.barber-valid {
+    color: var(--secondary);
+}
+
+.barber-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.barber-label {
+    font-family: var(--font-display);
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--on-surface-variant);
+}
+
+.barber-hint {
+    font-size: 12px;
+    color: var(--outline);
+}
+
+.barber-warning {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--tertiary);
+}
+
+/* Contraseña */
+.barber-password {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    background-color: var(--surface-container);
+}
+
+.barber-rules-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--outline);
+}
+
+.barber-rules-list {
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px var(--space-lg);
+}
+
+.barber-rules-list li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--outline);
+    transition: color var(--duration-base) var(--ease-out);
+}
+
+.barber-rules-list li.is-ok {
+    color: var(--secondary);
+}
+
+/* Rol */
+.barber-roles {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-sm);
+}
+
+.barber-role {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 14px;
+    border: none;
+    border-radius: var(--radius-md);
+    background-color: var(--surface-container);
+    box-shadow: inset 0 0 0 1px transparent;
+    color: var(--on-surface);
+    text-align: left;
+    cursor: pointer;
+    transition:
+        background-color var(--duration-fast) var(--ease-out),
+        box-shadow var(--duration-fast) var(--ease-out),
+        transform var(--duration-fast) var(--ease-out);
+}
+
+.barber-role:hover:not(:disabled):not(.is-selected) {
+    background-color: var(--surface-high);
+}
+
+.barber-role:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.barber-role:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.barber-role:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.barber-role-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.barber-role-head .material-symbols-outlined {
+    color: var(--outline);
+}
+
+.barber-role-name {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.barber-role-desc {
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--on-surface-variant);
+}
+
+.barber-role.is-selected {
+    background-color: rgb(var(--primary-container-rgb) / 0.14);
+    box-shadow: inset 0 0 0 1px var(--primary-container);
+}
+
+.barber-role.is-selected .barber-role-name,
+.barber-role.is-selected .material-symbols-outlined {
+    color: var(--primary);
+}
+
+/* Comisión */
+.barber-commission {
+    display: grid;
+    grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-lg);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    background-color: var(--surface-container);
+}
+
+.barber-split input {
+    font-size: 22px;
+}
+
+.barber-commission-text {
+    margin: 0;
+    font-size: 13px;
+    line-height: 19px;
+    color: var(--on-surface-variant);
+}
+
+.barber-commission-title {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--on-surface);
+}
+
+/* Datos adicionales */
+.barber-extras-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding: 14px var(--space-md);
+    border: none;
+    border-radius: var(--radius-md);
+    background-color: var(--surface-container);
+    color: var(--on-surface-variant);
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.barber-extras-toggle > span {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.barber-extras-toggle:hover {
+    background-color: var(--surface-high);
+}
+
+.barber-extras-toggle:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.barber-extras {
+    animation: barber-in 240ms var(--ease-out) both;
+}
+
+.barber-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-sm);
+}
+
+/* Columna derecha */
+.barber-side {
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-lg));
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.barber-side-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-low);
+    box-shadow: var(--shadow-sm);
+}
+
+.barber-side-label {
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--outline);
+}
+
+.barber-credential {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    background-color: var(--surface-container);
+}
+
+.barber-credential-top {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    min-width: 0;
+}
+
+.barber-credential-avatar {
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    background-color: var(--primary-container);
+    color: var(--on-primary);
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 600;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-md);
+}
+
+.barber-credential-id {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.barber-credential-code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--primary);
+}
+
+.barber-credential-name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 20px;
+    line-height: 26px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--on-surface);
+    overflow-wrap: anywhere;
+}
+
+.barber-credential-role {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--secondary);
+}
+
+.barber-credential-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-low);
+}
+
+.barber-credential-rows > div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+.barber-credential-rows dt {
+    color: var(--outline);
+}
+
+.barber-credential-rows dd {
+    margin: 0;
+    color: var(--primary);
+    min-width: 0;
+}
+
+.barber-credential-rows dd.is-ellipsis {
+    color: var(--on-surface-variant);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.barber-credential-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.barber-side-info {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-low);
+    color: var(--primary);
+}
+
+.barber-side-info-title {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--on-surface);
+}
+
+.barber-side-info p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--on-surface-variant);
+}
+
+@keyframes barber-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 1100px) {
+    .barber-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .barber-side {
+        position: static;
+    }
+}
+
+@media (max-width: 720px) {
+    .barber-card {
+        padding: var(--space-md);
+        gap: var(--space-lg);
+    }
+
+    .barber-head {
+        flex-direction: column;
+        padding: var(--space-md);
+    }
+
+    .barber-title {
+        font-size: 28px;
+        line-height: 34px;
+    }
+
+    .barber-grid-2,
+    .barber-roles,
+    .barber-commission {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .barber-actions > * {
+        flex: 1;
+    }
+}

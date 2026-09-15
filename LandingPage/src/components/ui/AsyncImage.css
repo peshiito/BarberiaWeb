@@ -3,7 +3,7 @@
     width: 100%;
     overflow: hidden;
     background: var(--carbon-elevated);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
 }
 
 .section-cream .async-image {
@@ -46,6 +46,8 @@
     max-height: 48px;
 }
 
+/* Monograma grabado en latón para barberos sin foto: marco fino, grilla de
+   puntos (cuero picado) y las iniciales en Oswald. Tiene que verse intencional. */
 .async-image-monogram {
     position: absolute;
     inset: 0;
@@ -53,19 +55,54 @@
     align-items: center;
     justify-content: center;
     background:
-        radial-gradient(circle at 30% 20%, rgba(var(--brass-rgb), 0.22), transparent 60%),
-        var(--carbon-elevated);
+        radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1.4px) 0 0 / 14px 14px,
+        radial-gradient(120% 80% at 50% 0%, rgba(var(--brass-rgb), 0.12), transparent 70%),
+        var(--ink);
+}
+
+.async-image-monogram::before {
+    content: "";
+    position: absolute;
+    inset: 9%;
+    border: 1px solid rgba(var(--brass-rgb), 0.3);
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+.async-image-monogram span {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35em;
+    font-family: var(--font-display);
+    font-size: clamp(28px, 22cqi, 72px);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    color: var(--brass-bright);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.8);
+}
+
+.async-image-monogram span::before,
+.async-image-monogram span::after {
+    content: "";
+    width: 1.1em;
+    height: 1px;
+    background: rgba(var(--brass-rgb), 0.55);
+}
+
+.async-image {
+    container-type: inline-size;
 }
 
 .section-cream .async-image-monogram {
     background:
-        radial-gradient(circle at 30% 20%, rgba(var(--brass-rgb), 0.16), transparent 60%),
+        radial-gradient(circle, rgba(28, 23, 18, 0.08) 1px, transparent 1.4px) 0 0 / 14px 14px,
         var(--cream-dim);
 }
 
-.async-image-monogram span {
-    font-family: var(--font-display);
-    font-size: var(--text-3xl);
-    letter-spacing: 0.04em;
-    color: var(--brass-bright);
+.section-cream .async-image-monogram span {
+    color: var(--brass-ink);
+    text-shadow: none;
 }
